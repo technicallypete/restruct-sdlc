@@ -1,8 +1,10 @@
 # Restruct SDLC skills
 
-Restruct SDLC is a bundle of three agent skills for repositories run by a human owner, a supervisor agent and an
-implementer agent. Together they provide a management workflow (Goals, Specs, Plans, Results, budgets, validation,
-integration and closeout), verified local session handoffs, and supervision recovery from repository records.
+Restruct SDLC is a bundle of three agent skills for repositories run by a human owner, a **Supervisor Session**
+and a **Coordinator Session**. These agent sessions orchestrate harness subagent work in isolated worktrees and,
+where supported by the harness, VMs. Together they provide a management workflow (Goals, Specs, Plans, Results,
+budgets, validation, integration and closeout), verified local session handoffs, and supervision recovery from
+repository records.
 
 **Status: published.** Available on [GitHub](https://github.com/technicallypete/restruct-sdlc).
 
@@ -13,8 +15,9 @@ specification and human accountability ahead of implementation.
 
 Restruct SDLC applies those principles to repository workflows. Goals and Specs define intent and boundaries;
 Plans describe execution; Results and review records preserve evidence. A human owner retains architectural
-authority, supported by a supervisor agent and an implementation coordinator. Budgets, verified handoffs and
-cleanup keep execution bounded and context available across sessions.
+authority, supported by the Supervisor Session for specifications and review and the Coordinator Session for
+implementation and delegated work. Budgets, verified handoffs and cleanup keep execution bounded and context
+available across sessions.
 
 This bundle implements the software-delivery workflow within Restruct's broader organizational methodology.
 [Explore Restruct](https://vestive.com/restruct-methodology) or read the
