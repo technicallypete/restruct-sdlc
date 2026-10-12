@@ -338,7 +338,9 @@ If the inbox is incompatible or unavailable, use the supported attach/input inte
 ## Coordinator milestone observer (opt-in here; an adopting repository may default-enable it after verified bindings)
 
 [scripts/watch.py](scripts/watch.py) notifies one existing Codex supervisor thread of the verified Claude
-coordinator's milestones: review-ready, blocked or question, waiting, completed. It is a stdlib polling loop (default
+coordinator's milestones: failure, review-ready, blocked or question, waiting, completed. Explicit decision/approval
+requests qualify as questions; absent, expected or explicitly resolved failures do not qualify as failure alerts.
+Detection uses bounded text patterns, not AI inference or direct CI polling. It is a stdlib polling loop (default
 30 seconds) with no model inference. It belongs to the repository's coordinator–supervisor pair, not to one task:
 once enabled it keeps running across Goals, reviews and closeouts until the operator stops it.
 
@@ -346,6 +348,7 @@ once enabled it keeps running across Goals, reviews and closeouts until the oper
 W=".agents/skills/claude-session-handoff/scripts/watch.py"
 python3 "$W" --repo "$PWD" bind --supervisor-file /private/path/supervisor.json   # or --supervisor FULL_UUID
 python3 "$W" --repo "$PWD" start [--interval 30]
+python3 "$W" --repo "$PWD" start --resume   # optionally catch up from the saved cursor after stopping
 python3 "$W" --repo "$PWD" status
 python3 "$W" --repo "$PWD" stop
 ```
@@ -368,6 +371,11 @@ python3 "$W" --repo "$PWD" stop
   resuming across polls while it grows, and records it under `status` `parse_limit`. If the row was coordinator
   output, one notice says it could not be assessed for milestones. Later rows are still delivered.
 - **Lifecycle.** `start` first re-verifies the bound pair; if it cannot, it stays inactive and reports why. It then
+  starts at the current transcript tail, including after an earlier activation, so old backlog is not replayed.
+  Use `start --resume` after stopping when deliberately catching up from the saved cursor. Both modes preserve
+  deduplication and advisory/smoke history; fresh start refuses unresolved delivery uncertainty. An already-running
+  observer's cursor is never reset. Explicitly resolved or negated blockers do not produce blocked notices;
+  another active blocker on the same line still qualifies. It
   launches one explicitly managed background process per repository (a lock plus a verified PID, start time and
   command line). A second `start` for a running observer is idempotent (`already-running`), and replacing the pair
   needs an explicit verified `bind --replace`. `stop` never signals a reused PID. There is no cron, service or boot

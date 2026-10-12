@@ -71,8 +71,11 @@ By default (`SUPERVISOR_AUTO_PUBLISH=true`, owner may disable) the supervisor pu
 its management records to the explicit integration branch; the implementer keeps its task branch and merge requests.
 Relayed owner authorizations are attributed truthfully and never override native permission gates.
 By default (`OBSERVER_AUTO_ACTIVATE=true`, separate option) the companion milestone observer starts only after the
-coordinator and supervisor bindings are explicitly verified; otherwise it stays inactive and reported. Effort by
-role: coordinator high (xhigh when planning), planning workers xhigh, implementation workers high.
+coordinator and supervisor bindings are explicitly verified; otherwise it stays inactive and reported. Fresh
+`start` begins at the current transcript tail; deliberate catch-up after stopping uses `start --resume`. Notices
+include failures and explicit decision/approval requests, with no approval authority. Follow the companion's
+[observer procedure](../claude-session-handoff/SKILL.md#coordinator-milestone-observer-opt-in-here-an-adopting-repository-may-default-enable-it-after-verified-bindings)
+for detection limits, preserved deduplication and fail-closed recovery. Effort by role: coordinator high (xhigh when planning), planning workers xhigh, implementation workers high.
 Details: [roles and lifecycle](references/roles-lifecycle.md).
 
 ## References

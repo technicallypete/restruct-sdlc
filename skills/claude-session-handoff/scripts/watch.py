@@ -7,7 +7,7 @@ creation, settings changes, raw transcript forwarding or implicit retargeting. N
 
   watch.py --repo PATH bind (--supervisor UUID | --supervisor-file FILE) [--replace]
                              [--size-threshold BYTES | --no-size-advisory]
-  watch.py --repo PATH start [--interval SECONDS] | stop | status | unbind
+  watch.py --repo PATH start [--resume] [--interval SECONDS] | stop | status | unbind
   watch.py --repo PATH smoke --label TEXT      # one labelled benign delivery to the bound thread
   watch.py --repo PATH poll-once               # one foreground poll (diagnostics)
 
@@ -50,7 +50,9 @@ MAX_KEYS = 2000
 NOTICE_MARK = "[observer-notice:"
 ECHO_MARKS = (NOTICE_MARK, "[handoff-id:")
 CATEGORIES = (
-    ("question", re.compile(r"\bquestion for (?:the )?(?:owner|codex|supervisor)\b", re.I)),
+    ("failed", re.compile(r"\b(?:failed|failing|failures?)\b", re.I)),
+    ("question", re.compile(r"\b(?:question for (?:the )?(?:owner|codex|supervisor)|"
+                            r"(?:decision|approval)\s+(?:is\s+)?(?:needed|required))\b", re.I)),
     ("blocked", re.compile(r"\b(?:blocked|blocker|escalat(?:e|es|ed|ing|ion))\b", re.I)),
     ("review-ready", re.compile(r"\b(?:review[- ]ready|ready for (?:codex |supervisor )?review|submitted for "
                                 r"(?:codex |supervisor )?(?:implementation |plan )?review)\b", re.I)),
@@ -187,8 +189,9 @@ def new_rows(path, offsets, limits):
                         break  # still growing: resume from `scanned` next poll
                     continue
                 end = over["scanned"] + newline + 1
-                limits.append({"inode": info.st_ino, "start": over["start"], "bytes": end - over["start"],
-                               "prefix": over["prefix"]})
+                if not over.get("discard_partial"):
+                    limits.append({"inode": info.st_ino, "start": over["start"], "bytes": end - over["start"],
+                                   "prefix": over["prefix"]})
                 pos, over = end, None
                 continue
             stream.seek(pos)
@@ -201,7 +204,8 @@ def new_rows(path, offsets, limits):
                 over = {"start": pos, "scanned": pos + len(data),
                         "prefix": data[:PREFIX_BYTES].decode("utf-8", errors="replace")}
                 continue
-            for line in data[:last + 1].decode("utf-8", errors="replace").splitlines():
+            for raw in data[:last + 1].split(b"\n")[:-1]:  # JSONL rows end at LF only; U+2028/U+2029/U+0085
+                line = raw.decode("utf-8", errors="replace")   # inside JSON strings are content, not delimiters
                 with contextlib.suppress(ValueError):
                     row = json.loads(line)
                     if isinstance(row, dict):
@@ -211,6 +215,21 @@ def new_rows(path, offsets, limits):
                 break
     offsets[key] = {"inode": info.st_ino, "offset": pos, **({"oversized": over} if over else {})}
     return rows
+
+
+def active_alert(line, pattern):
+    """Ignore explicitly negated/resolved alerts, retaining a separate active issue on the same line."""
+    line = re.sub(r"[*`_]", "", line)
+    for match in pattern.finditer(line):
+        before, after = line[:match.start()], line[match.end():]
+        negated = re.search(r"\b(?:no|zero|0|without|not|never|no longer|expected)\s+"
+                            r"(?:(?:known|remaining|current|new|active|currently|still|unexpected)\s+)*$", before, re.I)
+        resolved = re.match(r"(?:\s+(?:gate|pipeline|job|test|check|build|validation))?"
+                            r"(?:\s+(?:is|was|now|already|has been|had been))*\s+"
+                            r"(?:resolved|cleared|fixed|removed|gone|passed|passing|recovered)\b", after, re.I)
+        if not negated and not resolved:
+            return True
+    return False
 
 
 def milestone(row):
@@ -228,8 +247,9 @@ def milestone(row):
            for c in content):
         return "question", "the coordinator asked a native question (inspect it in the coordinator session)"
     for category, pattern in CATEGORIES:
-        for line in joined.splitlines():
-            if pattern.search(line):
+        for line in joined.split("\n"):
+            if pattern.search(line) and (category not in ("failed", "blocked", "question")
+                                         or active_alert(line, pattern)):
                 return category, handoff.safe_excerpt(line.strip(), 240)
     return None
 
@@ -380,7 +400,7 @@ def verified_process(record):
     return start == record.get("start") and argv == [a.encode() for a in record.get("argv", [])]
 
 
-def cmd_start(root, interval):
+def cmd_start(root, interval, resume=False):
     require(MIN_INTERVAL <= interval <= MAX_INTERVAL, "interval-out-of-range")
     directory = observer_dir(root)
     binding = load(directory, "binding.json")
@@ -391,6 +411,25 @@ def cmd_start(root, interval):
     ok, reason, _ = verified_identity(root, binding)
     if not ok:
         return {"status": "inactive", "reason": reason, "next": "verify the session pair and rebind explicitly"}
+    if not resume:
+        state = load(directory, "state.json", empty_state())
+        if recover_pending(state):
+            return suspend(directory, state, "interrupted-delivery-uncertain")
+        require(not state.get("suspended"), "suspended-rebind-first")
+        path = transcript_path(binding["coordinator"])
+        with path.open("rb") as stream:
+            info = os.fstat(stream.fileno())
+            partial = False
+            if info.st_size:
+                stream.seek(info.st_size - 1)
+                partial = stream.read(1) != b"\n"
+        cursor = {"inode": info.st_ino, "offset": info.st_size}
+        if partial:
+            cursor["oversized"] = {"start": info.st_size, "scanned": info.st_size,
+                                   "prefix": "", "discard_partial": True}
+        state["offsets"][str(path)] = cursor
+        state["waiting"] = False
+        save(directory, "state.json", state)
     argv = child_argv(root, interval)
     log = os.open(directory / "observer.log", os.O_WRONLY | os.O_CREAT | os.O_APPEND | os.O_NOFOLLOW, 0o600)
     try:
@@ -465,7 +504,12 @@ def cmd_bind(root, args):
     require(current is None or args.replace, "already-bound-use-replace")
     report = coordinator_status(root)
     require(report.get("status") == "pinned-live-verified", "coordinator-not-pinned-live-verified")
-    threshold = None if args.no_size_advisory else (args.size_threshold or DEFAULT_SIZE_THRESHOLD)
+    if args.no_size_advisory:
+        threshold = None
+    elif args.size_threshold is None:  # omitted: default; an explicit value (including 0) is validated as given
+        threshold = DEFAULT_SIZE_THRESHOLD
+    else:
+        threshold = args.size_threshold
     require(threshold is None or threshold >= MIN_SIZE_THRESHOLD, "size-threshold-too-small")
     binding = {"supervisor": supervisor, "coordinator": report["pin"]["session"], "size_threshold": threshold,
                "bound": handoff.utc_now().isoformat(),
@@ -553,6 +597,9 @@ def parser():
     for name in ("start", "run"):
         sp = sub.add_parser(name)
         sp.add_argument("--interval", type=int, default=DEFAULT_INTERVAL)
+        if name == "start":
+            sp.add_argument("--resume", action="store_true",
+                            help="catch up from the saved cursor instead of starting at the current transcript tail")
     smoke = sub.add_parser("smoke")
     smoke.add_argument("--label", required=True)
     for name in ("stop", "status", "unbind", "poll-once"):
@@ -566,7 +613,7 @@ def main(argv=None):
     if args.command == "bind":
         return cmd_bind(root, args)
     if args.command == "start":
-        return cmd_start(root, args.interval)
+        return cmd_start(root, args.interval, args.resume)
     if args.command == "run":
         require(MIN_INTERVAL <= args.interval <= MAX_INTERVAL, "interval-out-of-range")
         return cmd_run(root, args.interval)

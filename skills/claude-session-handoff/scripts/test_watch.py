@@ -170,6 +170,60 @@ class Polling(Base):
 
 
 class NotificationSources(Base):
+    def test_staging_failure_report_notifies_once(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "The staging gate failed, so final acceptance must wait.\n"
+                             "140 tests passed and 1 failed.\n**Decision needed (supervisor or owner):** retry or investigate."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("milestone (failed", self.codex.queues()[0][4])
+        self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_absent_expected_or_resolved_failures_do_not_notify(self):
+        self.bind()
+        self.poll()
+        for text in ("No failures were found.", "0 unexpected failures.", "4 expected failures before the fix.",
+                     "The failure is resolved.", "The failed gate now passed.", "The **failure** was already fixed."):
+            with self.subTest(text=text):
+                self.append(self.row("assistant", text))
+                self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(self.codex.queues(), [])
+
+    def test_resolved_failure_does_not_hide_a_new_failure(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "The failure is resolved; a different job failed."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("milestone (failed", self.codex.queues()[0][4])
+
+    def test_decision_and_approval_requests_notify_but_negated_requests_do_not(self):
+        self.bind()
+        self.poll()
+        for text in ("No decision needed.", "No approval is required."):
+            self.append(self.row("assistant", text))
+            self.assertEqual(self.poll()["queue_calls"], 0)
+        for text in ("**Decision needed (supervisor or owner):** choose the recovery.", "Approval is required."):
+            self.append(self.row("assistant", text))
+            self.assertEqual(self.poll()["queue_calls"], 1)
+            self.assertIn("milestone (question", self.codex.queues()[-1][4])
+
+    def test_resolved_and_negated_blockers_do_not_notify(self):
+        self.bind()
+        self.poll()
+        for text in ("The permission blocker is resolved.", "No blocker is known.",
+                     "The action is no longer blocked.", "The blocker was already cleared."):
+            with self.subTest(text=text):
+                self.append(self.row("assistant", text))
+                self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(self.codex.queues(), [])
+
+    def test_resolved_blocker_does_not_hide_another_active_blocker(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "The permission blocker is resolved; currently blocked on credentials."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("milestone (blocked", self.codex.queues()[0][4])
+
     def test_codex_repository_edits_cause_zero_queue_calls(self):
         self.bind()
         self.poll()
@@ -413,6 +467,28 @@ class SizeAdvisory(Base):
         self.assertEqual(self.poll()["queue_calls"], 0)
         self.assertEqual(self.state()["deliveries"][-1]["outcome"], "queue-uncertain-exit-1")
 
+    def test_explicit_zero_threshold_is_refused_without_binding_change(self):
+        with self.assertRaises(handoff.Blocked) as ctx:
+            self.bind("--size-threshold", "0")                     # no prior binding: none is created
+        self.assertEqual(str(ctx.exception), "size-threshold-too-small")
+        self.assertIsNone(handoff.read_private(watch.observer_dir(self.root) / "binding.json"))
+        self.bind("--size-threshold", "4096")
+        before = handoff.read_private(watch.observer_dir(self.root) / "binding.json")
+        with self.assertRaises(handoff.Blocked) as ctx:
+            self.bind("--replace", "--size-threshold", "0")        # explicit 0 never becomes the 100 MiB default
+        self.assertEqual(str(ctx.exception), "size-threshold-too-small")
+        self.assertEqual(handoff.read_private(watch.observer_dir(self.root) / "binding.json"), before)
+        self.assertEqual(self.codex.calls, [])
+
+    def test_omitted_valid_and_opt_out_thresholds(self):
+        self.bind()
+        self.assertEqual(watch.main(["--repo", str(self.repo), "status"])["size_threshold"], 104857600)
+        self.bind("--replace", "--size-threshold", "2048")
+        self.assertEqual(watch.main(["--repo", str(self.repo), "status"])["size_threshold"], 2048)
+        self.bind("--replace", "--no-size-advisory")
+        self.assertIsNone(watch.main(["--repo", str(self.repo), "status"])["size_threshold"])
+        self.assertEqual(self.codex.calls, [])
+
     def test_unverified_identity_blocks_advisory(self):
         self.grow(5000)
         self.bind("--size-threshold", "4096")
@@ -532,6 +608,32 @@ class DurableIntent(Base):
         self.assertIn("(blocked", self.codex.queues()[-1][4])
 
 
+class UnicodeSeparatorFraming(Base):
+    """C6: rows are framed by LF only; U+2028, U+2029 and U+0085 inside JSON strings are content."""
+
+    def raw_row(self, text):
+        row = json.loads(self.row("assistant", text))
+        return json.dumps(row, ensure_ascii=False)  # keeps the separator as a raw character in the transcript
+
+    def test_raw_unicode_separators_do_not_split_rows(self):
+        for separator in ("\u2028", "\u2029", "\u0085"):
+            with self.subTest(separator=hex(ord(separator))):
+                self.setUp()
+                self.bind()
+                self.poll()
+                first = self.raw_row(f"Plan is review-ready.{separator}Details follow{separator}here.")
+                self.assertIn(separator.encode("utf-8"), first.encode("utf-8"))
+                self.append(first, self.raw_row(f"Now blocked{separator}on a decision."))
+                self.assertEqual(self.poll()["queue_calls"], 2)
+                messages = [c[4] for c in self.codex.queues()]
+                self.assertTrue(any("(review-ready" in m for m in messages) and any("(blocked" in m for m in messages))
+                self.assertEqual(self.poll()["queue_calls"], 0)      # each delivered exactly once
+                offsets = self.state()["offsets"][str(self.transcript)]
+                self.assertEqual(offsets["offset"], self.transcript.stat().st_size)
+                self.assertNotIn("oversized", offsets)
+                self.assertEqual(watch.main(["--repo", str(self.repo), "status"])["parse_limit"]["oversized_rows"], 0)
+
+
 class OversizedRows(Base):
     """C5: bounded progress through rows longer than the read limit, with explicit parse-limit reporting."""
 
@@ -639,6 +741,73 @@ class OversizedRows(Base):
 class Lifecycle(Base):
     def fake_child(self, root, interval):
         return [sys.executable, "-c", "import time; time.sleep(60)", "observer-fixture", str(interval)]
+
+    def start_fixture(self, *extra):
+        with patch.object(watch, "child_argv", self.fake_child):
+            started = watch.main(["--repo", str(self.repo), "start", *extra])
+        if started["status"] == "started":
+            def cleanup():
+                watch.main(["--repo", str(self.repo), "stop"])
+                os.waitpid(started["pid"], 0)
+            self.addCleanup(cleanup)
+        return started
+
+    def test_fresh_start_skips_saved_backlog_and_keeps_dedup(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "Work is complete; handback sent."))
+        self.poll()
+        keys = self.state()["keys"]
+        self.append(self.row("assistant", "Old Result is review-ready."))
+        self.start_fixture()
+        self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(self.state()["keys"], keys)
+        self.append(self.row("assistant", "New Result is review-ready."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        offsets = self.state()["offsets"]
+        self.append(self.row("assistant", "Another Result is review-ready."))
+        self.assertEqual(self.start_fixture()["status"], "already-running")
+        self.assertEqual(self.state()["offsets"], offsets)
+        self.assertEqual(self.poll()["queue_calls"], 1)
+
+    def test_resume_catches_up_once_from_saved_cursor(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "Missed Result is review-ready."))
+        offsets = self.state()["offsets"]
+        self.start_fixture("--resume")
+        self.assertEqual(self.state()["offsets"], offsets)
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_fresh_start_discards_existing_partial_row_without_parse_warning(self):
+        self.bind()
+        self.poll()
+        row = self.row("assistant", "Old partial Result is review-ready.")
+        with self.transcript.open("a") as stream:
+            stream.write(row[:50])
+        self.start_fixture()
+        with self.transcript.open("a") as stream:
+            stream.write(row[50:] + "\n")
+        self.append(self.row("assistant", "Current Result is review-ready."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertEqual(len(self.codex.queues()), 1)
+        self.assertNotIn("oversized", self.state()["offsets"][str(self.transcript)])
+        self.assertEqual(self.state().get("parse_limits", []), [])
+
+    def test_fresh_start_does_not_clear_uncertain_intent(self):
+        self.bind()
+        self.poll()
+        directory = watch.observer_dir(self.root)
+        state = self.state()
+        offsets = state["offsets"]
+        state["deliveries"].append({"key": "interrupted", "outcome": "pending-intent"})
+        watch.save(directory, "state.json", state)
+        result = self.start_fixture()
+        self.assertEqual(result["status"], "suspended")
+        self.assertEqual(self.state()["offsets"], offsets)
+        self.assertEqual(self.state()["deliveries"][-1]["outcome"], "uncertain-interrupted")
+        self.assertEqual(self.codex.queues(), [])
 
     def test_start_duplicate_stop_and_cleanup(self):
         self.bind()

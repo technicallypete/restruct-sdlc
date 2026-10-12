@@ -61,7 +61,11 @@ The supervisor states the tier in each Goal's Execution Policy; agents never sel
    name or chosen among several sessions), run the companion's `watch.py bind` and then `watch.py start`, using the
    30-second default, with no further enablement question. If any binding is missing, ambiguous, unverified or
    retired, leave the observer inactive and record the unmet prerequisite. Never create sessions or change
-   permissions to satisfy it. `start` is idempotent for a running observer. `false` opts out.
+   permissions to satisfy it. Fresh `start` begins at the current transcript tail; after stopping, `start --resume`
+   deliberately catches up from the saved cursor. Both preserve deduplication/advisory history; unresolved delivery
+   uncertainty blocks fresh activation. `start` is idempotent for a running observer. Notices include failures and
+   decision/approval requests, without task or approval authority; detection is bounded text matching rather than
+   CI polling. Use the companion's observer procedure for exclusions and recovery. `false` opts out.
 8. Run `python3 -B .agents/skills/sdlc-management/scripts/check_sdlc.py adoption . --release <RELEASE>` and fix
    every finding. Optionally pass `--literals FILE` with project-private strings that must not appear. Private
    worker checkouts under `.claude/worktrees/` and `.codex/worktrees/` are not adopted content and are skipped.

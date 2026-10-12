@@ -159,3 +159,19 @@ delivery groups to a private archive before pruning them from the live log
 in a quiet maintenance window, refusing while any other helper invocation runs or
 holds the log). Preserve any worktree-local delivery log in the archive before
 removing that worktree. See the skill for the exact commands and refusals.
+
+
+## Coordinator milestone observer
+
+The companion `watch.py` polls the verified coordinator's assistant transcript at a 30-second default. It reports
+failures, review readiness, blockers, questions and explicit decision/approval requests, waiting and completion.
+Absent, expected or explicitly resolved issues are filtered. Detection is bounded text matching, not AI inference
+or direct CI polling; notices carry no approval or task authority. Incoming handoffs, echoed notices, sidechains
+and repository edits are excluded as sources.
+
+After explicit verified coordinator/supervisor bindings, `start` begins at the current transcript tail, avoiding
+historical backlog even after a prior activation. After stopping, use `start --resume` only for deliberate catch-up
+from the saved cursor. Both retain deduplication and advisory history; unresolved delivery uncertainty blocks fresh
+activation, and an already-running observer's cursor is never reset. The standalone companion is opt-in; adopted
+repositories may default-enable it after verified bindings. See [the skill](../SKILL.md) for commands, private-state
+safety, version support, size advisories and suspension/recovery rules.
