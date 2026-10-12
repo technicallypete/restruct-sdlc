@@ -4,7 +4,7 @@ Restruct SDLC is a bundle of three agent skills for repositories run by a human 
 implementer agent. Together they provide a management workflow (Goals, Specs, Plans, Results, budgets, validation,
 integration and closeout), verified local session handoffs, and supervision recovery from repository records.
 
-**Status: publication candidate.** This bundle is reviewed for local use and has not been published.
+**Status: published.** Available on [GitHub](https://github.com/technicallypete/restruct-sdlc).
 
 ## Why Restruct?
 
