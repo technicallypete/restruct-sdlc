@@ -19,6 +19,11 @@ supervisor role, and loading a skill grants nothing.
 - An observed review-ready submission triggers delegated review without another owner prompt; duplicate unchanged
   reviews are skipped; unavailable delegation falls back to direct review. Decisions and remaining gates are
   relayed automatically to the verified coordinator with receipt and acknowledgment checks.
+- Delegated reviews complete asynchronously within an open supervisor turn: wait with the harness's agent
+  notification interface (the owner may steer), then finalize, record and relay before the final reply. No repeated
+  polling; automatic wake-up after an ended turn is not guaranteed. An interruption alone is not stop-all: inspect
+  child status on resuming, keep completed findings and authorized running work, and do not cancel or re-dispatch
+  automatically unless an explicit stop-all or conflicting direction applies.
 - Owner interruption, mandatory escalations and owner merge authority remain.
 
 Distinguish direct evidence from reports and stale observations. Keep approval history and bindings intact.

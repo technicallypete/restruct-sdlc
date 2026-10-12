@@ -54,8 +54,11 @@ Validation history (not counted): every failed, skipped and interrupted run with
 
 ## Effort
 
-Effort is a **configurable recommendation**: `PLANNING_EFFORT` (default `xhigh`) and `IMPLEMENTATION_EFFORT`
-(default `high`). Before a phase, state the intended effort and remind the operator; honor an already stated
+Effort is a **configurable recommendation** by role: `COORDINATOR_EFFORT` (default `high`) for orchestration,
+status and handoffs; `PLANNING_EFFORT` (default `xhigh`) for planning workers, and for a coordinator that plans;
+`IMPLEMENTATION_EFFORT` (default `high`) for implementation workers. Set worker effort explicitly through supported
+controls where available instead of assuming inheritance. The owner may raise complex debugging or security work
+to xhigh. Before a phase, state the intended effort and remind the operator; honor an already stated
 choice. Verify actual runtime effort only where session metadata exposes it, and otherwise record "unknown". A
 handoff's wording never sets or proves the runtime setting, and effort changes never reset budgets or completed
 work.

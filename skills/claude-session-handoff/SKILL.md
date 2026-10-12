@@ -335,17 +335,17 @@ Socket delivery is not acknowledgment. Verify the intended transcript's user rep
 
 If the inbox is incompatible or unavailable, use the supported attach/input interface or report the blocker. Do not restart a live session, bypass a held permission prompt or change permission modes merely to make delivery work. Follow existing user authorization for any such action; this skill grants none.
 
-## Coordinator milestone observer (optional; disabled unless the operator enables it)
+## Coordinator milestone observer (opt-in here; an adopting repository may default-enable it after verified bindings)
 
 [scripts/watch.py](scripts/watch.py) notifies one existing Codex supervisor thread of the verified Claude
 coordinator's milestones: review-ready, blocked or question, waiting, completed. It is a stdlib polling loop (default
-20 seconds) with no model inference. It belongs to the repository's coordinator–supervisor pair, not to one task:
+30 seconds) with no model inference. It belongs to the repository's coordinator–supervisor pair, not to one task:
 once enabled it keeps running across Goals, reviews and closeouts until the operator stops it.
 
 ```sh
 W=".agents/skills/claude-session-handoff/scripts/watch.py"
 python3 "$W" --repo "$PWD" bind --supervisor-file /private/path/supervisor.json   # or --supervisor FULL_UUID
-python3 "$W" --repo "$PWD" start [--interval 20]
+python3 "$W" --repo "$PWD" start [--interval 30]
 python3 "$W" --repo "$PWD" status
 python3 "$W" --repo "$PWD" stop
 ```
@@ -359,15 +359,43 @@ python3 "$W" --repo "$PWD" stop
   cannot loop. "Waiting" is reported as *native prompt not inspected*; inspect it before answering.
 - **Delivery.** Notices go through `codex queue --thread UUID`, with Codex CLI 0.160.0 and daemon 0.162.1
   verified. An idle poll makes no queue or CLI call. The outcome is recorded as `queued-not-acknowledged`, never as
-  acknowledgment. Queue failure or uncertainty, an unverified version, identity loss, a retired session or a changed
-  pin suspends delivery, with no retry, until an explicit `bind --replace`.
-- **Lifecycle.** `start` launches one explicitly managed background process per repository (a lock plus a verified
-  PID, start time and command line). `stop` never signals a reused PID. There is no cron, service or boot
+  acknowledgment. Before each `codex queue` call, the notice's intent and dedup key are written to private state;
+  if that write fails, nothing is queued. An intent left unfinished by a crash or a failed final write is recorded
+  as `uncertain-interrupted` and never retried, even after rebinding. Queue failure or uncertainty, an unverified
+  version, identity loss, a retired session or a changed pin suspends delivery, with no retry, until an explicit
+  `bind --replace`.
+- **Parsing limit.** A JSONL row longer than 1 MiB is not parsed. The observer scans past it in bounded chunks,
+  resuming across polls while it grows, and records it under `status` `parse_limit`. If the row was coordinator
+  output, one notice says it could not be assessed for milestones. Later rows are still delivered.
+- **Lifecycle.** `start` first re-verifies the bound pair; if it cannot, it stays inactive and reports why. It then
+  launches one explicitly managed background process per repository (a lock plus a verified PID, start time and
+  command line). A second `start` for a running observer is idempotent (`already-running`), and replacing the pair
+  needs an explicit verified `bind --replace`. `stop` never signals a reused PID. There is no cron, service or boot
   startup. Task closeout, delivery-log compaction and worktree cleanup leave its state alone.
 - **State.** Deduplication keys, transcript offsets, delivery records and the log live in 0700/0600 files under
   `~/.local/state/claude-session-handoff/<repo-key>/observer/`, outside Git. Unsafe modes or symlinks block.
+- **Transcript-size advisory.** Each poll reads the coordinator transcript's size from file metadata only. At or
+  above the threshold (default 100 MiB, `--size-threshold BYTES` at bind, or `--no-size-advisory` to opt out), one
+  advisory with size, threshold and a safe handoff/archive recommendation goes to the supervisor. It is sent once
+  per coordinator UUID and threshold, including on a first poll that is already large, and is kept across restarts,
+  rotation, size decreases and closeout. `status` shows size, threshold and advisory state. It never prunes
+  transcripts or retires, creates or rebinds sessions.
+- **Adoption default.** When an adopting repository's activation option is enabled (the default) and it has
+  explicitly established and verified the existing coordinator pin and supervisor UUID, run `bind` and then
+  `start` (30-second default) with no further enablement question. A missing, ambiguous, unverified or retired
+  binding leaves the observer inactive and reported. Never guess a UUID from a name, create a session or change
+  permissions to satisfy it. The opt-out leaves it inactive.
 - **Authority.** A notice carries no approval, task or permission authority. `smoke --label TEXT` sends exactly one
   labelled benign delivery to check the route.
+
+## Effort for coordinators and workers
+
+The persistent coordinator defaults to **high** for orchestration, status and handoffs, and uses **xhigh** when it
+plans. Planning workers default to **xhigh** and implementation workers to **high**. Set worker effort explicitly
+through supported dispatch or session controls where available; never assume inheritance, and never claim that
+handoff prose sets it. Verify the actual or inherited value where metadata allows; otherwise report it as unknown.
+The owner may raise affected work to xhigh for complex debugging or security decisions. Effort never changes
+authority, budget or a running session.
 
 ## Owner authorization attribution
 

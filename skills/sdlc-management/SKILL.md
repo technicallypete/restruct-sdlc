@@ -62,10 +62,17 @@ Goal and Spec (supervisor) → Plan (implementer; omitted only when the Goal exp
 tier) → Plan review (ACCEPT, CORRECTION LOOP or ARCHITECTURE DECISION
 REQUIRED) → implementation and validation → Result → pre-integration review → conditional integration (owner
 merge) → final ACCEPT → closeout. Only final ACCEPT completes a Goal. Review-ready submissions trigger delegated
-review and automatic decision relay without another owner prompt; owner interruption and mandatory gates remain.
+review and automatic decision relay without another owner prompt; the supervisor keeps the review turn open with the
+harness's asynchronous wait/notification interface and relays before its final reply (no repeated polling; an ended
+turn may not wake automatically). An interruption alone is not stop-all: inspect child status and preserve completed
+or authorized running work unless an explicit stop-all or conflicting direction applies. Owner interruption and
+mandatory gates remain.
 By default (`SUPERVISOR_AUTO_PUBLISH=true`, owner may disable) the supervisor pushes each completed PROGRESS update and
 its management records to the explicit integration branch; the implementer keeps its task branch and merge requests.
 Relayed owner authorizations are attributed truthfully and never override native permission gates.
+By default (`OBSERVER_AUTO_ACTIVATE=true`, separate option) the companion milestone observer starts only after the
+coordinator and supervisor bindings are explicitly verified; otherwise it stays inactive and reported. Effort by
+role: coordinator high (xhigh when planning), planning workers xhigh, implementation workers high.
 Details: [roles and lifecycle](references/roles-lifecycle.md).
 
 ## References
@@ -121,6 +128,8 @@ python3 -B scripts/check_sdlc.py adoption REPO --release NAME [--literals FILE]
 python3 -B -m unittest discover -s scripts -p 'test_check_sdlc.py'
 ```
 
+For a Git-backed bundle, verify a copy without its VCS metadata rather than weakening the check, for example
+`rsync -a --exclude=/.git BUNDLE/ /tmp/bundle-check/ && python3 -B scripts/check_sdlc.py package /tmp/bundle-check`.
 `package` checks a skill directory or a bundle root: frontmatter, the 200-line limit, intra-package and sibling-skill
 links, template placeholders and adoption links, reachability, file types, forbidden content and the bundle
 manifest. `adoption` checks an instantiated repository: required paths, rendered links, leftover placeholders, Goal

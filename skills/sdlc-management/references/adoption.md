@@ -19,7 +19,9 @@ copy outside the shipped skill (for example in the adoption Plan).
   `INTEGRATION_BRANCH`.
 - Validation options: `FINAL_VALIDATION_PLACEMENT` (`mr-hosted` default, or `local-before-mr`),
   `CANCELED_PIPELINE_SATISFIES` (default `false`).
-- Budget and effort: `DEFAULT_BUDGET` (`B5`), `PLANNING_EFFORT` (`xhigh`), `IMPLEMENTATION_EFFORT` (`high`).
+- Budget and effort: `DEFAULT_BUDGET` (`B5`), `COORDINATOR_EFFORT` (`high`), `PLANNING_EFFORT` (`xhigh`),
+  `IMPLEMENTATION_EFFORT` (`high`).
+- Observer activation: `OBSERVER_AUTO_ACTIVATE` (default `true`, independent of supervisor publication).
 - `DELIVERY_BARRIER` (optional, default empty): a roadmap barrier the project declares, if any.
 
 **Rendering.** Replace each `{{NAME}}` with its value. A list renders as its items joined by `, `; an empty value
@@ -54,7 +56,13 @@ The supervisor states the tier in each Goal's Execution Policy; agents never sel
 5. Append [`templates/root/gitignore.lines`](../templates/root/gitignore.lines) to `.gitignore` (session log and
    private worktree roots), skipping lines already present.
 6. Create the release directories `goals/`, `specs/`, `plans/`, `results/` and `archive/`.
-7. Run `python3 -B .agents/skills/sdlc-management/scripts/check_sdlc.py adoption . --release <RELEASE>` and fix
+7. **Observer activation** (when `OBSERVER_AUTO_ACTIVATE` is `true`). Once the owner-selected coordinator is pinned
+   and `pinned-live-verified`, and the existing supervisor UUID has been supplied explicitly (never inferred from a
+   name or chosen among several sessions), run the companion's `watch.py bind` and then `watch.py start`, using the
+   30-second default, with no further enablement question. If any binding is missing, ambiguous, unverified or
+   retired, leave the observer inactive and record the unmet prerequisite. Never create sessions or change
+   permissions to satisfy it. `start` is idempotent for a running observer. `false` opts out.
+8. Run `python3 -B .agents/skills/sdlc-management/scripts/check_sdlc.py adoption . --release <RELEASE>` and fix
    every finding. Optionally pass `--literals FILE` with project-private strings that must not appear. Private
    worker checkouts under `.claude/worktrees/` and `.codex/worktrees/` are not adopted content and are skipped.
 

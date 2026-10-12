@@ -55,7 +55,10 @@ or final integration. Workers share the Goal's attempt allowance.
 
 ## Effort, budgets and escalation
 
-Planning defaults to {{PLANNING_EFFORT}} and implementation to {{IMPLEMENTATION_EFFORT}}; remind the operator and
-record unverifiable effort as unknown. The default budget class is {{DEFAULT_BUDGET}}; never extend or reset it
+The coordinator defaults to {{COORDINATOR_EFFORT}} for orchestration, status and handoffs and to {{PLANNING_EFFORT}}
+when it plans; planning workers default to {{PLANNING_EFFORT}} and implementation workers to
+{{IMPLEMENTATION_EFFORT}}. Configure worker effort explicitly where supported, remind the operator, verify actual
+or inherited values and record unverifiable effort as unknown. The owner may raise complex debugging or security
+work to xhigh. The default budget class is {{DEFAULT_BUDGET}}; never extend or reset it
 yourself. Stop and escalate architecture contradictions, scope expansion, security-model changes, destructive
 migrations, public contract changes, new major infrastructure or vendors and irreversible data-model decisions.

@@ -62,7 +62,8 @@ rerun.
 ## GitLab/glab adapter (`CI_PROVIDER=gitlab`, `MR_TOOL=glab`)
 
 ```sh
-git fetch origin && git merge-base --is-ancestor origin/INTEGRATION_BRANCH HEAD || git rebase origin/INTEGRATION_BRANCH
+git fetch origin || exit 1                                       # stop: never rebase against stale refs
+git merge-base --is-ancestor origin/INTEGRATION_BRANCH HEAD || git rebase origin/INTEGRATION_BRANCH
 git push origin HEAD:refs/heads/TEMP_BRANCH                      # safekeeping checkpoint
 glab mr list --source-branch TEMP_BRANCH --target-branch INTEGRATION_BRANCH   # avoid a duplicate MR
 glab mr create --source-branch TEMP_BRANCH --target-branch INTEGRATION_BRANCH \

@@ -21,6 +21,8 @@
     "FINAL_VALIDATION_PLACEMENT": {"description": "mr-hosted (default) or local-before-mr.", "default": "mr-hosted"},
     "CANCELED_PIPELINE_SATISFIES": {"description": "Whether an owner-canceled post-merge pipeline satisfies the gate.", "default": false},
     "DEFAULT_BUDGET": {"description": "Default Goal budget class: B3, B5, B7 or B15.", "default": "B5"},
+    "COORDINATOR_EFFORT": {"description": "Recommended coordinator effort for orchestration, status and handoffs (planning uses PLANNING_EFFORT).", "default": "high"},
+    "OBSERVER_AUTO_ACTIVATE": {"description": "Start the companion milestone observer after the coordinator and supervisor bindings are explicitly established and verified (true by default; independent of supervisor publication).", "default": true},
     "PLANNING_EFFORT": {"description": "Recommended planning effort; a recommendation, not a verified setting.", "default": "xhigh"},
     "IMPLEMENTATION_EFFORT": {"description": "Recommended implementation effort; a recommendation, not a verified setting.", "default": "high"},
     "DELIVERY_BARRIER": {"description": "Optional roadmap delivery barrier declared by the project; empty when none.", "default": ""}

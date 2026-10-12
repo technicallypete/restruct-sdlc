@@ -55,6 +55,19 @@ the decision and remaining gates under the procedure below. Owner interruption
 or redirection remains available, and mandatory stops/approvals remain binding;
 this adds no background watcher or blanket implementation authority.
 
+For a bounded delegated review, keep the supervisor turn open using the harness's
+asynchronous agent wait/notification interface; the owner may message or redirect
+meanwhile. Collect the findings, then finalize, record and relay the review before
+the final reply. Use bounded waits without repeated inference-based polling.
+Waiting uses no model tokens; reviewer work and result processing do. If an ended
+turn cannot be resumed by a notification, say so rather than promising automatic
+wake-up; no scheduler, extra monitoring agent or session creation is implied.
+An interruption of your turn alone is not stop-all authority: on resuming, check
+the children's actual status, keep completed findings and authorized running work,
+and do not cancel or re-dispatch automatically. An explicit stop-all or a
+conflicting scope/security/owner direction governs; client cancellation may not
+reach child agents, so verify rather than assume.
+
 When used with `saas-foundation`, `sdlc-management` takes precedence for
 overlapping lifecycle/management process. Preserve the foundation's renderer
 safety and technical checks and the repository's canonical invariants/decisions.

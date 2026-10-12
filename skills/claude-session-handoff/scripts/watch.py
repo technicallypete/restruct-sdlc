@@ -6,12 +6,15 @@ explicitly bound, existing Codex supervisor thread with `codex queue`. No model 
 creation, settings changes, raw transcript forwarding or implicit retargeting. Notices carry no authority.
 
   watch.py --repo PATH bind (--supervisor UUID | --supervisor-file FILE) [--replace]
+                             [--size-threshold BYTES | --no-size-advisory]
   watch.py --repo PATH start [--interval SECONDS] | stop | status | unbind
   watch.py --repo PATH smoke --label TEXT      # one labelled benign delivery to the bound thread
   watch.py --repo PATH poll-once               # one foreground poll (diagnostics)
 
 State is private (0700/0600) under the handoff helper's repository state directory, in `observer/`, outside Git.
 Uncertain identity, versions, state or queue outcome suspends delivery until an explicit `bind --replace`.
+Each poll also reads the coordinator transcript's size from file metadata; at or above the bound threshold (default
+100 MiB) one advisory is queued per coordinator UUID and threshold. Nothing is pruned and no session is changed.
 """
 import argparse
 import contextlib
@@ -33,10 +36,16 @@ from handoff import Blocked, require
 SCHEMA = "claude-session-handoff/observer/v1"
 VERIFIED_CODEX_CLI = {"0.160.0"}
 VERIFIED_CODEX_DAEMON = {"0.162.1"}
-DEFAULT_INTERVAL = 20
+DEFAULT_INTERVAL = 30
+DEFAULT_SIZE_THRESHOLD = 104857600  # 100 MiB
+MIN_SIZE_THRESHOLD = 1024
 MIN_INTERVAL, MAX_INTERVAL = 5, 300
 QUEUE_TIMEOUT = 30
-MAX_READ = 1048576
+MAX_READ = 1048576           # one read; also the per-row parsing limit
+MAX_SCAN = 16 * MAX_READ     # bytes examined per poll (bounded progress through oversized rows)
+PREFIX_BYTES = 4096          # kept from an oversized row to tell whether it was coordinator output
+ASSISTANT_PREFIX = re.compile(r'"type"\s*:\s*"assistant"')
+SIDECHAIN_PREFIX = re.compile(r'"isSidechain"\s*:\s*true')
 MAX_KEYS = 2000
 NOTICE_MARK = "[observer-notice:"
 ECHO_MARKS = (NOTICE_MARK, "[handoff-id:")
@@ -93,7 +102,21 @@ def save(directory, name, value):
 
 
 def empty_state():
-    return {"offsets": {}, "keys": [], "deliveries": [], "suspended": None, "waiting": False, "smoke": None}
+    return {"offsets": {}, "keys": [], "deliveries": [], "suspended": None, "waiting": False, "smoke": None,
+            "size_advised": [], "transcript": None}
+
+
+def size_check(state, binding, path):
+    """Metadata-only size check; (key, size, threshold) once per coordinator UUID and threshold, else None."""
+    threshold = binding.get("size_threshold", DEFAULT_SIZE_THRESHOLD)
+    size = path.stat().st_size
+    key = f"size:{binding['coordinator']}:{threshold}"
+    advised = state.setdefault("size_advised", [])
+    state["transcript"] = {"bytes": size, "threshold": threshold, "coordinator": binding["coordinator"],
+                           "advised": key in advised, "time": handoff.utc_now().isoformat()}
+    if threshold is None or size < threshold or key in advised:
+        return None
+    return key, size, threshold
 
 
 def suspend(directory, state, reason):
@@ -131,31 +154,62 @@ def transcript_path(session):
     return paths[0]
 
 
-def new_rows(path, offsets):
-    """Complete JSONL rows after the stored offset; a truncated/replaced file restarts at 0; partial tails wait."""
+def new_rows(path, offsets, limits):
+    """Complete JSONL rows after the stored offset, with bounded memory and bounded work per poll.
+
+    A truncated or replaced file restarts at 0; a short partial tail waits. A row longer than MAX_READ is scanned
+    forward in MAX_READ chunks (resuming across polls while it grows) until its newline; it is never parsed, its
+    fragments are never parsed as records, and it is appended to `limits` (start, bytes, prefix) for reporting.
+    """
     info = path.stat()
     key = str(path)
     stored = offsets.get(key)
     if stored is None:
         offsets[key] = {"inode": info.st_ino, "offset": info.st_size}
         return []
-    start = stored["offset"]
-    if stored["inode"] != info.st_ino or info.st_size < start:
-        start = 0
+    if stored["inode"] != info.st_ino or info.st_size < stored["offset"]:
+        stored = {"inode": info.st_ino, "offset": 0}  # replaced, or truncated below the committed offset
+    elif info.st_size < (stored.get("oversized") or {}).get("scanned", 0):
+        # Truncated inside a pending oversized row: the bytes before its committed start are intact, so drop the
+        # stale scan state and re-read from that start (no history replay, no stall at the old scan position).
+        stored = {"inode": info.st_ino, "offset": stored["offset"]}
+    pos, over, examined, rows = stored["offset"], stored.get("oversized"), 0, []
     with path.open("rb") as stream:
-        stream.seek(start)
-        data = stream.read(MAX_READ)
-    end = data.rfind(b"\n")
-    if end < 0:
-        offsets[key] = {"inode": info.st_ino, "offset": start}
-        return []
-    offsets[key] = {"inode": info.st_ino, "offset": start + end + 1}
-    rows = []
-    for line in data[:end + 1].decode("utf-8", errors="replace").splitlines():
-        with contextlib.suppress(ValueError):
-            row = json.loads(line)
-            if isinstance(row, dict):
-                rows.append(row)
+        while examined < MAX_SCAN:
+            if over:
+                stream.seek(over["scanned"])
+                data = stream.read(MAX_READ)
+                examined += len(data)
+                newline = data.find(b"\n")
+                if newline < 0:
+                    over["scanned"] += len(data)
+                    if len(data) < MAX_READ:
+                        break  # still growing: resume from `scanned` next poll
+                    continue
+                end = over["scanned"] + newline + 1
+                limits.append({"inode": info.st_ino, "start": over["start"], "bytes": end - over["start"],
+                               "prefix": over["prefix"]})
+                pos, over = end, None
+                continue
+            stream.seek(pos)
+            data = stream.read(MAX_READ)
+            examined += len(data)
+            last = data.rfind(b"\n")
+            if last < 0:
+                if len(data) < MAX_READ:
+                    break  # short partial tail: wait for its newline
+                over = {"start": pos, "scanned": pos + len(data),
+                        "prefix": data[:PREFIX_BYTES].decode("utf-8", errors="replace")}
+                continue
+            for line in data[:last + 1].decode("utf-8", errors="replace").splitlines():
+                with contextlib.suppress(ValueError):
+                    row = json.loads(line)
+                    if isinstance(row, dict):
+                        rows.append(row)
+            pos += last + 1
+            if len(data) < MAX_READ:
+                break
+    offsets[key] = {"inode": info.st_ino, "offset": pos, **({"oversized": over} if over else {})}
     return rows
 
 
@@ -190,8 +244,20 @@ def remember(state, key):
     state["keys"] = (state["keys"] + [key])[-MAX_KEYS:]
 
 
+def recover_pending(state):
+    """An intent persisted before `codex queue` but never finalized is uncertain: never retried, never acknowledged."""
+    found = False
+    for record in state.get("deliveries", []):
+        if record.get("outcome") == "pending-intent":
+            record["outcome"], found = "uncertain-interrupted", True
+    if (state.get("smoke") or {}).get("outcome") == "pending-intent":
+        state["smoke"]["outcome"], found = "uncertain-interrupted", True
+    return found
+
+
 def deliver(directory, state, binding, text, key, kind):
-    """Queue one notice. Uncertainty is recorded and suspends delivery; there are no retries."""
+    """Queue one notice. The intent and its dedup key are persisted first (no queue if that fails); uncertainty is
+    recorded and suspends delivery; there are no retries."""
     cli, daemon = codex_versions()
     if cli not in VERIFIED_CODEX_CLI or daemon not in VERIFIED_CODEX_DAEMON:
         remember(state, key)
@@ -202,13 +268,16 @@ def deliver(directory, state, binding, text, key, kind):
     message = f"{NOTICE_MARK} {notice_id}] {text}"
     remember(state, key)
     record = {"key": key, "kind": kind, "notice_id": notice_id, "time": handoff.utc_now().isoformat(),
-              "message_sha256": hashlib.sha256(message.encode()).hexdigest(), "cli": cli, "daemon": daemon}
+              "message_sha256": hashlib.sha256(message.encode()).hexdigest(), "cli": cli, "daemon": daemon,
+              "outcome": "pending-intent"}
+    state["deliveries"] = (state["deliveries"] + [record])[-200:]
+    save(directory, "state.json", state)  # durable intent before the external queue; raises -> nothing queued
     try:
         result = run_codex(["queue", "--thread", binding["supervisor"], "--message", message], QUEUE_TIMEOUT)
         outcome = "queued-not-acknowledged" if result.returncode == 0 else f"queue-uncertain-exit-{result.returncode}"
     except (OSError, subprocess.SubprocessError):
         outcome = "queue-uncertain-error"
-    state["deliveries"] = (state["deliveries"] + [{**record, "outcome": outcome}])[-200:]
+    record["outcome"] = outcome
     if outcome != "queued-not-acknowledged":
         return suspend(directory, state, "queue-uncertain")
     save(directory, "state.json", state)
@@ -221,16 +290,31 @@ def poll_once(root):
     if binding is None:
         return {"status": "unbound", "queue_calls": 0}
     state = load(directory, "state.json", empty_state())
+    if recover_pending(state):
+        return suspend(directory, state, "interrupted-delivery-uncertain")
     if state.get("suspended"):
         return {"status": "suspended", "reason": state["suspended"]["reason"], "queue_calls": 0}
     ok, reason, report = verified_identity(root, binding)
     if not ok:
         return suspend(directory, state, reason)
+    offsets, limits = json.loads(json.dumps(state["offsets"])), []  # committed only after every delivery
     try:
-        rows = new_rows(transcript_path(binding["coordinator"]), state["offsets"])
+        path = transcript_path(binding["coordinator"])
+        rows = new_rows(path, offsets, limits)
+        advisory = size_check(state, binding, path)
     except Blocked as error:
         return suspend(directory, state, str(error))
     events = []
+    for limit in limits:
+        assistant = bool(ASSISTANT_PREFIX.search(limit["prefix"])) and not SIDECHAIN_PREFIX.search(limit["prefix"])
+        state["parse_limits"] = (state.get("parse_limits", []) + [
+            {"start": limit["start"], "bytes": limit["bytes"], "coordinator_output": assistant,
+             "time": handoff.utc_now().isoformat()}])[-50:]
+        key = f"oversized:{limit['inode']}:{limit['start']}"
+        if assistant and key not in state["keys"]:
+            events.append((key, "parse-limit", f"a coordinator output row of {limit['bytes']} bytes exceeded the "
+                           f"{MAX_READ}-byte parsing limit and could not be assessed for milestones; inspect the "
+                           "coordinator session", ""))
     for row in rows:
         found = milestone(row)
         key = row_key(row)
@@ -243,6 +327,18 @@ def poll_once(root):
                        "attach before answering)", ""))
     state["waiting"] = waiting
     calls = 0
+    if advisory:
+        key, size, threshold = advisory
+        state["size_advised"] = (state["size_advised"] + [key])[-200:]  # recorded before delivery: no retry
+        state["transcript"]["advised"] = True
+        text = (f"Claude coordinator transcript size advisory: {size} bytes ({size / 1048576:.1f} MiB) is at or above "
+                f"the {threshold}-byte threshold. Recommendation: assess a safe session handoff or archive at a safe "
+                "point under the recovery rules. Nothing was pruned, no session was changed, and this notice carries "
+                "no approval or task authority.")
+        result = deliver(directory, state, binding, text, key, "size-advisory")
+        calls += result.get("queue_calls", 0)
+        if result["status"] == "suspended":
+            return {**result, "queue_calls": calls}
     for key, category, excerpt, stamp in events:
         text = (f"Claude coordinator milestone ({category}{', ' + stamp if stamp else ''}): {excerpt}. This notice "
                 "carries no approval or task authority; verify the repository records.")
@@ -250,6 +346,7 @@ def poll_once(root):
         calls += result.get("queue_calls", 0)
         if result["status"] == "suspended":
             return {**result, "queue_calls": calls}
+    state["offsets"] = offsets
     save(directory, "state.json", state)
     return {"status": "polled", "events": len(events), "queue_calls": calls}
 
@@ -286,10 +383,14 @@ def verified_process(record):
 def cmd_start(root, interval):
     require(MIN_INTERVAL <= interval <= MAX_INTERVAL, "interval-out-of-range")
     directory = observer_dir(root)
-    require(load(directory, "binding.json") is not None, "unbound-bind-first")
+    binding = load(directory, "binding.json")
+    require(binding is not None, "unbound-bind-first")
     record = load(directory, "process.json")
     if verified_process(record):
         return {"status": "already-running", "pid": record["pid"]}
+    ok, reason, _ = verified_identity(root, binding)
+    if not ok:
+        return {"status": "inactive", "reason": reason, "next": "verify the session pair and rebind explicitly"}
     argv = child_argv(root, interval)
     log = os.open(directory / "observer.log", os.O_WRONLY | os.O_CREAT | os.O_APPEND | os.O_NOFOLLOW, 0o600)
     try:
@@ -335,7 +436,12 @@ def cmd_status(root):
             "supervisor_fingerprint": fingerprint(binding["supervisor"]) if binding else None,
             "coordinator": binding.get("coordinator") if binding else None,
             "suspended": state.get("suspended"), "deliveries": len(state.get("deliveries", [])),
-            "last_delivery": (state.get("deliveries") or [None])[-1], "dedup_keys": len(state.get("keys", []))}
+            "last_delivery": (state.get("deliveries") or [None])[-1], "dedup_keys": len(state.get("keys", [])),
+            "size_threshold": binding.get("size_threshold", DEFAULT_SIZE_THRESHOLD) if binding else None,
+            "transcript": state.get("transcript"), "size_advised": len(state.get("size_advised", [])),
+            "parse_limit": {"row_bytes": MAX_READ, "oversized_rows": len(state.get("parse_limits", [])),
+                            "last": (state.get("parse_limits") or [None])[-1]},
+            "pending_intents": sum(1 for d in state.get("deliveries", []) if d.get("outcome") == "pending-intent")}
 
 
 def read_supervisor(args):
@@ -359,12 +465,15 @@ def cmd_bind(root, args):
     require(current is None or args.replace, "already-bound-use-replace")
     report = coordinator_status(root)
     require(report.get("status") == "pinned-live-verified", "coordinator-not-pinned-live-verified")
-    binding = {"supervisor": supervisor, "coordinator": report["pin"]["session"],
+    threshold = None if args.no_size_advisory else (args.size_threshold or DEFAULT_SIZE_THRESHOLD)
+    require(threshold is None or threshold >= MIN_SIZE_THRESHOLD, "size-threshold-too-small")
+    binding = {"supervisor": supervisor, "coordinator": report["pin"]["session"], "size_threshold": threshold,
                "bound": handoff.utc_now().isoformat(),
                "replaced": {"supervisor_fingerprint": fingerprint(current["supervisor"]),
                             "coordinator": current["coordinator"]} if current else None}
     save(directory, "binding.json", binding)
     state = load(directory, "state.json", empty_state())
+    recover_pending(state)  # still uncertain and deduplicated: rebinding never retries them
     state["suspended"] = None
     save(directory, "state.json", state)
     return {"status": "bound", "supervisor_fingerprint": fingerprint(supervisor), "coordinator": binding["coordinator"]}
@@ -384,15 +493,18 @@ def cmd_smoke(root, label):
     binding = load(directory, "binding.json")
     require(binding is not None, "unbound-bind-first")
     state = load(directory, "state.json", empty_state())
+    if recover_pending(state):
+        save(directory, "state.json", state)
+        raise Blocked("interrupted-delivery-uncertain-rebind-first")
     require(not state.get("smoke"), "smoke-already-delivered")
     require(not state.get("suspended"), "suspended-rebind-first")
     ok, reason, _ = verified_identity(root, binding)
     require(ok, reason or "identity-unverified")
     text = (f"OBSERVER SMOKE TEST ({label}): labelled, benign delivery check only. No reply, task action or approval "
             "is requested, and this notice carries no authority.")
-    result = deliver(directory, state, binding, text, f"smoke:{label}", "smoke")
-    state = load(directory, "state.json", empty_state())
-    state["smoke"] = {"label": label, "outcome": result["status"], "time": handoff.utc_now().isoformat()}
+    state["smoke"] = {"label": label, "outcome": "pending-intent", "time": handoff.utc_now().isoformat()}
+    result = deliver(directory, state, binding, text, f"smoke:{label}", "smoke")  # persists the smoke intent first
+    state["smoke"]["outcome"] = result["status"]
     save(directory, "state.json", state)
     last = state["deliveries"][-1]
     return {**result, "cli": last.get("cli"), "daemon": last.get("daemon"),
@@ -435,6 +547,9 @@ def parser():
     target.add_argument("--supervisor")
     target.add_argument("--supervisor-file")
     bind.add_argument("--replace", action="store_true")
+    size = bind.add_mutually_exclusive_group()
+    size.add_argument("--size-threshold", type=int)
+    size.add_argument("--no-size-advisory", action="store_true")
     for name in ("start", "run"):
         sp = sub.add_parser(name)
         sp.add_argument("--interval", type=int, default=DEFAULT_INTERVAL)

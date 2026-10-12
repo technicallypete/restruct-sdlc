@@ -116,6 +116,17 @@ integration checkout, without another owner confirmation.
   3. If delegation is unavailable, record that limitation and review directly rather than leaving authorized work
      idle.
   4. Record the disposition in a review file (template `results/REVIEW.md.tmpl`).
+- **Asynchronous completion.** For a bounded delegated review, the supervisor keeps its turn open using the
+  harness's supported asynchronous agent wait/notification interface, and the owner may message or redirect
+  meanwhile. It collects the findings, then finalizes, records and relays the decision **before** its final reply.
+  It uses bounded waits and avoids repeated inference-based polling. Waiting uses no model tokens; reviewer work and
+  result processing do. Automatic wake-up after an ended turn is not guaranteed; state that limit rather than
+  promise it. No scheduler or extra monitoring agent is implied.
+- **Interruption is not stop-all.** An interruption of the supervisor's turn alone does not stop delegated agents.
+  On resuming, inspect the children's actual status, preserve completed findings and authorized running work, and do
+  not cancel or re-dispatch automatically. An explicit stop-all instruction, or a scope, security or owner direction
+  that makes their work unsafe or obsolete, still governs. Do not assume a client (for example mobile) cancellation
+  reached the child agents; check.
 - **Automatic relay.** After recording, the supervisor relays the decision, reviewed inputs, permitted next
   action and remaining gates to the verified coordinator, through the companion messaging skill
   ([claude-session-handoff](../../claude-session-handoff/SKILL.md)). Receipt and acknowledgment are verified and

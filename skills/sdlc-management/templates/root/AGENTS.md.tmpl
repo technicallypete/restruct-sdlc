@@ -64,7 +64,13 @@ review without another owner prompt: verify the exact artifact and phase, skip a
 bytes, and review directly (recording why) when delegation is unavailable. Record the outcome, then relay it with
 the remaining gates to the verified coordinator and verify receipt and acknowledgment. The owner may interrupt or
 redirect; mandatory escalations and owner merge authority remain. No watcher, transport or early implementation
-authority is added.
+authority is added. For a bounded delegated review, keep the supervisor turn open with the harness's asynchronous
+agent wait/notification interface (the owner may steer meanwhile). Finalize, record and relay the decision before the
+final reply. Use bounded waits without repeated inference-based polling; waiting itself uses no model tokens, but
+reviewer work and result processing do. An ended turn may not wake automatically, so say so rather than promising it.
+Interrupting the supervisor's turn alone is not stop-all: on resuming, inspect child status, keep completed findings
+and authorized running work, and do not cancel or re-dispatch automatically. An explicit stop-all or a conflicting
+scope, security or owner direction governs; never assume a client cancellation reached child agents.
 
 ## Coordinator and workers: naming, dispatch and relocation gate
 
@@ -114,8 +120,19 @@ expansion, security-model changes, destructive migrations, public contract chang
 vendors, irreversible data-model decisions.
 
 Budgets follow the [budget policy](management/BUDGET_POLICY.md); the default class is {{DEFAULT_BUDGET}}. Effort
-recommendations: planning {{PLANNING_EFFORT}}, implementation {{IMPLEMENTATION_EFFORT}}; unverifiable runtime
-effort is recorded as unknown.
+recommendations by role: coordinator {{COORDINATOR_EFFORT}} for orchestration, status and handoffs; planning workers
+(and a coordinator that plans) {{PLANNING_EFFORT}}; implementation workers {{IMPLEMENTATION_EFFORT}}. Set worker
+effort explicitly through supported controls; verify actual or inherited values and record unverifiable effort as
+unknown. The owner may raise complex debugging or security work to xhigh.
+
+## Milestone observer activation
+
+Observer auto-activation: `{{OBSERVER_AUTO_ACTIVATE}}` (enabled by default; independent of supervisor publication).
+When enabled, once the coordinator pin is verified and the existing supervisor UUID is explicitly bound, the
+coordinator workflow starts the companion observer (`watch.py bind`, then `start`, 30-second default) without
+another enablement question. Missing, ambiguous, unverified or retired bindings leave it inactive and reported.
+There is no name guessing, session creation or permission change. A repeated start is idempotent, and `false`
+opts out. Notices, including the transcript-size advisory, carry no authority.
 
 ## Validation and integration
 
