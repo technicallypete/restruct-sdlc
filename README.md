@@ -6,6 +6,20 @@ integration and closeout), verified local session handoffs, and supervision reco
 
 **Status: publication candidate.** This bundle is reviewed for local use and has not been published.
 
+## Why Restruct?
+
+Restruct™ is an operating methodology for AI-first software organizations that places architectural governance,
+specification and human accountability ahead of implementation.
+
+Restruct SDLC applies those principles to repository workflows. Goals and Specs define intent and boundaries;
+Plans describe execution; Results and review records preserve evidence. A human owner retains architectural
+authority, supported by a supervisor agent and an implementation coordinator. Budgets, verified handoffs and
+cleanup keep execution bounded and context available across sessions.
+
+This bundle implements the software-delivery workflow within Restruct's broader organizational methodology.
+[Explore Restruct](https://vestive.com/restruct-methodology) or read the
+[AI as Governed Execution chapter](https://vestive.com/restruct-methodology/ai-as-governed-execution).
+
 ## Skills
 
 | Skill | Responsibility |
