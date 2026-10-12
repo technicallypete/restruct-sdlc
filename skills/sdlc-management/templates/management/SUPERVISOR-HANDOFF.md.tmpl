@@ -1,0 +1,24 @@
+# {{PROJECT_NAME}} — Supervisor state reference
+
+Release-independent, dated state for a supervisor session. It records context, not approval. Load
+[repository-supervisor](../.agents/skills/repository-supervisor/SKILL.md) to resume; the owner still assigns the
+supervisor role, and loading a skill grants nothing.
+
+## Current state (update with dates)
+
+- Integration branch `{{INTEGRATION_BRANCH}}` at `<sha>` (observed `<date>`).
+- Active release: [`{{RELEASE}}` PROGRESS]({{RELEASE}}/PROGRESS.md).
+- Verified coordinator: `<session name>`, pin status `<status>`, checkout `.claude/worktrees/0-agent-<id>`.
+- Active tasks: `<ID> / <role>` — checkout, branch, phase, attempt usage, next gate.
+- Open findings and decisions awaiting the owner.
+
+## Operating defaults
+
+- The supervisor works in the main integration checkout and prefers bounded, read-only subagents for Spec drafting,
+  research and formal reviews. Isolated supervisor workers use `.codex/worktrees/<task-id>-agent-<id>-<role>`.
+- An observed review-ready submission triggers delegated review without another owner prompt; duplicate unchanged
+  reviews are skipped; unavailable delegation falls back to direct review. Decisions and remaining gates are
+  relayed automatically to the verified coordinator with receipt and acknowledgment checks.
+- Owner interruption, mandatory escalations and owner merge authority remain.
+
+Distinguish direct evidence from reports and stale observations. Keep approval history and bindings intact.

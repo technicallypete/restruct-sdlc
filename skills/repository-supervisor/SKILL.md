@@ -1,0 +1,109 @@
+---
+name: repository-supervisor
+description: Resume repository supervision from management records, review Claude Plans or Results, and track Goal dependencies and acceptance. Use for supervisor handoffs or continued planning/review; leaves implementation with Claude Code.
+---
+
+# Repository supervisor
+
+Recover current supervisor state from the repository rather than an opening prompt
+or a replay of earlier conversation. Follow the supervisor role in AGENTS.md when
+the user has assigned it to this agent, including another explicitly delegated
+agent session. Loading the skill does not assign authority, approve work or
+authorize merges. Claude Code remains the primary implementer; major product and
+architecture decisions remain with the owner.
+
+## Recover state
+
+1. Resolve the current checkout's Git root. Read root AGENTS.md and CLAUDE.md,
+   canonical architecture/security/decisions and applicable ADRs, budget policy,
+   and the active release's ROADMAP.md and PROGRESS.md as required by governance.
+2. Read `management/SUPERVISOR-HANDOFF.md` if present as a dated state reference.
+   Prefer current committed records and verified state over its older observations.
+   Use another release's existing management structure when governance selects it.
+3. Identify active Goals and the specific user-authorized next action. Read their
+   Goal, Spec, exact approved Plan/inventory, latest review/release/relocation
+   confirmation and Result when present. Distinguish design approval, execution
+   release, conditional integration and final implementation ACCEPT.
+4. Verify checkout/branch/HEAD, outstanding edits, relevant predecessor status,
+   immutable input bindings and current cycle/checkpoint usage. Read-only discovery
+   first; do not checkout/rebase someone else's active worktree or refresh bound
+   inputs to match the integration branch.
+
+For session checks and authorized messages, load the sibling
+[Claude handoff skill](../claude-session-handoff/SKILL.md). Use its compact Python
+helper and current registration; do not embed another socket implementation here.
+Route to the pinned preferred coordinator by omitting `--session` only while the
+helper's `status` is `pinned-live-verified`; otherwise target a verified session
+explicitly with `--session`. Verify actual receipt and dispatch. Report model prose as reported status until
+validation artifacts independently support it. Continuous watching is unnecessary.
+
+## Checkout and delegated review defaults
+
+Use the main integration checkout for supervision; specifications and read-only
+reviews normally need no separate worktree. Prefer bounded subagents for Spec
+drafting/research and formal reviews, keeping one writer per artifact. Reviewers
+are read-only by default. If a Codex worker needs isolation, use
+`.codex/worktrees/<task-id>-agent-<id>-<role>`, recording checkout/branch/owner;
+Claude workers use `.claude/worktrees/`. Preserve active checkouts.
+
+When an existing handoff/status check reveals a review-ready Claude Plan/Result,
+start a bounded subagent review without another owner prompt. Verify the exact
+submission and avoid duplicate review of unchanged accepted content. Integrate
+findings and issue the supervisor's disposition; a child cannot approve for you.
+If subagents are unavailable, report it and review directly. Automatically relay
+the decision and remaining gates under the procedure below. Owner interruption
+or redirection remains available, and mandatory stops/approvals remain binding;
+this adds no background watcher or blanket implementation authority.
+
+When used with `saas-foundation`, `sdlc-management` takes precedence for
+overlapping lifecycle/management process. Preserve the foundation's renderer
+safety and technical checks and the repository's canonical invariants/decisions.
+Neither skill grants a supervisor role merely by being loaded.
+
+## Supervise the next authorized action
+
+- **Goal/Spec:** reconcile the actual accepted predecessor and roadmap; define a
+  bounded measurable outcome, non-goals, dependencies, AC evidence, budget and
+  stops using repository conventions. Do not authorize a whole epic in one batch.
+- **Plan review:** compare the exact Plan and changed inputs with the Spec, all
+  ACs, security/architecture, budget and required evidence. Reuse accepted controls.
+  Resolve a mechanical binding change without reopening settled design unless a
+  substantive defect or changed assumption requires it. Import accepted Plan,
+  inventory/history and review bytes into the local integration branch as required.
+- **Implementation review:** inspect actual diffs and attributable AC evidence,
+  including real runtime-role/isolation negatives where required. Passing tests
+  alone are insufficient. Give bounded corrections; do not rewrite Claude's code.
+- **Progress/integration:** update existing management records. Follow current
+  rebase, local/manual/hosted validation, MR, owner-merge and branch-cleanup policies.
+  Never infer merge/action authority from a review or session delivery.
+
+Use exactly the governance outcomes for formal review: **ACCEPT**,
+**CORRECTION LOOP**, or **ARCHITECTURE DECISION REQUIRED**. State what ACCEPT
+accepts and the remaining gates. Corrections identify the finding, guarantee,
+minimum relevant retests and authorized budget. Stop/escalate scope, architecture,
+security, public-contract, irreversible-model and resource conflicts as required;
+do not extend/reset budgets or weaken evidence to finish.
+
+Preserve the adopting repository's canonical invariants, authority semantics and
+any declared delivery barrier. Read service-root instructions/skills for service
+work. The skill contains no substitute permission matrix, CI policy or fixed
+execution baseline; those belong to current approved repository records.
+
+## Leave durable state
+
+Record decisions in goal-specific reviews/Results and index them in PROGRESS.
+For cross-session continuity, update the existing supervisor handoff with dated
+active SHAs/checkouts, links to contracts, current phase/cycle usage, open findings
+and next gates. Distinguish direct evidence from reports and stale observations.
+Keep approval history and bindings intact; an updated state note is not a release.
+
+Send concise references to those records using the handoff helper. Its root
+management delivery log tracks attempts/receipt IDs, not acceptance or execution.
+After every completed review, notify the responsible verified Claude session
+without another owner prompt, including outcome, reviewed inputs, next action and
+remaining gates. Verify coordinator relay where applicable, receipt and explicit
+acknowledgment; report pending/unavailable delivery without automatic resends or
+session creation. Notification conveys the recorded review authority only.
+Do not store full conversations or secrets. Commit/push, hosted writes, merges and
+new implementation require existing owner authorization. On subsequent turns,
+read changed sections and unresolved findings instead of replaying all sources.

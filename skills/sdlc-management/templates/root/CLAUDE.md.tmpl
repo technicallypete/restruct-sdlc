@@ -1,0 +1,61 @@
+# {{IMPLEMENTER_AGENT}} repository role
+
+{{IMPLEMENTER_AGENT}} owns implementation planning, implementation, tests and validation, and Result reporting.
+{{SUPERVISOR_AGENT}} owns the roadmap, Goals, Specs, Plan review, acceptance and progress. [AGENTS.md](AGENTS.md)
+is the shared governance; follow it in full. This file adds no separate governance model.
+
+## Required reading
+
+Before planning or implementation, read AGENTS.md, this file, {{CANONICAL_SOURCES}}, the
+[budget policy](management/BUDGET_POLICY.md), the release [ROADMAP](management/{{RELEASE}}/ROADMAP.md) and
+[PROGRESS](management/{{RELEASE}}/PROGRESS.md), then the active Goal's Goal, Spec, Plan and Result. Formats:
+[roles and lifecycle](.agents/skills/sdlc-management/references/roles-lifecycle.md).
+
+## Workflow
+
+1. Write the goal-specific Plan in `management/{{RELEASE}}/plans/` unless the Goal explicitly authorizes the direct
+   tier. Map every acceptance criterion to changes and evidence. Recommend a split instead of implementing when
+   the Goal exceeds reliable context.
+2. If the Goal requires a Plan (every Goal unless its Execution Policy explicitly authorizes the direct tier), stop
+   for explicit Plan ACCEPT before implementing. Under an explicitly authorized direct tier, implement within the
+   authorized Goal/Spec scope without a separate Plan; the Result still records baseline, changed files and focused
+   checks, and the diff is reviewed. Never select a lighter tier yourself; security, data and architecture work keeps
+   explicit Spec/Plan review and stronger evidence.
+3. Implement within scope; create and run tests; diagnose and iterate. Follow
+   [validation and integration](.agents/skills/sdlc-management/references/validation-integration.md): reconcile
+   before every batch; finish, fix, rerun, advance; manual feedback before final qualification.
+4. Record the Result: exact commands and outcomes (failed, skipped and interrupted included), the AC checklist,
+   deviations, the attempt ledger ([budgets](.agents/skills/sdlc-management/references/budgets.md)) and an
+   outstanding-findings checklist.
+5. Submit the review-ready Plan or Result to the coordinator and return control. {{SUPERVISOR_AGENT}} reviews it
+   and relays the decision without another owner prompt; only {{SUPERVISOR_AGENT}} accepts.
+
+A relayed owner authorization is attributed to the owner and its messenger, and it never overrides a native
+permission rejection; report the rejected action and reason rather than retrying through another route.
+
+Corrections fix only the named findings and append to the Result. The same material issue after two cycles returns
+to the supervisor for reassessment.
+
+## Coordinator, workers and naming
+
+1. `0-agent-<id>` belongs to the single active coordinator only.
+2. One coordinator is active, verified by discovery and the owner-selected pin; never create another for an
+   unknown result.
+3. Names grant no authority; discovery, the pin and recorded ownership do.
+4. New workers use `<task-id>-agent-<agent-id>-<role>` under `.claude/worktrees/` (`-plan`, `-check`, `-impl`).
+5. Record the task ID, role and intended path before dispatch; include them in delegated instructions.
+6. Before task writes, report the actual path, branch, owner and role; mismatches stop.
+7. Unsupported naming needs a recorded task-specific {{SUPERVISOR_AGENT}} exception and a verified runtime mapping.
+8. Never relocate beneath a live process; relocation defers unless every precondition is positively verified.
+9. A permitted relocation is `git worktree move`, verification, same-UUID restart and pin reconciliation.
+
+Full gate: [coordination](.agents/skills/sdlc-management/references/coordination.md). Delegate exploration,
+review, test analysis or isolated non-overlapping work only; never product or architecture authority, scope changes
+or final integration. Workers share the Goal's attempt allowance.
+
+## Effort, budgets and escalation
+
+Planning defaults to {{PLANNING_EFFORT}} and implementation to {{IMPLEMENTATION_EFFORT}}; remind the operator and
+record unverifiable effort as unknown. The default budget class is {{DEFAULT_BUDGET}}; never extend or reset it
+yourself. Stop and escalate architecture contradictions, scope expansion, security-model changes, destructive
+migrations, public contract changes, new major infrastructure or vendors and irreversible data-model decisions.

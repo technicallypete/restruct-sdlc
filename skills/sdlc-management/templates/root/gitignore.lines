@@ -1,0 +1,4 @@
+# sdlc-management: machine-local session delivery records and private worker checkouts
+/management/**/SESSION-HANDOFFS.jsonl
+/.claude/worktrees/
+/.codex/worktrees/

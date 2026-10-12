@@ -1,0 +1,49 @@
+# {{PROJECT_NAME}} — Agent Execution Budget Policy
+
+Budgets detect thrashing, scope growth and failing strategies. They are maxima, not targets, and never justify
+weakening validation, security, testing or acceptance criteria. Detail:
+[budgets reference](../.agents/skills/sdlc-management/references/budgets.md).
+
+## Ownership
+
+{{SUPERVISOR_AGENT}} assigns the budget class in each Goal (default {{DEFAULT_BUDGET}}). {{IMPLEMENTER_AGENT}}
+works within it, may recommend a change during planning and never increases its own budget. A change after Plan
+approval needs {{SUPERVISOR_AGENT}} approval recorded in the Goal or Plan history, and never implies scope,
+architecture or acceptance changes.
+
+## Goal execution attempts
+
+- One attempt is one Goal-level try. Commands, test batches, inner fix loops, rebases, handoffs, checkpoints and
+  restarts do not consume attempts.
+- The initial implementation is attempt 1. An attempt ends at a review-ready Result, a report that it cannot
+  satisfy the Goal, or an abandoned strategy. A retry or an authorized correction round consumes a new attempt.
+- Workers and subagents share the Goal's allowance; there is one ledger, kept by the implementer.
+
+## Classes and checkpoints
+
+| Class | Maximum | Checkpoint |
+|---|---|---|
+| B3 | 3 | after attempt 2 |
+| B5 | 5 | after attempt 3 |
+| B7 | 7 | after attempt 4 |
+| B15 (exceptional) | 15 | after attempts 8 and 12 |
+
+A checkpoint reassesses criteria done and remaining, failures, repeated patterns, uncertainty, convergence and
+bounds. It is not an automatic stop.
+
+## Exhaustion and extensions
+
+On exhaustion: stop, preserve state, keep failing criteria, update the Result and return control. An extension
+records the previous and new budget, attempts used (preserved), reason, remaining work and the approving supervisor.
+Counters are never reset.
+
+## Effort
+
+Recommendations only: planning {{PLANNING_EFFORT}}, implementation {{IMPLEMENTATION_EFFORT}}. Record unverifiable
+runtime effort as unknown.
+
+## Result accounting
+
+Every Result has an Execution Budget section: class, maximum, attempts used, and an attempt log with each
+attempt's contributions, outcome and boundary reason. Individual failures and commands are validation history, not
+attempts. Acceptance remains {{SUPERVISOR_AGENT}}'s decision.

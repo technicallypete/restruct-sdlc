@@ -1,0 +1,50 @@
+# {{PROJECT_NAME}} branch integration and cleanup
+
+Integration branch: `{{INTEGRATION_BRANCH}}`. Release branch: `{{RELEASE_BRANCH}}`. Protected long-lived branches:
+{{PROTECTED_BRANCHES}}. CI provider: `{{CI_PROVIDER}}`; merge-request tool: `{{MR_TOOL}}`. Generic policy:
+[validation and integration](../../.agents/skills/sdlc-management/references/validation-integration.md).
+
+## Before every local batch
+
+1. `git fetch origin`
+2. `git merge-base --is-ancestor origin/{{INTEGRATION_BRANCH}} HEAD || git rebase origin/{{INTEGRATION_BRANCH}}`
+   (preserve dirty work and bindings; never rewrite protected branches).
+3. Environment check: {{PRE_BATCH_ENV_CHECK}}. If it fails, do not launch.
+4. Record target and candidate SHAs and binding provenance.
+
+Fast checks: `{{FAST_CHECK_COMMAND}}`. Full qualification: `{{FULL_CHECK_COMMAND}}`. Batches finish, fix, rerun,
+advance; manual feedback precedes final qualification.
+
+## Final validation
+
+Placement: `{{FINAL_VALIDATION_PLACEMENT}}`. Canceled post-merge pipeline satisfies the gate:
+`{{CANCELED_PIPELINE_SATISFIES}}` (canceled is recorded as canceled, never as passing; a failed job always fails;
+pending or running never qualifies).
+
+## Feature and Goal branches
+
+1. Push safekeeping checkpoints to the temporary branch after each round.
+2. After {{SUPERVISOR_AGENT}}'s pre-integration review, re-check the target, rebase if needed and rerun only
+   affected checks.
+3. Open one merge request to `{{INTEGRATION_BRANCH}}` with source-branch deletion enabled, using `{{MR_TOOL}}`.
+4. Inspect automated review findings and unresolved threads before merging.
+5. Merge only with owner authorization; record conditional integration and the post-merge disposition.
+6. Verify the source branch is deleted; delete only verified merged temporary branches.
+
+## GitLab/glab commands (when the provider is gitlab)
+
+```sh
+glab mr list --source-branch TEMP_BRANCH --target-branch {{INTEGRATION_BRANCH}}
+glab mr create --source-branch TEMP_BRANCH --target-branch {{INTEGRATION_BRANCH}} --title "TITLE" \
+  --description "Evidence: see the Goal Result." --remove-source-branch --yes
+glab mr view MR_IID --comments
+glab mr merge MR_IID
+```
+
+Promotion from `{{INTEGRATION_BRANCH}}` to `{{RELEASE_BRANCH}}` uses a separate merge request with source-branch
+deletion **off**.
+
+## Closeout
+
+Verify integrated content, unique work and live ownership before `git worktree remove`; close disposable merge
+requests; archive session records before pruning; never delete a live coordinator's directory.

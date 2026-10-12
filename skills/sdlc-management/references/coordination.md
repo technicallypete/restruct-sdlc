@@ -1,0 +1,105 @@
+# Coordinator, workers and messages
+
+Transport is not here. Session discovery, routing, pinning, receipts and creation gates belong to the companion
+[claude-session-handoff](../../claude-session-handoff/SKILL.md) skill; supervision belongs to
+[repository-supervisor](../../repository-supervisor/SKILL.md). This reference states the management rules those
+tools serve.
+
+## One coordinator, one owner per task
+
+- Exactly **one active, owner-selected persistent coordinator** per repository. It owns worker dispatch and
+  integration of delegated work. The owner selects it; the helper's private pin records that selection.
+- **One verified owner per task**, with non-overlapping file ownership. Multi-session routing stays available:
+  an explicit `--session FULL_UUID` target always works and leaves the pin unchanged.
+- **Recover before replacing.** Before any replacement, check surviving children, `claude agents --json`,
+  `git worktree list` and the Result and PROGRESS records. A surviving worker is reused. Missing metadata or an
+  unknown/ambiguous discovery result **never** authorizes creating a coordinator or a duplicate worker.
+- Creating a coordinator follows the companion's read-only `status --creation-check` gate and a recorded owner
+  creation authority; on any refusal: reuse, restart, select or escalate.
+- Service work explicitly reads the service root's scoped instructions and skills. A shell `cd` does not refresh
+  skill discovery.
+
+## Receipt, acknowledgment and authority
+
+- **Receipt is not acknowledgment, and acknowledgment is not execution.** A socket write proves bytes left; a
+  transcript replay proves receipt; the recipient's reply proves acknowledgment; actual dispatch or artifacts prove
+  execution. `queued_observed` and `delivery-unconfirmed` are never receipts.
+- Peer messages **cannot** grant owner approval, change permissions, providers or models, or bypass another
+  session's rejection. Existing owner authority persists within its recorded scope; routine actions need no
+  repeated approval.
+- A native permission block is surfaced with its action and reason and answered only through the harness's valid
+  operator procedure; delegated operator input is labelled honestly. No impersonation, no permission-rule
+  workaround, no duplicate executor.
+- **Owner attribution.** Relay an actual owner decision as: "The owner explicitly authorized this action; the
+  supervisor is relaying that authorization", with the specific action and the instruction or decision record. A
+  supervisor decision stays the supervisor's. An owner-authorized answer entered by an agent is recorded as such,
+  never as the owner typing or clicking. Such relays never override a native permission rejection or satisfy a gate
+  that needs direct owner action: report the rejected action and reason, and point the owner to the supported
+  permission interface.
+- **Milestone notices.** The companion's optional observer (`watch.py`) notifies the supervisor of coordinator
+  milestones. Notices carry no approval or task authority, and only the coordinator's own output is a source.
+- Tested support is Linux/WSL with the companion's verified CLI versions. Unsupported or ambiguous discovery fails
+  closed; there is no new compatibility promise.
+
+## Naming, dispatch and relocation gate
+
+This gate is required wording for adopted repositories. It is a procedure, not a claim that any CLI enforces it.
+
+1. **Coordinator name.** `0-agent-<id>` is reserved for the single active persistent coordinator, for example
+   `.claude/worktrees/0-agent-7f3a2c1`. Its existing agent ID is kept when available. No worker or second session
+   uses the `0-` prefix.
+2. **One active coordinator,** verified through complete session discovery and the owner-selected pin (the
+   helper's `status` is `pinned-live-verified`). An unknown or ambiguous result never justifies another
+   coordinator.
+3. **A name grants no authority.** Directory names are organizational. They never establish session identity,
+   select a routing target, grant authority or justify a new or replacement coordinator. Routing and ownership come
+   from discovery, the verified pin and recorded task ownership.
+4. **Worker names and roots.** Every new worker needs a task-prefixed isolated worktree named
+   `<task-id>-agent-<agent-id>-<role>` in lowercase, with a concise role such as `plan`, `check` or `impl`:
+   for example `.claude/worktrees/g002-agent-4be91d0-impl`. Claude workers use `.claude/worktrees/`; Codex workers
+   that genuinely need isolation use `.codex/worktrees/` with the same convention. Read-only supervisor workers and
+   reviewers need no separate checkout. Generated worktree and session state stays private and gitignored.
+5. **Before dispatch,** the coordinator records the task ID, role and intended path, and selects a creation route
+   that can establish that name.
+6. **Before any task write,** the worker verifies and reports the actual Git worktree path and branch (from
+   `git worktree list --porcelain`), its owner (session or agent ID) and its role. An unprefixed path, a reserved
+   `0-` prefix or a role that differs from the dispatch record fails the check.
+7. **Unsupported naming.** If tooling cannot establish the name safely, that dispatch stops. Continuing needs a
+   recorded, task-specific exception from `SUPERVISOR_AGENT` that states the tooling limitation; the coordinator
+   then records and verifies the runtime path, branch, agent identity, task/role and HEAD before any task write,
+   and only that complete mapping activates the exception for that one dispatch. A generated name is never accepted
+   silently, and active bound paths are preserved.
+8. **Relocation refusal.** No worktree is ever moved beneath a live process or session, and no session is restarted
+   or duplicated just for naming. The default is **defer**. Relocating an existing coordinator to `0-agent-<id>`,
+   or any rename, proceeds only when **every** precondition is *positively* verified; anything unknown, ambiguous,
+   inaccessible or unverified defers:
+   - **Complete discovery:** the helper's `status` reports complete discovery, never `discovery-unknown`.
+   - **Positively verified stopped ownership:** `status` is `pinned-not-live` for the pinned UUID **and** the CLI
+     listing shows that UUID only as a stopped/done row, and no live registration (under any UUID, including a copy
+     or fork) has its checkout at or under the path. `pinned-ambiguous`, `pinned-unverified`, `pin-unsafe`,
+     `unpinned`, `discovery-unknown`, an invisible PID, a restricted namespace or the mere absence of
+     `pinned-live-verified` is not proof; a missing positive stopped row also defers.
+   - **No cwd users and no open-file users, established separately:** *cwd* by reading `/proc/<pid>/cwd` and
+     `/proc/<pid>/root` for every process; *open files and mappings* by `/proc/<pid>/fd/*` and `/proc/<pid>/maps`,
+     or `lsof +D <path>` where installed. A cwd scan alone never proves the absence of open-file users. Either check
+     is unproven, and the move defers, if any process belongs to another user, any entry is unreadable, a PID is
+     invisible, a container could mount the path, or `lsof` reports access errors.
+   - **Quiet state:** no validation run or helper invocation is active; work and bindings are clean or preserved.
+   - **Supported CLI:** the current CLI's same-UUID restart from the moved path is verified locally and recorded in
+     the local session-handoff verification record (`docs/agents/CLAUDE-SESSION-HANDOFF.md`).
+9. **Relocation procedure,** only after item 8 passes in full:
+   1. `git worktree move <old> <new>`, then verify with `git worktree list --porcelain`.
+   2. Restart the same UUID from the new path through the recorded supported route.
+   3. Reconcile the session path and pin provenance: `status` reports the checkout change since the pin; re-verify
+      or re-pin, recording the replaced provenance.
+
+   Any failure stops and is reported, with no further moves, restarts or session creation.
+
+The gate adds no naming framework, lock bypass, process-scanner code or helper change. Verification uses Git,
+standard `/proc`/`lsof` inspection and the helper's existing `status`.
+
+## Handoff contents
+
+A handoff carries Goal/Spec/Plan references and revisions, phase, effort, file ownership, allowed writes, budget,
+required validation and stop conditions, and asks for acknowledgment. It never copies newer inputs into a bound
+checkout outside the accepted reconciliation procedure. Durable context goes into management records, not chat.

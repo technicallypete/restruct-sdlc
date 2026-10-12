@@ -1,0 +1,133 @@
+# {{PROJECT_NAME}} — Repository Management Governance
+
+{{SUPERVISOR_AGENT}} supervises the roadmap, Goals, Work Specs, Plan review, implementation acceptance and
+progress. {{IMPLEMENTER_AGENT}} is the primary implementer and owns Plans, implementation, validation and Results.
+{{OWNER_ROLE}} and {{ARCHITECTURE_AUTHORITY}} own canonical product and architecture direction; {{OWNER_ROLE}}
+decides major changes. Neither agent silently decides them.
+
+This file adopts the `sdlc-management` workflow. Its references are authoritative detail for this repository
+unless this file or explicit owner direction says otherwise:
+[roles and lifecycle](.agents/skills/sdlc-management/references/roles-lifecycle.md),
+[budgets](.agents/skills/sdlc-management/references/budgets.md),
+[adoption and composition](.agents/skills/sdlc-management/references/adoption.md),
+[coordination](.agents/skills/sdlc-management/references/coordination.md),
+[validation and integration](.agents/skills/sdlc-management/references/validation-integration.md),
+[closeout and risks](.agents/skills/sdlc-management/references/closeout-risks.md).
+Harness instructions and explicit owner direction take precedence over skills and templates.
+
+## Canonical sources
+
+Before planning, implementing or reviewing, read: {{CANONICAL_SOURCES}}, the
+[budget policy](management/BUDGET_POLICY.md), the release [ROADMAP](management/{{RELEASE}}/ROADMAP.md) and
+[PROGRESS](management/{{RELEASE}}/PROGRESS.md), and the active Goal's Goal, Spec, Plan and Result. Conflicts with
+canonical architecture or accepted decisions escalate. Delivery barrier: {{DELIVERY_BARRIER}}.
+
+Service roots with scoped instructions: {{SERVICE_ROOTS}}. Service work starts in its root, after reading this file
+and the active Goal inputs, and explicitly loads that root's instructions and skills.
+
+## Ownership matrix
+
+| Responsibility | Owner |
+|---|---|
+| Product and architecture direction, major decisions | {{OWNER_ROLE}} |
+| Roadmap, Goal, Work Spec, Plan review, acceptance, PROGRESS | {{SUPERVISOR_AGENT}} |
+| Plan, implementation, tests and validation, Result, tactical workers | {{IMPLEMENTER_AGENT}} |
+
+## Management structure
+
+Goal artifacts live in `management/{{RELEASE}}/` (`goals/`, `specs/`, `plans/`, `results/`, `archive/`) with stable
+IDs (`G###`) that are never reused. Revisions preserve history. PROGRESS is the mutable index; BACKLOG holds
+proposals, not authorization. The release-independent supervisor reference is
+[SUPERVISOR-HANDOFF](management/SUPERVISOR-HANDOFF.md). Goals carry the eleven fields in order; Specs, Plans and
+Results follow the formats in the roles reference.
+
+Only final ACCEPT completes a Goal. Plan approval, readiness and conditional integration are distinct earlier
+states. Formal reviews return exactly one of **ACCEPT**, **CORRECTION LOOP** or **ARCHITECTURE DECISION REQUIRED**.
+
+## Supervisor progress publication
+
+Supervisor auto-publication: `{{SUPERVISOR_AUTO_PUBLISH}}` (enabled by default). When enabled, {{SUPERVISOR_AGENT}},
+after completing a PROGRESS update, commits and pushes that update and its associated management records (imported
+Results and status, reviews, decisions) to `{{INTEGRATION_BRANCH}}` from the main integration checkout without another
+owner confirmation. It stages exact owned paths, excludes secrets and machine-local logs, fetches and reconciles
+first, never force-pushes, and reports a conflict, protected-branch rule or permission gate instead of bypassing it.
+Publication is not review or ACCEPT. {{IMPLEMENTER_AGENT}} delivers Results and status and keeps its task-branch and
+merge-request workflow; this grants no direct implementer push. The owner may disable it (`false`) for the repository
+or for an explicit task or session; record the override. It is an agent workflow, not a watcher, hook or scheduler.
+
+## Supervisor checkout, delegated review and relay
+
+{{SUPERVISOR_AGENT}} normally works in the main integration checkout. Prefer bounded subagents for Spec
+drafting/research and formal Plan/Result reviews; reviewers are read-only by default, and the supervisor owns the
+disposition. When an existing handoff or status check shows a review-ready Plan or Result, start the delegated
+review without another owner prompt: verify the exact artifact and phase, skip a duplicate review of unchanged
+bytes, and review directly (recording why) when delegation is unavailable. Record the outcome, then relay it with
+the remaining gates to the verified coordinator and verify receipt and acknowledgment. The owner may interrupt or
+redirect; mandatory escalations and owner merge authority remain. No watcher, transport or early implementation
+authority is added.
+
+## Coordinator and workers: naming, dispatch and relocation gate
+
+1. `0-agent-<id>` is reserved for the single active persistent coordinator; its existing agent ID is kept when
+   available, and no worker uses the `0-` prefix.
+2. Exactly one coordinator is active, verified by complete discovery and the owner-selected pin
+   (`pinned-live-verified`). Unknown or ambiguous discovery never justifies another coordinator.
+3. A directory name grants no authority, identity or routing; discovery, the verified pin and recorded task
+   ownership do.
+4. New workers use `<task-id>-agent-<agent-id>-<role>` (for example `g002-agent-<id>-impl`, `-plan`, `-check`).
+   {{IMPLEMENTER_AGENT}} workers live under `.claude/worktrees/`; {{SUPERVISOR_AGENT}} workers that need isolation
+   live under `.codex/worktrees/`. Read-only reviewers need no checkout.
+5. Before dispatch, the coordinator records the task ID, role and intended path.
+6. Before any task write, the worker reports `git worktree list --porcelain` path, branch, owner and role; an
+   unprefixed path, a `0-` worker or a role mismatch fails.
+7. If tooling cannot establish the name, the dispatch stops until {{SUPERVISOR_AGENT}} records a task-specific
+   exception and the coordinator records the verified runtime path, branch, agent, task/role and HEAD.
+8. Relocation defers by default: no move beneath a live process, and no restart or duplicate session for naming. A
+   move needs complete discovery, positively verified stopped ownership, separately proven absence of cwd and
+   open-file users, a quiet state and a recorded supported same-UUID restart.
+9. Only then: `git worktree move`, verify, restart the same UUID, reconcile path and pin provenance. Any failure
+   stops.
+
+Owner attribution: relay an actual owner decision as "The owner explicitly authorized this action; {{SUPERVISOR_AGENT}} is
+relaying that authorization", naming the action and decision record. A relayed authorization never overrides a native
+permission rejection or a gate that needs direct owner action; report it instead. Observer notices carry no authority.
+
+Details and the full preconditions: [coordination](.agents/skills/sdlc-management/references/coordination.md).
+Session discovery, routing, receipts and closeout archiving use
+[claude-session-handoff](.agents/skills/claude-session-handoff/SKILL.md) and the local
+[verification record](docs/agents/CLAUDE-SESSION-HANDOFF.md); supervision resumes with
+[repository-supervisor](.agents/skills/repository-supervisor/SKILL.md).
+
+## Combining management and foundation skills
+
+When used with `saas-foundation` or a similar renderer, `sdlc-management` supersedes only overlapping management
+process. Renderer dry runs, resolved-input review, informed authorization, conflict safeguards, technical checks and
+canonical decisions stay; foundation stages become Goal and acceptance inputs; the renderer's plan is not an
+Implementation Plan; unresolved technical conflicts escalate.
+
+## Execution policy
+
+The supervisor states the risk tier (direct, ordinary, or security/data/architecture) in each Goal. After Plan
+approval, or within an explicitly authorized direct-tier Goal/Spec without a separate Plan, the implementer works
+autonomously within scope; agents never select a lighter tier themselves. Stop and escalate: architecture contradictions, scope
+expansion, security-model changes, destructive migrations, public contract changes, new major infrastructure or
+vendors, irreversible data-model decisions.
+
+Budgets follow the [budget policy](management/BUDGET_POLICY.md); the default class is {{DEFAULT_BUDGET}}. Effort
+recommendations: planning {{PLANNING_EFFORT}}, implementation {{IMPLEMENTATION_EFFORT}}; unverifiable runtime
+effort is recorded as unknown.
+
+## Validation and integration
+
+Follow the [branch workflow](docs/agents/BRANCH-WORKFLOW.md). Before every local batch: fetch, rebase onto
+`origin/{{INTEGRATION_BRANCH}}` if needed, reconcile bindings and run the environment check
+({{PRE_BATCH_ENV_CHECK}}). Batches finish, fix, rerun, then advance. Manual feedback precedes final qualification.
+Final validation placement: `{{FINAL_VALIDATION_PLACEMENT}}`; canceled post-merge pipeline satisfies the gate:
+`{{CANCELED_PIPELINE_SATISFIES}}`. Integrate through reviewed merge requests to `{{INTEGRATION_BRANCH}}` with
+`{{MR_TOOL}}`; merge only with owner authorization. Protected branches: {{PROTECTED_BRANCHES}}.
+
+## Closeout and risks
+
+Acceptance and cleanup are separate; verify integrated content, unique work and live ownership before removing
+anything. Archive session records before pruning. Compact PROGRESS into dated archives with working links. Record
+performance and other risks in [RISKS](docs/RISKS.md).

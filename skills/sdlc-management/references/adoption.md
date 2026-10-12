@@ -1,0 +1,126 @@
+# Adoption, parameters and composition
+
+Adoption instantiates the management structure in a target repository. It is an agent-performed procedure checked
+by `scripts/check_sdlc.py`; there is no generator framework.
+
+## Parameters
+
+Every parameter is explicit. [`templates/parameters.example.json`](../templates/parameters.example.json) lists
+each one with a description and a generic default. Copy it, edit the values for the target project and keep the
+copy outside the shipped skill (for example in the adoption Plan).
+
+- Identity and actors: `PROJECT_NAME`, `RELEASE` (default `v0`), `OWNER_ROLE`, `ARCHITECTURE_AUTHORITY`,
+  `SUPERVISOR_AGENT`, `IMPLEMENTER_AGENT`.
+- Sources and layout: `CANONICAL_SOURCES` (list), `SERVICE_ROOTS` (list, default empty).
+- Branches and CI: `INTEGRATION_BRANCH`, `RELEASE_BRANCH`, `PROTECTED_BRANCHES` (list), `CI_PROVIDER`
+  (`gitlab` or `other`), `MR_TOOL`, `FAST_CHECK_COMMAND`, `FULL_CHECK_COMMAND`, `PRE_BATCH_ENV_CHECK` (optional).
+- Supervisor publication: `SUPERVISOR_AUTO_PUBLISH` (default `true`; see
+  [roles](roles-lifecycle.md#supervisor-progress-publication-option-enabled-by-default)), publishing to the explicit
+  `INTEGRATION_BRANCH`.
+- Validation options: `FINAL_VALIDATION_PLACEMENT` (`mr-hosted` default, or `local-before-mr`),
+  `CANCELED_PIPELINE_SATISFIES` (default `false`).
+- Budget and effort: `DEFAULT_BUDGET` (`B5`), `PLANNING_EFFORT` (`xhigh`), `IMPLEMENTATION_EFFORT` (`high`).
+- `DELIVERY_BARRIER` (optional, default empty): a roadmap barrier the project declares, if any.
+
+**Rendering.** Replace each `{{NAME}}` with its value. A list renders as its items joined by `, `; an empty value
+renders as `(none)`; booleans render as `true`/`false`. No other syntax exists: no conditionals or loops.
+
+**Not generic defaults.** A particular project's delivery barrier, product/tenancy/tool-contract rules, identity
+provider, UI kit, port conventions, branch and actor names, dated owner directions, one-off exceptions, runner
+timings and environment workarounds are never defaults. An environment safeguard becomes `PRE_BATCH_ENV_CHECK`.
+
+## Risk tiers
+
+The supervisor states the tier in each Goal's Execution Policy; agents never self-classify to skip a gate.
+
+- **Direct execution:** explicitly authorized, bounded copy/styling/presentation work inside existing behavior.
+  No separate Plan; the Result records baseline, changed files and focused checks; the diff is still reviewed.
+- **Ordinary:** a concise Spec and a short Plan (changes, criterion mapping, validation, real risks). One Plan
+  approval authorizes autonomous implementation within scope.
+- **Security, data or architecture:** explicit Spec/Plan review and stronger evidence for identity,
+  authorization or isolation, security-model changes, migrations, durable identity decisions, public contracts,
+  major dependencies or infrastructure.
+
+## Procedure
+
+1. Read the target's existing governance. Record the parameter values and the adoption authority in a Plan.
+2. Install the skills flat into `.agents/skills/` with the collision-safe procedure in
+   [Installing the skills](#installing-the-skills), record any collision decision, and commit.
+3. For each template, compute its destination: strip `templates/`; `root/` maps to the repository root;
+   `management/release/` maps to `management/<RELEASE>/`; drop `.tmpl`. Instance templates (GOAL, SPEC, PLAN,
+   RESULT, REVIEW, PROGRESS-ARCHIVE) are copied per Goal or per archive with an ID-based filename.
+4. **Create only missing files.** For an existing file, write the rendering beside it as `<path>.sdlc-proposed`
+   and record the owner's merge decision. Existing governance is never silently overwritten or merged.
+5. Append [`templates/root/gitignore.lines`](../templates/root/gitignore.lines) to `.gitignore` (session log and
+   private worktree roots), skipping lines already present.
+6. Create the release directories `goals/`, `specs/`, `plans/`, `results/` and `archive/`.
+7. Run `python3 -B .agents/skills/sdlc-management/scripts/check_sdlc.py adoption . --release <RELEASE>` and fix
+   every finding. Optionally pass `--literals FILE` with project-private strings that must not appear. Private
+   worker checkouts under `.claude/worktrees/` and `.codex/worktrees/` are not adopted content and are skipped.
+
+## Installing the skills
+
+Never copy over an existing skill. For each bundle skill, from the bundle root:
+
+```sh
+TARGET=/path/to/target-repo
+for s in sdlc-management claude-session-handoff repository-supervisor; do
+  dest="$TARGET/.agents/skills/$s"
+  if [ -L "$TARGET/.agents" ] || [ -L "$TARGET/.agents/skills" ] || [ -L "$dest" ]; then
+    echo "STOP $s: symlinked destination; nothing copied"
+  elif [ ! -e "$dest" ]; then
+    mkdir -p "$TARGET/.agents/skills" && cp -R "skills/$s" "$dest" && echo "INSTALLED $s"
+  elif [ -z "$(find "$dest" -type l)" ] && diff -r -q "skills/$s" "$dest" > /dev/null; then
+    echo "IDENTICAL $s: left unchanged"
+  else
+    echo "COLLISION $s: existing content kept; record an owner merge or replacement decision"
+  fi
+done
+```
+
+- **Absent:** copied. **Identical** (no symlinks, no differences): left unchanged.
+- **Different** (edited, older or newer): the existing directory stays byte-identical. Record the collision, the
+  `diff -r` summary and the owner's merge or replacement decision in the adoption Plan or Result; the bundle copy
+  remains the proposal. A replacement happens only after that recorded decision.
+- **Symlinked** `.agents`, `.agents/skills` or skill destination: stop; nothing is written through a symlink.
+
+## Installation: storage versus discovery
+
+The supported layout is the flat directory `.agents/skills/<skill>/`, committed in the target repository. Codex
+discovers repository skills there; Claude sessions read `SKILL.md` explicitly, as the adopted AGENTS.md requires.
+The bundle's `skills/` directory is **storage**, not a discovery location.
+
+The handoff helper's committed-path assumptions constrain adopters:
+- `compact` verifies the helper committed at `.agents/skills/claude-session-handoff/scripts/handoff.py`;
+- task labels match `G` plus three digits, and document references must lie under `management/`;
+- closure records match `management/<release>/results/<ID>-implementation-codex-review*.md`, with
+  `--verified-by codex|owner`, and the sender label is `codex-supervisor`;
+- messaging is verified on Claude Code 2.1.290, 2.1.291 and 2.1.296, the creation gate only on 2.1.296;
+- the helper needs Linux `/proc`.
+
+The templates therefore default to `G###` IDs, root `management/`, `management/<release>/` and that review record
+name. Changing them would change helper behavior, which needs separate scope.
+
+**Unsupported:** other install paths (`compact` refuses them), native `.claude/skills/` discovery, discovery after
+`cd`, personal installation, macOS or native Windows, other CLIs or versions (the helper fails closed), and any
+promise of automatic discovery.
+
+## Composing with a foundation or renderer skill
+
+When this skill is used together with `saas-foundation` (or a similar renderer skill), **`sdlc-management`
+supersedes only the overlapping management process**: management artifacts, actor responsibilities,
+authorization flow, budgets, progress, reviews, validation sequencing, Git integration and closeout.
+
+It does **not** supersede, and must preserve:
+- the renderer's dry run and resolved-input review, informed write authorization, destination and conflict
+  safeguards, and renderer safety rules;
+- every required technical foundation check and technical verification;
+- the repository's canonical governance, architecture and accepted decisions, including technical/security
+  invariants, dependencies and delivery barriers.
+
+Mapping: each foundation stage becomes an input to a Goal and its acceptance criteria. The renderer's dry-run plan
+is **not** an Implementation Plan; the Goal still needs its own Plan and approvals. Existing authority satisfies a
+repeated confirmation only within its explicit scope. Where the renderer's historical technical guidance differs
+from accepted repository decisions, management precedence resolves nothing: canonical decisions prevail and an
+unresolved technical conflict escalates. The foundation skill is neither edited nor bundled to apply this rule,
+and neither skill assigns a supervisor role by being loaded.

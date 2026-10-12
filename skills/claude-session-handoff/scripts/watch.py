@@ -1,0 +1,479 @@
+#!/usr/bin/env python3
+"""Coordinator -> supervisor milestone observer for one repository; standard library only.
+
+Polls the verified, pinned Claude coordinator's own session transcript and queues concise milestone notices to one
+explicitly bound, existing Codex supervisor thread with `codex queue`. No model inference, approvals, session
+creation, settings changes, raw transcript forwarding or implicit retargeting. Notices carry no authority.
+
+  watch.py --repo PATH bind (--supervisor UUID | --supervisor-file FILE) [--replace]
+  watch.py --repo PATH start [--interval SECONDS] | stop | status | unbind
+  watch.py --repo PATH smoke --label TEXT      # one labelled benign delivery to the bound thread
+  watch.py --repo PATH poll-once               # one foreground poll (diagnostics)
+
+State is private (0700/0600) under the handoff helper's repository state directory, in `observer/`, outside Git.
+Uncertain identity, versions, state or queue outcome suspends delivery until an explicit `bind --replace`.
+"""
+import argparse
+import contextlib
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import signal
+import subprocess
+import sys
+import time
+import uuid
+
+import handoff
+from handoff import Blocked, require
+
+SCHEMA = "claude-session-handoff/observer/v1"
+VERIFIED_CODEX_CLI = {"0.160.0"}
+VERIFIED_CODEX_DAEMON = {"0.162.1"}
+DEFAULT_INTERVAL = 20
+MIN_INTERVAL, MAX_INTERVAL = 5, 300
+QUEUE_TIMEOUT = 30
+MAX_READ = 1048576
+MAX_KEYS = 2000
+NOTICE_MARK = "[observer-notice:"
+ECHO_MARKS = (NOTICE_MARK, "[handoff-id:")
+CATEGORIES = (
+    ("question", re.compile(r"\bquestion for (?:the )?(?:owner|codex|supervisor)\b", re.I)),
+    ("blocked", re.compile(r"\b(?:blocked|blocker|escalat(?:e|es|ed|ing|ion))\b", re.I)),
+    ("review-ready", re.compile(r"\b(?:review[- ]ready|ready for (?:codex |supervisor )?review|submitted for "
+                                r"(?:codex |supervisor )?(?:implementation |plan )?review)\b", re.I)),
+    ("completed", re.compile(r"\b(?:handback|handed back|work (?:is )?complete|completed (?:the )?"
+                             r"(?:task|goal|attempt))\b", re.I)),
+)
+STOP = False
+
+
+def run_codex(arguments, timeout):
+    """The only Codex CLI boundary (tests replace it)."""
+    return subprocess.run(["codex", *arguments], capture_output=True, text=True, timeout=timeout)
+
+
+def coordinator_status(root):
+    """Reuse the handoff helper's pin/discovery verification (tests replace it)."""
+    registry = Path.home() / ".claude" / "sessions"
+    projects = Path.home() / ".claude" / "projects"
+    report = handoff.status_report(root, registry, projects)
+    if report.get("status") == "pinned-live-verified":
+        row = handoff.live_registration(registry, report["pin"]["session"], root)
+        report["registration_status"] = row.get("status")
+    return report
+
+
+def projects_dir():
+    return Path.home() / ".claude" / "projects"
+
+
+def fingerprint(value):
+    return hashlib.sha256(value.encode()).hexdigest()[:12]
+
+
+def observer_dir(root):
+    return handoff.state_subdir(root, "observer")
+
+
+def load(directory, name, default=None):
+    data = handoff.read_private(directory / name)
+    if data is None:
+        return default
+    value = json.loads(data)
+    require(isinstance(value, dict) and value.get("schema") == SCHEMA, "state-unsafe")
+    return value
+
+
+def save(directory, name, value):
+    handoff.write_private_atomic(directory, name, json.dumps({**value, "schema": SCHEMA}, sort_keys=True).encode())
+
+
+def empty_state():
+    return {"offsets": {}, "keys": [], "deliveries": [], "suspended": None, "waiting": False, "smoke": None}
+
+
+def suspend(directory, state, reason):
+    if not state.get("suspended"):
+        state["suspended"] = {"reason": reason, "time": handoff.utc_now().isoformat()}
+    save(directory, "state.json", state)
+    return {"status": "suspended", "reason": state["suspended"]["reason"], "queue_calls": 0}
+
+
+def codex_versions():
+    cli = run_codex(["--version"], 15)
+    match = re.search(r"(\d+\.\d+\.\d+)", cli.stdout or "")
+    daemon = run_codex(["app-server", "daemon", "version"], 15)
+    try:
+        server = json.loads(daemon.stdout).get("appServerVersion")
+    except (ValueError, AttributeError):
+        server = None
+    return (match.group(1) if cli.returncode == 0 and match else None), (server if daemon.returncode == 0 else None)
+
+
+def verified_identity(root, binding):
+    """(ok, reason, report): the pin must be live-verified and equal the bound coordinator UUID."""
+    report = coordinator_status(root)
+    status = report.get("status")
+    if status != "pinned-live-verified":
+        return False, f"coordinator-{status or 'unknown'}", report
+    if report.get("pin", {}).get("session") != binding["coordinator"]:
+        return False, "coordinator-changed-rebind-required", report
+    return True, None, report
+
+
+def transcript_path(session):
+    paths = handoff.transcripts(projects_dir(), session)
+    require(len(paths) == 1, "coordinator-transcript-ambiguous" if paths else "coordinator-transcript-missing")
+    return paths[0]
+
+
+def new_rows(path, offsets):
+    """Complete JSONL rows after the stored offset; a truncated/replaced file restarts at 0; partial tails wait."""
+    info = path.stat()
+    key = str(path)
+    stored = offsets.get(key)
+    if stored is None:
+        offsets[key] = {"inode": info.st_ino, "offset": info.st_size}
+        return []
+    start = stored["offset"]
+    if stored["inode"] != info.st_ino or info.st_size < start:
+        start = 0
+    with path.open("rb") as stream:
+        stream.seek(start)
+        data = stream.read(MAX_READ)
+    end = data.rfind(b"\n")
+    if end < 0:
+        offsets[key] = {"inode": info.st_ino, "offset": start}
+        return []
+    offsets[key] = {"inode": info.st_ino, "offset": start + end + 1}
+    rows = []
+    for line in data[:end + 1].decode("utf-8", errors="replace").splitlines():
+        with contextlib.suppress(ValueError):
+            row = json.loads(line)
+            if isinstance(row, dict):
+                rows.append(row)
+    return rows
+
+
+def milestone(row):
+    """A new coordinator-authored milestone, or None. Incoming handoffs, echoes and receipts never qualify."""
+    if row.get("type") != "assistant" or row.get("isSidechain"):
+        return None
+    content = row.get("message", {}).get("content", [])
+    if isinstance(content, str):
+        content = [{"type": "text", "text": content}]
+    texts = [c.get("text", "") for c in content if isinstance(c, dict) and c.get("type") == "text"]
+    joined = "\n".join(texts)
+    if any(mark in joined for mark in ECHO_MARKS):
+        return None
+    if any(isinstance(c, dict) and c.get("type") == "tool_use" and c.get("name") == "AskUserQuestion"
+           for c in content):
+        return "question", "the coordinator asked a native question (inspect it in the coordinator session)"
+    for category, pattern in CATEGORIES:
+        for line in joined.splitlines():
+            if pattern.search(line):
+                return category, handoff.safe_excerpt(line.strip(), 240)
+    return None
+
+
+def row_key(row):
+    if isinstance(row.get("uuid"), str):
+        return "row:" + row["uuid"]
+    return "row:" + hashlib.sha256(json.dumps(row, sort_keys=True).encode()).hexdigest()
+
+
+def remember(state, key):
+    state["keys"] = (state["keys"] + [key])[-MAX_KEYS:]
+
+
+def deliver(directory, state, binding, text, key, kind):
+    """Queue one notice. Uncertainty is recorded and suspends delivery; there are no retries."""
+    cli, daemon = codex_versions()
+    if cli not in VERIFIED_CODEX_CLI or daemon not in VERIFIED_CODEX_DAEMON:
+        remember(state, key)
+        state["deliveries"].append({"key": key, "kind": kind, "outcome": "not-sent-unverified-codex-version",
+                                    "cli": cli, "daemon": daemon})
+        return suspend(directory, state, "unverified-codex-version")
+    notice_id = str(uuid.uuid4())
+    message = f"{NOTICE_MARK} {notice_id}] {text}"
+    remember(state, key)
+    record = {"key": key, "kind": kind, "notice_id": notice_id, "time": handoff.utc_now().isoformat(),
+              "message_sha256": hashlib.sha256(message.encode()).hexdigest(), "cli": cli, "daemon": daemon}
+    try:
+        result = run_codex(["queue", "--thread", binding["supervisor"], "--message", message], QUEUE_TIMEOUT)
+        outcome = "queued-not-acknowledged" if result.returncode == 0 else f"queue-uncertain-exit-{result.returncode}"
+    except (OSError, subprocess.SubprocessError):
+        outcome = "queue-uncertain-error"
+    state["deliveries"] = (state["deliveries"] + [{**record, "outcome": outcome}])[-200:]
+    if outcome != "queued-not-acknowledged":
+        return suspend(directory, state, "queue-uncertain")
+    save(directory, "state.json", state)
+    return {"status": "queued-not-acknowledged", "notice_id": notice_id, "queue_calls": 1}
+
+
+def poll_once(root):
+    directory = observer_dir(root)
+    binding = load(directory, "binding.json")
+    if binding is None:
+        return {"status": "unbound", "queue_calls": 0}
+    state = load(directory, "state.json", empty_state())
+    if state.get("suspended"):
+        return {"status": "suspended", "reason": state["suspended"]["reason"], "queue_calls": 0}
+    ok, reason, report = verified_identity(root, binding)
+    if not ok:
+        return suspend(directory, state, reason)
+    try:
+        rows = new_rows(transcript_path(binding["coordinator"]), state["offsets"])
+    except Blocked as error:
+        return suspend(directory, state, str(error))
+    events = []
+    for row in rows:
+        found = milestone(row)
+        key = row_key(row)
+        if found and key not in state["keys"]:
+            events.append((key, *found, row.get("timestamp", "")))
+    waiting = report.get("registration_status") == "waiting"
+    if waiting and not state.get("waiting"):
+        events.append((f"waiting:{handoff.utc_now().isoformat()}", "waiting",
+                       "the coordinator reports waiting; the native prompt was not inspected (inspect with claude "
+                       "attach before answering)", ""))
+    state["waiting"] = waiting
+    calls = 0
+    for key, category, excerpt, stamp in events:
+        text = (f"Claude coordinator milestone ({category}{', ' + stamp if stamp else ''}): {excerpt}. This notice "
+                "carries no approval or task authority; verify the repository records.")
+        result = deliver(directory, state, binding, text, key, category)
+        calls += result.get("queue_calls", 0)
+        if result["status"] == "suspended":
+            return {**result, "queue_calls": calls}
+    save(directory, "state.json", state)
+    return {"status": "polled", "events": len(events), "queue_calls": calls}
+
+
+# ---------------------------------------------------------------- lifecycle
+
+def child_argv(root, interval):
+    return [sys.executable, "-B", str(Path(__file__).resolve()), "--repo", str(root), "run", "--interval",
+            str(interval)]
+
+
+def cmdline(pid):
+    try:
+        return Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")[:-1]
+    except OSError:
+        return None
+
+
+def verified_process(record):
+    """The recorded PID still runs the recorded command with the recorded start time (no PID-reuse kill)."""
+    if not record:
+        return False
+    pid = record.get("pid")
+    if not isinstance(pid, int) or pid <= 1:
+        return False
+    try:
+        start = handoff.process_start(pid)
+    except (OSError, ValueError, IndexError):
+        return False
+    argv = cmdline(pid)
+    return start == record.get("start") and argv == [a.encode() for a in record.get("argv", [])]
+
+
+def cmd_start(root, interval):
+    require(MIN_INTERVAL <= interval <= MAX_INTERVAL, "interval-out-of-range")
+    directory = observer_dir(root)
+    require(load(directory, "binding.json") is not None, "unbound-bind-first")
+    record = load(directory, "process.json")
+    if verified_process(record):
+        return {"status": "already-running", "pid": record["pid"]}
+    argv = child_argv(root, interval)
+    log = os.open(directory / "observer.log", os.O_WRONLY | os.O_CREAT | os.O_APPEND | os.O_NOFOLLOW, 0o600)
+    try:
+        child = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=log, stderr=log, start_new_session=True,
+                                 close_fds=True)
+    finally:
+        os.close(log)
+    time.sleep(0.3)
+    if child.poll() is not None:
+        return {"status": "blocked", "reason": f"observer-exited-{child.returncode}"}
+    save(directory, "process.json", {"pid": child.pid, "start": handoff.process_start(child.pid), "argv": argv,
+                                     "interval": interval, "started": handoff.utc_now().isoformat()})
+    return {"status": "started", "pid": child.pid, "interval": interval}
+
+
+def cmd_stop(root):
+    directory = observer_dir(root)
+    record = load(directory, "process.json")
+    if not record:
+        return {"status": "not-running"}
+    if not verified_process(record):
+        return {"status": "stale-record-not-signalled", "pid": record.get("pid"),
+                "next": "the recorded process is gone or its identity changed; no signal was sent"}
+    os.kill(record["pid"], signal.SIGTERM)
+    deadline = time.monotonic() + 10
+    while time.monotonic() < deadline and verified_process(record):
+        time.sleep(0.1)
+    if verified_process(record):
+        return {"status": "blocked", "reason": "observer-did-not-stop", "pid": record["pid"]}
+    os.unlink(directory / "process.json")
+    return {"status": "stopped", "pid": record["pid"]}
+
+
+def cmd_status(root):
+    directory = observer_dir(root)
+    binding = load(directory, "binding.json")
+    state = load(directory, "state.json", empty_state())
+    record = load(directory, "process.json")
+    running = verified_process(record)
+    return {"status": "running" if running else ("stale-record" if record else "stopped"),
+            "pid": record.get("pid") if running else None,
+            "bound": binding is not None,
+            "supervisor_fingerprint": fingerprint(binding["supervisor"]) if binding else None,
+            "coordinator": binding.get("coordinator") if binding else None,
+            "suspended": state.get("suspended"), "deliveries": len(state.get("deliveries", [])),
+            "last_delivery": (state.get("deliveries") or [None])[-1], "dedup_keys": len(state.get("keys", []))}
+
+
+def read_supervisor(args):
+    if args.supervisor:
+        return args.supervisor
+    raw = handoff.read_private(Path(args.supervisor_file))
+    require(raw is not None, "supervisor-file-missing")
+    text = raw.decode().strip()
+    with contextlib.suppress(ValueError):
+        value = json.loads(text)
+        if isinstance(value, dict):
+            text = value.get("supervisor_thread", "")
+    return text
+
+
+def cmd_bind(root, args):
+    supervisor = read_supervisor(args)
+    require(handoff.is_canonical_uuid(supervisor), "invalid-supervisor-uuid")
+    directory = observer_dir(root)
+    current = load(directory, "binding.json")
+    require(current is None or args.replace, "already-bound-use-replace")
+    report = coordinator_status(root)
+    require(report.get("status") == "pinned-live-verified", "coordinator-not-pinned-live-verified")
+    binding = {"supervisor": supervisor, "coordinator": report["pin"]["session"],
+               "bound": handoff.utc_now().isoformat(),
+               "replaced": {"supervisor_fingerprint": fingerprint(current["supervisor"]),
+                            "coordinator": current["coordinator"]} if current else None}
+    save(directory, "binding.json", binding)
+    state = load(directory, "state.json", empty_state())
+    state["suspended"] = None
+    save(directory, "state.json", state)
+    return {"status": "bound", "supervisor_fingerprint": fingerprint(supervisor), "coordinator": binding["coordinator"]}
+
+
+def cmd_unbind(root):
+    directory = observer_dir(root)
+    require(not verified_process(load(directory, "process.json")), "stop-the-observer-first")
+    with contextlib.suppress(FileNotFoundError):
+        os.unlink(directory / "binding.json")
+    return {"status": "unbound"}
+
+
+def cmd_smoke(root, label):
+    require(label and len(label) <= 80 and re.fullmatch(r"[A-Za-z0-9 ._:-]+", label), "invalid-label")
+    directory = observer_dir(root)
+    binding = load(directory, "binding.json")
+    require(binding is not None, "unbound-bind-first")
+    state = load(directory, "state.json", empty_state())
+    require(not state.get("smoke"), "smoke-already-delivered")
+    require(not state.get("suspended"), "suspended-rebind-first")
+    ok, reason, _ = verified_identity(root, binding)
+    require(ok, reason or "identity-unverified")
+    text = (f"OBSERVER SMOKE TEST ({label}): labelled, benign delivery check only. No reply, task action or approval "
+            "is requested, and this notice carries no authority.")
+    result = deliver(directory, state, binding, text, f"smoke:{label}", "smoke")
+    state = load(directory, "state.json", empty_state())
+    state["smoke"] = {"label": label, "outcome": result["status"], "time": handoff.utc_now().isoformat()}
+    save(directory, "state.json", state)
+    last = state["deliveries"][-1]
+    return {**result, "cli": last.get("cli"), "daemon": last.get("daemon"),
+            "supervisor_fingerprint": fingerprint(binding["supervisor"])}
+
+
+def cmd_run(root, interval):
+    """Foreground loop for `start`; one per repository (exclusive lock)."""
+    directory = observer_dir(root)
+    lock = os.open(directory / "run.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        return {"status": "already-running"}
+
+    def stop(*_):
+        global STOP
+        STOP = True
+    signal.signal(signal.SIGTERM, stop)
+    signal.signal(signal.SIGINT, stop)
+    while not STOP:
+        try:
+            print(json.dumps({"time": handoff.utc_now().isoformat(), **poll_once(root)}), flush=True)
+        except Blocked as error:
+            print(json.dumps({"status": "blocked", "reason": str(error)}), flush=True)
+        except (OSError, ValueError, KeyError, subprocess.SubprocessError) as error:
+            print(json.dumps({"status": "blocked", "reason": type(error).__name__}), flush=True)
+        deadline = time.monotonic() + interval
+        while not STOP and time.monotonic() < deadline:
+            time.sleep(0.2)
+    return {"status": "stopped"}
+
+
+def parser():
+    p = argparse.ArgumentParser(description="Coordinator milestone observer")
+    p.add_argument("--repo", required=True)
+    sub = p.add_subparsers(dest="command", required=True)
+    bind = sub.add_parser("bind")
+    target = bind.add_mutually_exclusive_group(required=True)
+    target.add_argument("--supervisor")
+    target.add_argument("--supervisor-file")
+    bind.add_argument("--replace", action="store_true")
+    for name in ("start", "run"):
+        sp = sub.add_parser(name)
+        sp.add_argument("--interval", type=int, default=DEFAULT_INTERVAL)
+    smoke = sub.add_parser("smoke")
+    smoke.add_argument("--label", required=True)
+    for name in ("stop", "status", "unbind", "poll-once"):
+        sub.add_parser(name)
+    return p
+
+
+def main(argv=None):
+    args = parser().parse_args(argv)
+    root = handoff.repo_root(Path(args.repo))
+    if args.command == "bind":
+        return cmd_bind(root, args)
+    if args.command == "start":
+        return cmd_start(root, args.interval)
+    if args.command == "run":
+        require(MIN_INTERVAL <= args.interval <= MAX_INTERVAL, "interval-out-of-range")
+        return cmd_run(root, args.interval)
+    if args.command == "stop":
+        return cmd_stop(root)
+    if args.command == "unbind":
+        return cmd_unbind(root)
+    if args.command == "smoke":
+        return cmd_smoke(root, args.label)
+    if args.command == "poll-once":
+        return poll_once(root)
+    return cmd_status(root)
+
+
+if __name__ == "__main__":
+    try:
+        result = main()
+        print(json.dumps(result, separators=(",", ":")))
+        sys.exit(1 if result.get("status") in ("blocked", "suspended") else 0)
+    except Blocked as error:
+        print(json.dumps({"status": "blocked", "reason": str(error)}, separators=(",", ":")))
+        sys.exit(1)
+    except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError):
+        print(json.dumps({"status": "blocked", "reason": "local-input-process-or-cli-error"}))
+        sys.exit(1)

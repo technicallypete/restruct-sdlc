@@ -1,0 +1,17 @@
+# {{PROJECT_NAME}} — local Claude session handoff verification record
+
+The protocol, commands and refusals live in the companion skill:
+[claude-session-handoff](../../.agents/skills/claude-session-handoff/SKILL.md) and its
+[bundled reference](../../.agents/skills/claude-session-handoff/references/local-session-handoff.md). This file
+records only what was verified on this machine; it does not duplicate the protocol or expand authority.
+
+| Date | Claude Code version | Platform | Verified | Evidence |
+|---|---|---|---|---|
+| YYYY-MM-DD | `<version>` | `<Linux or WSL release>` | discovery / send + receipt / creation gate | `<record>` |
+
+## Same-UUID restart from a moved path
+
+Not verified. Until a row above records it, coordinator relocation stays deferred
+([coordination](../../.agents/skills/sdlc-management/references/coordination.md#naming-dispatch-and-relocation-gate)).
+
+Unsupported versions fail closed in the helper; record a new verification before relying on a changed CLI.
