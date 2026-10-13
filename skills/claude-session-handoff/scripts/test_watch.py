@@ -196,6 +196,46 @@ class NotificationSources(Base):
         self.assertEqual(self.poll()["queue_calls"], 1)
         self.assertIn("milestone (failed", self.codex.queues()[0][4])
 
+    def test_conditional_failure_rules_do_not_notify(self):
+        self.bind()
+        self.poll()
+        for text in ("Any failure rolls back steps 3–5 together.",
+                     "Any failure stops it and comes back to me.",
+                     "On failure we stop.", "Any failure would stop execution."):
+            with self.subTest(text=text):
+                self.append(self.row("assistant", text))
+                self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(self.codex.queues(), [])
+
+    def test_conditional_rule_does_not_hide_review_ready_headline(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "**G008 Plan r3 is ready for Codex review.**\n"
+                             "Any failure rolls back steps 3–5 together."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("milestone (review-ready", self.codex.queues()[0][4])
+        self.assertIn("G008 Plan r3", self.codex.queues()[0][4])
+        self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_conditional_rule_does_not_hide_real_failure(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "Any failure stops it; the staging gate failed."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("milestone (failed", self.codex.queues()[0][4])
+
+    def test_mechanical_binding_ready_notifies_once(self):
+        self.bind()
+        self.poll()
+        for text in ("G008 execution binding proposed and ready for Codex's mechanical verification.",
+                     "The binding is ready for Codex’s mechanical confirmation.",
+                     "The binding is ready for supervisor mechanical confirmation."):
+            with self.subTest(text=text):
+                self.append(self.row("assistant", text))
+                self.assertEqual(self.poll()["queue_calls"], 1)
+                self.assertIn("milestone (review-ready", self.codex.queues()[-1][4])
+                self.assertEqual(self.poll()["queue_calls"], 0)
+
     def test_decision_and_approval_requests_notify_but_negated_requests_do_not(self):
         self.bind()
         self.poll()

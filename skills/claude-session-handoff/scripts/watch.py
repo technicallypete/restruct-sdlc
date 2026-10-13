@@ -54,7 +54,8 @@ CATEGORIES = (
     ("question", re.compile(r"\b(?:question for (?:the )?(?:owner|codex|supervisor)|"
                             r"(?:decision|approval)\s+(?:is\s+)?(?:needed|required))\b", re.I)),
     ("blocked", re.compile(r"\b(?:blocked|blocker|escalat(?:e|es|ed|ing|ion))\b", re.I)),
-    ("review-ready", re.compile(r"\b(?:review[- ]ready|ready for (?:codex |supervisor )?review|submitted for "
+    ("review-ready", re.compile(r"\b(?:review[- ]ready|ready for (?:(?:codex|supervisor)(?:['’]s)? )?"
+                                r"(?:review|mechanical (?:verification|confirmation))|submitted for "
                                 r"(?:codex |supervisor )?(?:implementation |plan )?review)\b", re.I)),
     ("completed", re.compile(r"\b(?:handback|handed back|work (?:is )?complete|completed (?:the )?"
                              r"(?:task|goal|attempt))\b", re.I)),
@@ -218,7 +219,7 @@ def new_rows(path, offsets, limits):
 
 
 def active_alert(line, pattern):
-    """Ignore explicitly negated/resolved alerts, retaining a separate active issue on the same line."""
+    """Ignore negated/resolved alerts and conditional failure rules; retain separate active issues."""
     line = re.sub(r"[*`_]", "", line)
     for match in pattern.finditer(line):
         before, after = line[:match.start()], line[match.end():]
@@ -227,7 +228,11 @@ def active_alert(line, pattern):
         resolved = re.match(r"(?:\s+(?:gate|pipeline|job|test|check|build|validation))?"
                             r"(?:\s+(?:is|was|now|already|has been|had been))*\s+"
                             r"(?:resolved|cleared|fixed|removed|gone|passed|passing|recovered)\b", after, re.I)
-        if not negated and not resolved:
+        conditional = (match.group().lower() in ("failure", "failures")
+                       and re.search(r"\b(?:any|on(?: any)?)\s+$", before, re.I)
+                       and re.match(r"\s+(?:we\s+)?(?:(?:will|would)\s+)?(?:stops?|rolls? back|returns?|triggers?)\b",
+                                    after, re.I))
+        if not negated and not resolved and not conditional:
             return True
     return False
 

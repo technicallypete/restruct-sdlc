@@ -38,6 +38,10 @@ tools serve.
   permission interface.
 - **Milestone notices.** The companion's optional observer (`watch.py`) notifies the supervisor of coordinator
   milestones. Notices carry no approval or task authority, and only the coordinator's own output is a source.
+  Review-ready notices include execution bindings ready for mechanical verification or confirmation. Conditional
+  stop rules such as “Any failure stops it” are not reports of an actual failure. The observer uses bounded text
+  patterns rather than language inference; verify the linked records before acting. Keep detection code and tests
+  in `claude-session-handoff`, rather than duplicating them in this skill.
 - Tested support is Linux/WSL with the companion's verified CLI versions. Unsupported or ambiguous discovery fails
   closed; there is no new compatibility promise.
 
