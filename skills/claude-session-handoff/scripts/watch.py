@@ -49,6 +49,9 @@ SIDECHAIN_PREFIX = re.compile(r'"isSidechain"\s*:\s*true')
 MAX_KEYS = 2000
 NOTICE_MARK = "[observer-notice:"
 ECHO_MARKS = (NOTICE_MARK, "[handoff-id:")
+STATUS_MARKER = re.compile(
+    r"COORDINATOR_STATUS: (working|review-ready|blocked|question|failed|completed)"
+    r" \| ([A-Za-z0-9][A-Za-z0-9_.-]{0,63}) \| ([^\r\n|]{1,240})")
 CATEGORIES = (
     ("failed", re.compile(r"\b(?:failed|failing|failures?)\b", re.I)),
     ("question", re.compile(r"\b(?:question for (?:the )?(?:owner|codex|supervisor)|"
@@ -237,6 +240,26 @@ def active_alert(line, pattern):
     return False
 
 
+def explicit_status(text):
+    """Only a final plain status line qualifies; fenced examples do not."""
+    lines = text.rstrip().split("\n")
+    marker = STATUS_MARKER.fullmatch(lines[-1])
+    if marker is None or not marker[3].strip():
+        return None
+    fence = None
+    for line in lines[:-1]:
+        match = re.match(r"^\s*(`{3,}|~{3,})", line)
+        if match:
+            delimiter = match[1]
+            if fence is None:
+                fence = delimiter
+            elif delimiter[0] == fence[0] and len(delimiter) >= len(fence):
+                fence = None
+    if fence is not None:
+        return None
+    return marker[1], handoff.safe_excerpt(f"{marker[2]}: {marker[3].strip()}", 240)
+
+
 def milestone(row):
     """A new coordinator-authored milestone, or None. Incoming handoffs, echoes and receipts never qualify."""
     if row.get("type") != "assistant" or row.get("isSidechain"):
@@ -251,8 +274,13 @@ def milestone(row):
     if any(isinstance(c, dict) and c.get("type") == "tool_use" and c.get("name") == "AskUserQuestion"
            for c in content):
         return "question", "the coordinator asked a native question (inspect it in the coordinator session)"
+    status = explicit_status(joined)
+    if status is not None:
+        return None if status[0] == "working" else status
     for category, pattern in CATEGORIES:
         for line in joined.split("\n"):
+            if re.match(r"^\s*(?:>\s*)?COORDINATOR_STATUS:", line):
+                continue  # malformed/nonterminal/quoted markers are not prose alerts
             if pattern.search(line) and (category not in ("failed", "blocked", "question")
                                          or active_alert(line, pattern)):
                 return category, handoff.safe_excerpt(line.strip(), 240)

@@ -170,6 +170,82 @@ class Polling(Base):
 
 
 class NotificationSources(Base):
+    def test_working_marker_suppresses_history_and_recovery_prose(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "Earlier the gate failed. Rerun the failed batch, then continue.\n"
+                             "COORDINATOR_STATUS: working | G008 | Implementer resumed."))
+        self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(self.codex.calls, [])
+
+    def test_ready_marker_selects_the_handoff_instead_of_failed_batch_prose(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "Rerun the failed batch after review.\n"
+                             "COORDINATOR_STATUS: review-ready | G008 | Result ready for review."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("milestone (review-ready", self.codex.queues()[0][4])
+        self.assertIn("G008: Result ready for review.", self.codex.queues()[0][4])
+        self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_explicit_attention_classes_notify_once(self):
+        self.bind()
+        self.poll()
+        for category in ("review-ready", "blocked", "question", "failed", "completed"):
+            with self.subTest(category=category):
+                self.append(self.row("assistant", f"COORDINATOR_STATUS: {category} | OS001 | Check records."))
+                self.assertEqual(self.poll()["queue_calls"], 1)
+                self.assertIn(f"milestone ({category}", self.codex.queues()[-1][4])
+                self.assertIn("no approval or task authority", self.codex.queues()[-1][4])
+                self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_invalid_marker_does_not_suppress_a_real_prose_failure(self):
+        self.bind()
+        self.poll()
+        for marker in ("COORDINATOR_STATUS: unknown | G008 | Check records.",
+                       "COORDINATOR_STATUS: working | ../G008 | Check records.",
+                       "COORDINATOR_STATUS: working | G008 | ",
+                       "COORDINATOR_STATUS: working | G008 | " + "x" * 241):
+            self.append(self.row("assistant", "The staging gate failed.\n" + marker))
+            self.assertEqual(self.poll()["queue_calls"], 1)
+            self.assertIn("milestone (failed", self.codex.queues()[-1][4])
+
+    def test_incoming_sidechain_and_echo_markers_never_notify(self):
+        self.bind()
+        self.poll()
+        marker = "COORDINATOR_STATUS: review-ready | G008 | Result ready."
+        self.append(self.row("user", marker), self.row("assistant", marker, sidechain=True),
+                    self.row("assistant", "[observer-notice: example]\n" + marker),
+                    self.row("assistant", "[handoff-id: example]\n" + marker))
+        self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(self.codex.calls, [])
+
+    def test_nonterminal_quoted_and_fenced_markers_never_notify(self):
+        self.bind()
+        self.poll()
+        marker = "COORDINATOR_STATUS: review-ready | G008 | Result ready."
+        for text in (marker + "\nThis was an example.", "> " + marker,
+                     "```text\n" + marker + "\n```", "```text\n" + marker,
+                     "~~~text\n" + marker):
+            self.append(self.row("assistant", text))
+            self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_final_marker_after_closed_fence_is_recognized(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "```text\nexample\n```\n"
+                             "COORDINATOR_STATUS: question | G008 | Choose the next action."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("milestone (question", self.codex.queues()[0][4])
+
+    def test_native_question_is_not_hidden_by_working_marker(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "COORDINATOR_STATUS: working | G008 | Preparing.",
+                             tool="AskUserQuestion"))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("asked a native question", self.codex.queues()[0][4])
+
     def test_staging_failure_report_notifies_once(self):
         self.bind()
         self.poll()

@@ -337,6 +337,18 @@ If the inbox is incompatible or unavailable, use the supported attach/input inte
 
 ## Coordinator milestone observer (opt-in here; an adopting repository may default-enable it after verified bindings)
 
+**Coordinator response contract:** finish each turn with one plain final line:
+`COORDINATOR_STATUS: review-ready | G008 | Plan ready for supervisor review.`
+Classes are `working`, `review-ready`, `blocked`, `question`, `failed`, `completed`.
+Use the actual nonsecret task ID and a nonempty summary of at most 240 characters
+without `|`. Routine acknowledgments/progress and recovery use `working`, which
+queues no milestone. Plans/Results/bindings awaiting review use `review-ready`;
+`completed` means verified terminal closeout, never self-acceptance. A valid final
+marker overrides prose classification; native questions still notify. Markers
+inside fences/quotes, nonterminal or malformed markers are not milestones;
+other legacy prose remains detectable when no valid final marker exists.
+Existing source/echo exclusions, deduplication and authority boundaries remain.
+
 [scripts/watch.py](scripts/watch.py) notifies one existing Codex supervisor thread of the verified Claude
 coordinator's milestones: failure, review-ready, blocked or question, waiting, completed. Explicit decision/approval
 requests qualify as questions; absent, expected or explicitly resolved failures do not qualify as failure alerts.
