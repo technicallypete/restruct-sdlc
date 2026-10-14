@@ -102,7 +102,14 @@ closeout under this default; an explicit owner retention instruction takes prior
 
 ## Progress compaction
 
-After final ACCEPT and integration closeout, the supervisor assesses PROGRESS:
+After final ACCEPT and integration closeout, the supervisor assesses PROGRESS.
+Every epic closeout is a mandatory periodic compaction checkpoint: compact
+accumulated superseded entries, or record that none need moving. If active-task
+bindings prevent a safe change, record the specific hold and next safe checkpoint.
+Record this disposition before marking epic closeout complete; no new validation
+campaign or tracking framework is needed.
+
+During compaction:
 - keep one current entry per Goal with its disposition, acceptance and review links, dependencies, blockers and
   next gates;
 - move superseded updates into a committed dated archive, `management/<release>/archive/PROGRESS-YYYY-MM-DD.md`

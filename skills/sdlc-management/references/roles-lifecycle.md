@@ -84,6 +84,15 @@ Only final ACCEPT completes a Goal. A merge, a passing pipeline or a delivered m
 migrations, public API or tool-contract changes, new major infrastructure or vendors, irreversible data-model
 decisions. Plan approval never covers a change discovered afterward.
 
+## Epic-closeout progress checkpoint
+
+The supervisor records a PROGRESS compaction disposition at every epic closeout,
+before marking closeout complete: archive superseded updates with working links,
+record none needed, or explain an active-binding deferral and next safe checkpoint.
+Keep current dispositions, dependencies, blockers and acceptance/evidence links visible.
+Preserve history under [closeout policy](closeout-risks.md#progress-compaction);
+this housekeeping alone needs no tests or new tracking framework.
+
 ## Supervisor progress publication (option, enabled by default)
 
 `SUPERVISOR_AUTO_PUBLISH` (default `true`) with an explicit `INTEGRATION_BRANCH`. When it is enabled, the

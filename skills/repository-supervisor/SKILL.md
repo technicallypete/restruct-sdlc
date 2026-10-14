@@ -110,6 +110,11 @@ active SHAs/checkouts, links to contracts, current phase/cycle usage, open findi
 and next gates. Distinguish direct evidence from reports and stale observations.
 Keep approval history and bindings intact; an updated state note is not a release.
 
+At every epic closeout, perform the repository's PROGRESS compaction checkpoint before marking closeout complete.
+Archive superseded updates with working links and preserve the concise current index, acceptance and failure history.
+Record a no-change outcome when nothing needs moving, or a specific active-binding deferral and next safe checkpoint.
+This is supervisor housekeeping, not another validation campaign or permission to rebind active work.
+
 Send concise references to those records using the handoff helper. Its root
 management delivery log tracks attempts/receipt IDs, not acceptance or execution.
 After every completed review, notify the responsible verified Claude session

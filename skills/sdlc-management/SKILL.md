@@ -87,6 +87,10 @@ assess target deltas before batches, reconcile relevant/unknown changes and alwa
 Select expensive CI meta-tests by their actual dependencies; retain required application/security evidence.
 Existing approved bindings remain in force until explicitly amended.
 
+Every epic closeout requires a supervisor-owned [PROGRESS compaction checkpoint](references/closeout-risks.md#progress-compaction):
+archive superseded updates, record none needed, or document an active-binding hold and next safe checkpoint.
+Preserve current status and linked history; this housekeeping alone requires no test rerun.
+
 ## References
 
 | Reference | Covers |
