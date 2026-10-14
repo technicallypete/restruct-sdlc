@@ -27,6 +27,8 @@ After a task is integrated, the supervisor automatically starts planning the nex
 
 After final predecessor acceptance, the supervisor automatically reassesses the provisional Plan against the accepted repository state. Material changes receive bounded Plan updates and review; otherwise it reconciles inputs. Once all approval, dependency, owner-decision, budget and readiness gates close, the supervisor records and dispatches execution without another routine owner-proceed prompt. Explicit holds remain; a Plan or green pipeline alone is not release.
 
+Automatic continuation stops at missing Specs unless the owner explicitly records a specification mandate through a named inclusive endpoint, task range or pinned epic. Owner stop/phase limits independently override continuation even when Specs or approved Plans exist: "stop before G013" excludes it; "finish G013, then stop" includes its closeout but no successor lookahead. Ambiguous boundaries are held for clarification. These are examples, not live task authorizations.
+
 ## Skills
 
 | Skill | Responsibility |

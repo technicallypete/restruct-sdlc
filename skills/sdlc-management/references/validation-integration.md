@@ -4,6 +4,14 @@ Generic policy first, then the configurable options, then a concrete GitLab/glab
 adaptation points: replace the adapter commands with the provider's equivalents; nothing else here is claimed for
 them. The instantiated runbook is `templates/docs/agents/BRANCH-WORKFLOW.md.tmpl`.
 
+## Owner mandate and stop bounds
+
+Check [recorded mandates/stops](roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries)
+before every continuation. A ready Spec/accepted Plan or green pipeline does not
+override an owner stop. Do not start successor lookahead while finishing the
+endpoint task's CI/closeout. Auto-specification needs explicit bounded owner
+authority; an epic mandate neither expands membership nor resets Goal budgets.
+
 ## Planning overlap
 
 After verified integration, apply [automatic planning](roles-lifecycle.md#automatic-planning-after-integration)

@@ -75,6 +75,13 @@ Neither skill grants a supervisor role merely by being loaded.
 
 ## Supervise the next authorized action
 
+Before any automatic transition, check recorded owner specification/work/phase/stop bounds. Missing Specs stop
+continuation unless explicitly authorized within a recorded endpoint/range or pinned epic. Spec-only mandates
+stop at documentation; full-lifecycle mandates retain every gate. Stops override existing Specs/accepted Plans,
+including lookahead planning during CI; clarify ambiguous endpoints before crossing and do not skip to later tasks.
+Record owner instruction, membership, phase/endpoint and resume authority in existing PROGRESS/handoff records.
+Policy examples grant no actual epic/range. See [mandates and stops](../sdlc-management/references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).
+
 After verified integration, automatically dispatch planning for the earliest eligible next roadmap task with an
 existing ready supervisor-owned Goal/Spec; no separate owner prompt. Reuse its current planner if assigned. Label
 pending predecessor acceptance provisional, record baseline/holds and preserve explicit owner deferrals. Planning
@@ -90,7 +97,9 @@ specific holds, native permissions and delivery barriers; a Plan or green pipeli
 
 - **Goal/Spec:** reconcile the actual accepted predecessor and roadmap; define a
   bounded measurable outcome, non-goals, dependencies, AC evidence, budget and
-  stops using repository conventions. Do not authorize a whole epic in one batch.
+  stops using repository conventions. A recorded owner epic mandate may cover
+  sequential specification/delivery; keep separate bounded Goals and reviews,
+  and never infer epic authority or expand its pinned membership.
 - **Plan review:** compare the exact Plan and changed inputs with the Spec, all
   ACs, security/architecture, budget and required evidence. Reuse accepted controls.
   Resolve a mechanical binding change without reopening settled design unless a

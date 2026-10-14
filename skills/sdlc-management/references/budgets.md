@@ -65,6 +65,10 @@ work.
 
 ## Proportional process
 
+An owner range/epic mandate never combines, resets or extends individual Goal
+budgets. Assign each newly specified Goal its normal class; exhaustion and
+owner work/phase/endpoint stops still hold while a broader mandate is unfinished.
+
 Scale Plan and evidence detail to scope and risk ([risk tiers](adoption.md#risk-tiers)). Reference unchanged
 accepted controls by path and version instead of rebuilding them. After the initial reading, re-read only changed
 sections and unresolved findings. A new execution framework or orchestration library is separate scope, not an

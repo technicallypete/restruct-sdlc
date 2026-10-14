@@ -44,6 +44,22 @@ Results follow the formats in the roles reference.
 Only final ACCEPT completes a Goal. Plan approval, readiness and conditional integration are distinct earlier
 states. Formal reviews return exactly one of **ACCEPT**, **CORRECTION LOOP** or **ARCHITECTURE DECISION REQUIRED**.
 
+## Bounded specification authority and owner stop boundaries
+
+Automatic continuation stops at a missing Spec unless {{OWNER_ROLE}} explicitly
+authorizes {{SUPERVISOR_AGENT}} to write Goals/Specs within a recorded named
+inclusive endpoint, task set/range or pinned epic. Record the owner instruction,
+roadmap commit/task membership, start, allowed phases, endpoint and stop/resume
+authority in existing PROGRESS/handoff records. No implicit expansion or new registry.
+Specification-only mandates stop at docs; full-epic delivery mandates retain
+separate Goal budgets and every review/dependency/binding/permission/barrier gate.
+Independent owner stops override continuation even with ready Specs/approved
+Plans; check before advance planning during CI. "Stop before G013" excludes it;
+"finish G013 then stop" includes closeout but no successor planning. Clarify an
+ambiguous "stop at/next task" before crossing it. Pause out-of-bound work safely,
+preserve artifacts and owner decision history, and never skip to a later task.
+See [mandates and stops](.agents/skills/sdlc-management/references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).
+
 ## Automatic planning after integration
 
 After verified integration into `{{INTEGRATION_BRANCH}}`, {{SUPERVISOR_AGENT}}

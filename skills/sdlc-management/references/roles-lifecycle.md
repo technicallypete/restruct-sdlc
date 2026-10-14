@@ -84,6 +84,47 @@ Only final ACCEPT completes a Goal. A merge, a passing pipeline or a delivered m
 migrations, public API or tool-contract changes, new major infrastructure or vendors, irreversible data-model
 decisions. Plan approval never covers a change discovered afterward.
 
+## Bounded specification authority and owner stop boundaries
+
+Automatic continuation does not authorize new Goals/Specs. Without an explicit
+recorded owner mandate, stop at a missing/draft Spec and report the gap. The
+supervisor retains Goal/Spec ownership; implementers do not invent scope.
+
+The owner may authorize specification through an inclusive named task/Spec,
+an explicit task set/range or a named epic. Record the owner instruction/reference,
+allowed phases, start, exact task membership, inclusive/exclusive endpoint and
+stop/resumption disposition in existing PROGRESS/handoff records. Pin the
+roadmap commit: dependency order, not numeric IDs, governs; later inserted tasks
+do not silently enlarge the mandate. Do not create an authorization registry.
+
+Specification-only authority is a phase stop: it does not automatically permit
+planning/implementation when the Spec becomes ready. A full-epic mandate may
+explicitly include missing Goals/Specs and normal delivery, retaining separate
+Goal budgets, reviews, dependencies, bindings and acceptance. Other separately
+authorized tasks remain unaffected. Missing prerequisites outside the mandate
+or owner-owned architecture decisions still escalate.
+
+An independent owner stop overrides specification, planning, reconciliation
+and execution, even with an existing Spec/accepted Plan. Check it before every
+automatic transition, including advance planning while current CI/closeout runs.
+Examples only, not current authorizations:
+- "Auto-spec through G013 inclusive": the recorded specification range only.
+- "Finish EPIC-004 including missing Goals/Specs, then stop": the pinned epic
+  and normal gated delivery, not a rolling authorization for later epics.
+- "Stop before G013": no G013 specification/planning/execution.
+- "Finish G013, then stop": complete G013 acceptance/closeout, with no successor
+  specification or planning during its CI overlap, even if a Spec exists.
+- "Plan G013, then stop": no implementation under that phase-limited mandate.
+
+Record the interpretation of "stop at"/"next task". If identity or before/after
+meaning is ambiguous, hold before crossing it and clarify, preserving work
+within clear bounds. Cancel queued continuation past a new stop; pause existing
+out-of-bounds work at a safe point, preserving artifacts, cleanup and truthful
+status. "Stop now" remains immediate. The earlier/more restrictive endpoint or
+stop wins until explicitly changed by the owner; retain decision history and
+never infer resumption from a merge/observer event or skip to a later task.
+Native permissions, budget exhaustion and delivery barriers still govern.
+
 ## Automatic planning after integration
 
 Standing owner policy: once a task is verified integrated into the configured
@@ -91,7 +132,9 @@ integration branch, the supervisor starts planning for the earliest eligible nex
 task in roadmap dependency order if a complete supervisor-owned Goal/Spec exists.
 No new owner planning prompt is required. Check existing task ownership first;
 resume the assigned planner instead of creating a duplicate. Missing/draft Specs
-or unresolved planning prerequisites are reported, not filled by invented scope.
+or unresolved planning prerequisites are reported, not filled by invented scope;
+only a matching explicit bounded mandate permits supervisor specification first.
+Check recorded owner phase/stop limits even for a ready Spec.
 
 Planning can overlap predecessor CI, final acceptance and cleanup: label the
 Plan provisional, record the actual integrated commit and remaining dependencies,

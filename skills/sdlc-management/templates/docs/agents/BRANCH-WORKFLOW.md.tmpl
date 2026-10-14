@@ -4,6 +4,13 @@ Integration branch: `{{INTEGRATION_BRANCH}}`. Release branch: `{{RELEASE_BRANCH}
 {{PROTECTED_BRANCHES}}. CI provider: `{{CI_PROVIDER}}`; merge-request tool: `{{MR_TOOL}}`. Generic policy:
 [validation and integration](../../.agents/skills/sdlc-management/references/validation-integration.md).
 
+## Owner mandate and stop bounds
+
+Check [mandates and stops](../../.agents/skills/sdlc-management/references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries)
+before automatic specification/planning/release. Missing Specs need bounded
+owner authority; ready Specs/approved Plans never override a stop. No successor
+lookahead during endpoint CI/closeout; clarify ambiguous boundaries before crossing.
+
 ## Automatic next-task planning
 
 After verified integration into `{{INTEGRATION_BRANCH}}`, start planning the

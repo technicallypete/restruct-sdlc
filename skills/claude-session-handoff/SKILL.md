@@ -266,6 +266,11 @@ clean output; avoid replaying terminal redraws into conversation context.
 
 ## Send a handoff
 
+For bounded specification/epic mandates or stop changes, cite the actual recorded owner instruction, exact task
+membership/endpoint and permitted phases. Stops override existing Specs/Plans and automatic lookahead; verify
+acknowledgment and safe pauses of affected work. No notice/receipt creates mandate or resume authority. See
+[mandates and stops](../sdlc-management/references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).
+
 An adopting repository's automatic post-integration planning rule can supply standing authority for a bounded
 planning dispatch. Verify the ready Goal/Spec and task owner, label pending dependencies provisional and relay the
 remaining execution gates. Neither a merge notice nor this helper independently authorizes planning or execution;
