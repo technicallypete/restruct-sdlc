@@ -32,6 +32,36 @@ unconfirmed and incomplete records keep their bytes. Before removing a linked wo
 delivery log byte for byte into the same archive and record both hashes. See
 [claude-session-handoff](../../claude-session-handoff/SKILL.md) for exact commands and refusals.
 
+## Bounded routine cleanup
+
+- Record task/job ownership when creating temporary paths, containers, images and
+  volumes, using the existing run inventory. Capture exact IDs and mounted volume
+  names while the creating container still exists. Use the existing interruption
+  cleanup; names, age and current non-use alone do not establish ownership.
+- The coordinator performs routine cleanup; the supervisor checks its compact
+  receipt. Reuse the existing cleanup mechanism, retained decisions and inventories.
+  Use one scoped preflight and one removal pass, with immediate checks for mutable
+  targets. Do not create another Goal, Plan, registry or verification framework, or
+  require new per-file hashes for disposable bulk output. Existing approved hash,
+  retention and recovery requirements remain binding.
+- Check task-relevant processes and mounts. Unrelated host services or container
+  churn are not blockers by themselves. Hold an uncertain or live item, explain
+  why, and clean the independently verified remainder. Required active-run resource
+  cleanup gates still apply; this does not permit starting another batch with
+  unresolved required resources.
+- After interruption, preserve the partial receipt and continue unfinished items;
+  verify completed items rather than redo them. Do not restart unrelated tests or
+  repeatedly rebuild inventories because one item is held.
+- On a native permission refusal, report the exact action and reason once and
+  request supported owner handling. No repeated approval relays, rephrased retries,
+  settings changes or executor substitution to bypass a denial. Include genuine
+  human mid-turn decisions when checking authorization; never invent one.
+
+Closeout records need the task, ownership source, removed/retained counts and bytes,
+retained proof locations, and held items with reasons. Partial cleanup is reported
+as partial. Unverified volumes remain held; a targeted exception does not stall
+all verified cleanup. This is a bounded operational step, not another test campaign.
+
 ## Local validation evidence: retain a compact record, purge bulk output
 
 Default closeout policy: after final ACCEPT, integration and required qualification,

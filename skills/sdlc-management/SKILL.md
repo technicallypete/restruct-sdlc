@@ -79,6 +79,8 @@ for detection limits, preserved deduplication and fail-closed recovery. Effort b
 Details: [roles and lifecycle](references/roles-lifecycle.md).
 After verified terminal closeout, retain compact attributable evidence and purge redundant task-owned local
 validation output by default; protect active inputs and session archives. See [evidence cleanup](references/closeout-risks.md#local-validation-evidence-retain-a-compact-record-purge-bulk-output).
+Record resource ownership at creation and use [bounded routine cleanup](references/closeout-risks.md#bounded-routine-cleanup):
+one scoped pass, a compact receipt, and individual holds instead of another verification campaign.
 
 ## References
 
