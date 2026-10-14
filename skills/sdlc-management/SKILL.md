@@ -82,6 +82,11 @@ validation output by default; protect active inputs and session archives. See [e
 Record resource ownership at creation and use [bounded routine cleanup](references/closeout-risks.md#bounded-routine-cleanup):
 one scoped pass, a compact receipt, and individual holds instead of another verification campaign.
 
+Validation follows [Git-first provenance and proportionate coverage](references/validation-integration.md):
+assess target deltas before batches, reconcile relevant/unknown changes and always reconcile before final/MR.
+Select expensive CI meta-tests by their actual dependencies; retain required application/security evidence.
+Existing approved bindings remain in force until explicitly amended.
+
 ## References
 
 | Reference | Covers |

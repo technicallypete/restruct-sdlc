@@ -25,7 +25,8 @@ None, or the change with risk handling.
 
 ## 6. Validation batches
 
-Before every batch: fetch, rebase onto `origin/{{INTEGRATION_BRANCH}}` if needed, reconcile bindings, run
+Before every batch: fetch and assess target-delta relevance to validation and authority. Reconcile relevant/unknown
+changes; record any permitted irrelevant-delta deferral under the validation policy. Reconcile before final/MR and run
 {{PRE_BATCH_ENV_CHECK}}. Batches finish, fix, rerun, advance. Manual feedback precedes final qualification.
 
 | Batch | Runs | Evidence |

@@ -40,14 +40,33 @@ A batch is a named group of local checks (focused tests, builds, lint, controls,
 batch on a temporary Goal branch:
 
 1. Fetch the remote target (`origin/<INTEGRATION_BRANCH>`).
-2. `git merge-base --is-ancestor origin/<INTEGRATION_BRANCH> HEAD`; if it fails, rebase. Resolve conflicts while
-   preserving both accepted changes, keep dirty work and immutable bindings, and reconcile changed approved inputs
-   before testing. Never rebase a long-lived or protected branch.
+2. Assess the exact fetched target delta against tested behavior, check dependencies,
+   fixtures/contracts, build/runtime configuration, external inputs and required evidence,
+   plus the task's authority, dependencies, approved bindings and governance. If all are
+   demonstrably unaffected, record target range/candidate/reason in the existing Result
+   and defer rebase/input reconstruction. Otherwise rebase/reconcile before testing.
+   Unknown impact follows reconciliation. Preserve dirty work and immutable bindings;
+   never rewrite a protected branch or change a running test's checkout.
 3. Run `PRE_BATCH_ENV_CHECK` when configured; if it fails, do not launch.
 4. Record target and candidate SHAs and the binding provenance with the batch evidence.
 
 Read-only Git, input-integrity and resource-safety inspections may precede the rebase. No redundant rebase when the
-target has not moved. Never edit or rebase a checkout underneath running tests.
+target has not moved. Always reconcile before final qualification and again before
+MR opening, rerunning affected checks only. No directory-wide management/skills exemption.
+Existing approved active contracts retain their required sequence until explicitly amended.
+
+## Proportionate coverage
+
+Committed test/approval inputs use Git commit/path. Unconsumed status documents
+need no duplicate test snapshot; approval/governance changes still require review.
+Size local coverage to changed behavior, required security criteria and the actual
+path/profile selection. Hosted staging is path-selected, docs-only pipelines may
+be omitted, and cancellation is not passing-test evidence. Keep required local
+coverage and honest failed/interrupted records; reuse unchanged attributable evidence.
+The expensive CI meta-tests are distinct from application tests and may be selected
+only for affected CI/harness/control dependencies; dependency and wrapper controls
+remain separate obligations. Unknown dependencies select CI meta-tests. Existing
+approved snapshots and Goal validation requirements are not silently waived.
 
 ## Finish, fix, rerun, advance
 

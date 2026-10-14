@@ -136,14 +136,20 @@ opts out. Notices, including the transcript-size advisory, carry no authority.
 
 ## Validation and integration
 
+Before each batch, fetch and assess the exact delta for validation and execution-authority impact. If irrelevant
+to both, record the target range/candidate/reason and defer rebase/input reconstruction. Otherwise reconcile;
+unknown impact follows reconciliation. Always reconcile before final qualification and MR opening; keep resource
+checks and existing approved contracts. No blanket folder exemption. Expensive CI meta-tests are selected by
+actual CI/harness/control dependencies; retain required application/security and hosted path-selected coverage.
+
 For new work, Git commit and path bind committed code and reviewed management inputs; the compact Result records
 tested commits, commands, outcomes and relevant runtime inputs. Relevant dirty/untracked changes must be identified.
 Extra snapshots/hashes cover only inputs Git does not capture; preserve existing approved bindings and secret-safe
 handling. Do not create parallel source inventories or retain whole checkout copies by default. See
 [Git-first provenance](.agents/skills/sdlc-management/references/validation-integration.md#git-first-provenance).
 
-Follow the [branch workflow](docs/agents/BRANCH-WORKFLOW.md). Before every local batch: fetch, rebase onto
-`origin/{{INTEGRATION_BRANCH}}` if needed, reconcile bindings and run the environment check
+Follow the [branch workflow](docs/agents/BRANCH-WORKFLOW.md). Before every local batch: fetch, assess the delta,
+reconcile unless the documented irrelevant-delta exception applies, and run the environment check
 ({{PRE_BATCH_ENV_CHECK}}). Batches finish, fix, rerun, then advance. Manual feedback precedes final qualification.
 Final validation placement: `{{FINAL_VALIDATION_PLACEMENT}}`; canceled post-merge pipeline satisfies the gate:
 `{{CANCELED_PIPELINE_SATISFIES}}`. Integrate through reviewed merge requests to `{{INTEGRATION_BRANCH}}` with

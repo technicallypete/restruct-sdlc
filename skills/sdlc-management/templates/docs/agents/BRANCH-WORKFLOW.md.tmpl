@@ -7,8 +7,10 @@ Integration branch: `{{INTEGRATION_BRANCH}}`. Release branch: `{{RELEASE_BRANCH}
 ## Before every local batch
 
 1. `git fetch origin`
-2. `git merge-base --is-ancestor origin/{{INTEGRATION_BRANCH}} HEAD || git rebase origin/{{INTEGRATION_BRANCH}}`
-   (preserve dirty work and bindings; never rewrite protected branches).
+2. Assess the exact target delta for validation and execution-authority impact. Rebase/reconcile relevant or
+   unknown changes, preserving dirty work and bindings. If demonstrably irrelevant to both, record the compared
+   SHAs/reason and defer rebase/input reconstruction. Always reconcile before final qualification and MR opening;
+   never rewrite protected branches.
 3. Environment check: {{PRE_BATCH_ENV_CHECK}}. If it fails, do not launch.
 4. Record target and candidate SHAs and binding provenance.
 
