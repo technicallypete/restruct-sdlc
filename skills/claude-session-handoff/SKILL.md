@@ -116,23 +116,25 @@ new PID revalidates automatically; a changed UUID (copy or fork) shows as
 
 ## Recovery and delegation
 
-Reserve `0-agent-<id>` for the one active persistent coordinator; task workers use
-their task prefixes. Preserve the existing agent ID when available. Naming is
+Reserve `0-agent-<id>` for the one active persistent coordinator; task workers prefer
+their task prefixes when natively supported. Preserve the existing agent ID when available. Naming is
 organizational, not identity/authority: verify discovery and the preferred pin.
 Existing coordinator relocation waits for a supported safe point; do not move a
 directory beneath a live session or restart/create duplicates just for naming.
 
 Before dispatching any replacement, the coordinator checks surviving children
 (`check --child`, `claude agents --json`), `git worktree list` and the Result and
-PROGRESS records. One owner per active task; future workers require task-prefixed
-worktrees. Record the intended path before dispatch and verify actual path/branch/
-worker before task writes. An unsupported generated name needs a recorded
-task-specific Codex exception; do not assume fallback permission. Preserve
-already-active bound paths and never move a live worker for naming. Handoffs carry Goal/Spec/Plan references,
+PROGRESS records. One owner per active task; prefer task/role-prefixed worktrees
+when natively supported. Unsupported naming is a Claude harness bug/limitation,
+never a dispatch blocker: use its default isolated `agent-<id>` worktree without
+a task-specific exception or naming approval prompt. Before task writes, verify
+and record actual task/role/agent/path/branch/HEAD ownership and isolation. Native
+permissions and locks remain binding; preserve active paths and never move a live
+worker or duplicate sessions for naming. Handoffs carry Goal/Spec/Plan references,
 phase, effort and file ownership. Pin, check and send dispatch nothing.
 
-New Claude workers use `<task-id>-agent-<agent-id>-<role>`, with a concise role
-such as `plan`, `check` or `impl`; verify the role in the dispatch path.
+Preferred Claude names are `<task-id>-agent-<agent-id>-<role>` (`plan`, `check`,
+`impl`); with native default names, record the role in the existing dispatch record.
 Codex workers needing isolation use `.codex/worktrees/`; supervisors normally
 stay in the main integration checkout. This does not rename existing live paths.
 

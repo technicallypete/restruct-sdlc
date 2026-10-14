@@ -66,10 +66,12 @@ to the supervisor for reassessment.
 2. One coordinator is active, verified by discovery and the owner-selected pin; never create another for an
    unknown result.
 3. Names grant no authority; discovery, the pin and recorded ownership do.
-4. New workers use `<task-id>-agent-<agent-id>-<role>` under `.claude/worktrees/` (`-plan`, `-check`, `-impl`).
-5. Record the task ID, role and intended path before dispatch; include them in delegated instructions.
-6. Before task writes, report the actual path, branch, owner and role; mismatches stop.
-7. Unsupported naming needs a recorded task-specific {{SUPERVISOR_AGENT}} exception and a verified runtime mapping.
+4. Prefer `<task-id>-agent-<agent-id>-<role>` under `.claude/worktrees/` when natively supported.
+5. Record task/role and preferred path if supported; otherwise use native isolated-worker creation.
+6. Before task writes, verify actual path, branch, HEAD, owner and task/role. Unsafe isolation or wrong ownership
+   stops; the default generated name alone never does.
+7. Unsupported task/role naming is a Claude harness bug/limitation: continue with its native `agent-<id>` worktree,
+   recording the mapping without another exception, approval or operator prompt. No permission/lock bypass.
 8. Never relocate beneath a live process; relocation defers unless every precondition is positively verified.
 9. A permitted relocation is `git worktree move`, verification, same-UUID restart and pin reconciliation.
 

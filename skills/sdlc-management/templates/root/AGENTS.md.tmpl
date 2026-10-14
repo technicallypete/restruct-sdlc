@@ -122,14 +122,15 @@ scope, security or owner direction governs; never assume a client cancellation r
    (`pinned-live-verified`). Unknown or ambiguous discovery never justifies another coordinator.
 3. A directory name grants no authority, identity or routing; discovery, the verified pin and recorded task
    ownership do.
-4. New workers use `<task-id>-agent-<agent-id>-<role>` (for example `g002-agent-<id>-impl`, `-plan`, `-check`).
+4. Prefer `<task-id>-agent-<agent-id>-<role>` when supported (for example `g002-agent-<id>-impl`, `-plan`, `-check`).
    {{IMPLEMENTER_AGENT}} workers live under `.claude/worktrees/`; {{SUPERVISOR_AGENT}} workers that need isolation
    live under `.codex/worktrees/`. Read-only reviewers need no checkout.
-5. Before dispatch, the coordinator records the task ID, role and intended path.
-6. Before any task write, the worker reports `git worktree list --porcelain` path, branch, owner and role; an
-   unprefixed path, a `0-` worker or a role mismatch fails.
-7. If tooling cannot establish the name, the dispatch stops until {{SUPERVISOR_AGENT}} records a task-specific
-   exception and the coordinator records the verified runtime path, branch, agent, task/role and HEAD.
+5. Before dispatch, record task/role and preferred path if supported; otherwise use native isolated-worker creation.
+6. Before task writes, verify actual Git path, branch, HEAD, agent/session owner and task/role. Wrong ownership,
+   branch or unsafe isolation fails; a generated basename alone does not.
+7. Treat unsupported Claude task/role naming as a harness bug/limitation and continue with its native `agent-<id>`
+   worktree, recording the actual task mapping. No task-specific exception or naming approval/prompt is required.
+   Never delay authorized work, duplicate sessions or bypass native permissions merely to enforce a name.
 8. Relocation defers by default: no move beneath a live process, and no restart or duplicate session for naming. A
    move needs complete discovery, positively verified stopped ownership, separately proven absence of cwd and
    open-file users, a quiet state and a recorded supported same-UUID restart.

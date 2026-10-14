@@ -47,7 +47,7 @@ tools serve.
 
 ## Naming, dispatch and relocation gate
 
-This gate is required wording for adopted repositories. It is a procedure, not a claim that any CLI enforces it.
+This procedure preserves ownership/isolation and relocation safety. Naming is a preference, never a dispatch blocker.
 
 1. **Coordinator name.** `0-agent-<id>` is reserved for the single active persistent coordinator, for example
    `.claude/worktrees/0-agent-7f3a2c1`. Its existing agent ID is kept when available. No worker or second session
@@ -58,21 +58,21 @@ This gate is required wording for adopted repositories. It is a procedure, not a
 3. **A name grants no authority.** Directory names are organizational. They never establish session identity,
    select a routing target, grant authority or justify a new or replacement coordinator. Routing and ownership come
    from discovery, the verified pin and recorded task ownership.
-4. **Worker names and roots.** Every new worker needs a task-prefixed isolated worktree named
+4. **Worker names and roots.** Prefer a task-prefixed isolated worktree named
    `<task-id>-agent-<agent-id>-<role>` in lowercase, with a concise role such as `plan`, `check` or `impl`:
    for example `.claude/worktrees/g002-agent-4be91d0-impl`. Claude workers use `.claude/worktrees/`; Codex workers
    that genuinely need isolation use `.codex/worktrees/` with the same convention. Read-only supervisor workers and
    reviewers need no separate checkout. Generated worktree and session state stays private and gitignored.
-5. **Before dispatch,** the coordinator records the task ID, role and intended path, and selects a creation route
-   that can establish that name.
-6. **Before any task write,** the worker verifies and reports the actual Git worktree path and branch (from
-   `git worktree list --porcelain`), its owner (session or agent ID) and its role. An unprefixed path, a reserved
-   `0-` prefix or a role that differs from the dispatch record fails the check.
-7. **Unsupported naming.** If tooling cannot establish the name safely, that dispatch stops. Continuing needs a
-   recorded, task-specific exception from `SUPERVISOR_AGENT` that states the tooling limitation; the coordinator
-   then records and verifies the runtime path, branch, agent identity, task/role and HEAD before any task write,
-   and only that complete mapping activates the exception for that one dispatch. A generated name is never accepted
-   silently, and active bound paths are preserved.
+5. **Before dispatch,** record the task ID, role and preferred path when supported; use native isolated-worker
+   creation if custom naming is unavailable.
+6. **Before any task write,** verify and record the actual worktree path, branch, HEAD, agent/session owner and
+   task/role. Wrong ownership, branch or unsafe isolation fails; a generated basename alone does not.
+7. **Unsupported naming.** Treat Claude's inability to set task/role prefixes as a harness naming bug/limitation
+   pending resolution. Continue immediately with its native generated `agent-<id>` worktree and the verified
+   task/role mapping. No task-specific exception, extra approval or operator prompt is needed solely for naming.
+   Do not create another coordinator, force a move, pre-create an inaccessible checkout, restart a session, add
+   hooks or bypass permissions to enforce the convention. Preserve active bound paths. This supersedes older
+   mandatory-prefix/exception gates without changing actual isolation, ownership or native permission checks.
 8. **Relocation refusal.** No worktree is ever moved beneath a live process or session, and no session is restarted
    or duplicated just for naming. The default is **defer**. Relocating an existing coordinator to `0-agent-<id>`,
    or any rename, proceeds only when **every** precondition is *positively* verified; anything unknown, ambiguous,

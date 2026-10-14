@@ -39,6 +39,12 @@ validation artifacts independently support it. Continuous watching is unnecessar
 
 ## Checkout and delegated review defaults
 
+Treat unsupported Claude task/role worktree naming as a harness bug/limitation;
+continue authorized work with native generated isolated names. Verify/record
+actual task, role, owner, path, branch and HEAD; do not demand another naming
+exception, delay dispatch or rename a live session. Isolation/permission failures
+remain blockers; a cosmetic name alone never is.
+
 Use the main integration checkout for supervision; specifications and read-only
 reviews normally need no separate worktree. Prefer bounded subagents for Spec
 drafting/research and formal reviews, keeping one writer per artifact. Reviewers

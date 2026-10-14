@@ -32,6 +32,14 @@ supervision); routine status checks never require reloading all three.
 
 Not for: product or architecture decisions, permission or provider changes, creating sessions, or CI redesign.
 
+## Native worker naming
+
+Prefer task/role prefixes when supported. Treat unsupported Claude naming as a
+harness bug/limitation and continue with its native isolated `agent-<id>` path,
+recording task/role/agent/path/branch/HEAD. Naming alone never requires a stop,
+exception or operator prompt; ownership/isolation and native permissions remain.
+See [coordination](references/coordination.md#naming-dispatch-and-relocation-gate).
+
 ## Inputs
 
 A parameter file copied from [parameters.example.json](templates/parameters.example.json): project name, release,
