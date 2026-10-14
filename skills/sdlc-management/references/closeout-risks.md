@@ -32,6 +32,44 @@ unconfirmed and incomplete records keep their bytes. Before removing a linked wo
 delivery log byte for byte into the same archive and record both hashes. See
 [claude-session-handoff](../../claude-session-handoff/SKILL.md) for exact commands and refusals.
 
+## Local validation evidence: retain a compact record, purge bulk output
+
+Default closeout policy: after final ACCEPT, integration and required qualification,
+remove bulky task-owned local validation artifacts; do not retain every harness run
+indefinitely. Apply this to already-closed tasks at the next cleanup as well. A
+running, blocked, review-pending or conditionally integrated task is not eligible.
+A canceled/superseded task needs a verified terminal disposition and confirmation
+that no investigation, appeal, dependent task or explicit retention hold needs its
+artifacts. Do not infer eligibility from an idle process or a deleted branch.
+
+Before deletion, the coordinator inventories owned evidence and the supervisor
+verifies a compact retained record linked from Result/closeout. Keep acceptance
+and review history, exact source/input/command/tool/configuration hashes, per-check
+outcomes, failed/skipped/interrupted history and fixes, required manual feedback,
+CI job/pipeline references and necessary selected proof artifacts. Retain input
+snapshots/oracles or other bytes still required to verify a decision or resume a
+dependent task. A hash identifies deleted content; it does not keep that content
+available. Record explicit retention holds, their owner, reason and release gate.
+
+Then purge redundant raw logs, traces/videos, report copies, extracted/build scratch,
+temporary fixtures and bulky per-run outputs covered by that record. Compress
+selected retained proof where useful; compressing all runs is not a substitute
+for purging redundant output. Recheck ownership, resolved containment, symlinks
+and live users before removal; use exact inventoried paths, never broad glob/home/
+state-directory deletion. Shared or unverified content stays put with a reason.
+Do not purge credentials, native session transcripts, handoff logs/archives, active
+observer state or committed Goal/Spec/Plan/Result/review/PROGRESS history under this
+rule. Delivery-record archive-before-prune remains a separate unchanged procedure.
+
+Record paths/categories, retained locations and hashes, deletion time, file count
+and bytes before/after/reclaimed, plus holds. Annotate old local links as purged
+with the retained record; never rewrite a failed run as passing or claim deleted
+artifacts can be downloaded/reused. Local cleanup does not change hosted artifact
+expiry, CI gates, Docker ownership or shared builder-cache pruning authority.
+If retention, safety or summary completeness cannot be verified, report the hold
+instead of deleting. No further owner prompt is needed for routine verified
+closeout under this default; an explicit owner retention instruction takes priority.
+
 ## Progress compaction
 
 After final ACCEPT and integration closeout, the supervisor assesses PROGRESS:
