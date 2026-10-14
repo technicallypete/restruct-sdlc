@@ -108,6 +108,33 @@ delivery barriers. A failed/pending predecessor pipeline is not acceptance.
 Record/relay the planning dispatch and holds in PROGRESS. This is an agent
 workflow, not another watcher, scheduler, transport or permission override.
 
+## Automatic reassessment and execution release
+
+After final predecessor ACCEPT and the repository's required integration CI
+disposition, the supervisor automatically reassesses the next task's existing
+provisional Plan against the actual accepted integration and current Goal/Spec.
+Verify all dependencies and explicit holds; a Plan existing or CI passing alone
+does not authorize implementation.
+
+For material changed assumptions or technical scope, request bounded implementer-
+owned Plan updates, preserve history and review the affected revision. Escalate
+owner decisions. An irrelevant documentation/SHA delta needs a recorded
+reconciliation, not a full replan or changed immutable Plan bytes.
+
+When the Goal/Spec, required Plan ACCEPT (or explicit direct-tier authority),
+dependency ACCEPTs, applicable CI, owner decisions, current input binding,
+budget and resource readiness are satisfied, record execution release in the
+existing review/binding and PROGRESS and relay it to the verified coordinator.
+The implementer begins/resumes scoped work without another routine owner
+"proceed" prompt. Reuse the task owner and naming rules; implementation defaults
+to high effort and budgets are not reset.
+
+Specific owner deferrals/manual approvals, architecture/security escalations,
+native permission gates and delivery barriers remain. Failed/pending required
+checks do not become acceptance. This replaces only the extra routine dispatch
+prompt, never the supervisor's release record. Use existing review/import/relay
+and provenance procedures; no new scheduler, helper or validation campaign.
+
 ## Epic-closeout progress checkpoint
 
 The supervisor records a PROGRESS compaction disposition at every epic closeout,

@@ -80,6 +80,9 @@ Details: [roles and lifecycle](references/roles-lifecycle.md).
 After verified integration, automatically begin planning the earliest eligible roadmap task with an existing ready
 Goal/Spec. Pending predecessor acceptance makes planning provisional; it never releases implementation. See
 [automatic planning](references/roles-lifecycle.md#automatic-planning-after-integration).
+After final dependency acceptance, automatically reassess the provisional Plan and record/relay execution release
+when all review, binding, owner-decision and readiness gates close; no extra routine owner prompt. See
+[execution release](references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
 After verified terminal closeout, retain compact attributable evidence and purge redundant task-owned local
 validation output by default; protect active inputs and session archives. See [evidence cleanup](references/closeout-risks.md#local-validation-evidence-retain-a-compact-record-purge-bulk-output).
 Default durable proof to Git records and CI artifacts; local raw evidence is temporary.

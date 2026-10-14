@@ -57,6 +57,19 @@ Keep Plan approval, dependency ACCEPTs, bindings, budgets and delivery barriers.
 Use existing coordinator/naming/effort rules. See
 [planning policy](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 
+## Automatic reassessment and execution release
+
+After final predecessor ACCEPT and required integration CI disposition,
+{{SUPERVISOR_AGENT}} automatically reassesses the provisional Plan against the
+accepted integration and current Goal/Spec. Material changes need bounded
+{{IMPLEMENTER_AGENT}} Plan updates/review; irrelevant deltas need reconciliation.
+When all dependencies, Plan ACCEPT (or explicit direct-tier authority), current
+binding, owner decisions, budget and resources are ready, record/relay execution
+release and start scoped work without another routine owner-proceed prompt.
+Plan existence/CI alone is insufficient. Preserve specific holds, native
+permissions and delivery barriers; no budget reset or duplicate qualification.
+See [release policy](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
+
 ## Supervisor progress publication
 
 Supervisor auto-publication: `{{SUPERVISOR_AUTO_PUBLISH}}` (enabled by default). When enabled, {{SUPERVISOR_AGENT}},

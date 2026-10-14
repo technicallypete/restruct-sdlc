@@ -81,6 +81,13 @@ pending predecessor acceptance provisional, record baseline/holds and preserve e
 does not release implementation, direct-tier work, test resources or dependency gates. Follow the adopting
 repository's rule or [portable policy](../sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 
+After final predecessor acceptance and applicable integration disposition, automatically reassess the provisional
+Plan against accepted content and current Goal/Spec. Material changes need bounded implementer-owned updates and
+review; irrelevant deltas need reconciliation only. Once all dependencies, Plan/input, owner decisions, budget and
+resource gates close, record/relay execution release and dispatch without another routine owner prompt. Preserve
+specific holds, native permissions and delivery barriers; a Plan or green pipeline alone is not release. Follow
+[release policy](../sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
+
 - **Goal/Spec:** reconcile the actual accepted predecessor and roadmap; define a
   bounded measurable outcome, non-goals, dependencies, AC evidence, budget and
   stops using repository conventions. Do not authorize a whole epic in one batch.

@@ -25,6 +25,8 @@ This bundle implements the software-delivery workflow within Restruct's broader 
 
 After a task is integrated, the supervisor automatically starts planning the next eligible roadmap task when a ready Goal/Spec already exists. Planning may overlap predecessor CI and closeout; implementation still requires its dependency acceptances, Plan approval and input binding. Explicit owner holds remain.
 
+After final predecessor acceptance, the supervisor automatically reassesses the provisional Plan against the accepted repository state. Material changes receive bounded Plan updates and review; otherwise it reconciles inputs. Once all approval, dependency, owner-decision, budget and readiness gates close, the supervisor records and dispatches execution without another routine owner-proceed prompt. Explicit holds remain; a Plan or green pipeline alone is not release.
+
 ## Skills
 
 | Skill | Responsibility |

@@ -12,6 +12,15 @@ acceptance and cleanup; implementation still waits for required final dependency
 acceptance, Plan review and current input binding. Do not reserve the shared test
 stack or repeat predecessor validation merely to write the next Plan.
 
+## Reassessment and execution release
+
+After final predecessor acceptance and applicable CI disposition, automatically
+reassess the provisional Plan using [the release policy](roles-lifecycle.md#automatic-reassessment-and-execution-release).
+Material Plan changes require bounded implementer updates and review; unchanged
+design requires reconciliation only. Verify every execution gate and record/
+relay the supervisor release before work, without another routine owner prompt.
+Use existing binding and relevant validation; no unchanged full rerun for a SHA.
+
 ## Git-first provenance
 
 For new work, Git is the source of truth for committed code and management

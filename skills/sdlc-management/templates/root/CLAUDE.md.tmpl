@@ -19,6 +19,11 @@ record pending dependencies as provisional; inspection/Plan artifacts only.
 This does not release implementation. Follow
 [planning policy](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 
+After [supervisor reassessment/release](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release)
+closes all dependency/review/input/owner-decision gates, begin/resume scoped work
+without another routine owner prompt. A Plan/merge/green pipeline alone is not
+release; material Plan updates require review and specific holds remain.
+
 As coordinator, finish each turn with a plain final status line:
 `COORDINATOR_STATUS: working | TASK-ID | Brief current status.`
 Choose the truthful class and follow the complete
