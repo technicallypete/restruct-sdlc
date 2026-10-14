@@ -117,6 +117,24 @@ name. Changing them would change helper behavior, which needs separate scope.
 `cd`, personal installation, macOS or native Windows, other CLIs or versions (the helper fails closed), and any
 promise of automatic discovery.
 
+## Maintaining a shared package in two repositories
+
+When the owner maintains a canonical project package and a separate distribution
+repository, a publishable shared-package change includes syncing the mapped files,
+updating provenance/manifest hashes and committing/pushing both repositories
+through their authorized routes. Verify both remote commits before reporting
+the sync complete. File equality alone is not publication; two independent Git
+histories require two pushes. Do not push unrelated project/private files.
+
+Mapped portable files should match the reviewed source; README, license/release
+metadata and explicitly documented adaptations need not match the project tree.
+Preserve pending unaccepted work and record any held divergence with its reason
+and release condition instead of sweeping it into a public commit. If one push
+fails, report the partial state and complete the outstanding sync when authorized;
+never claim both are current. Tags/releases, breaking migrations, live cutover,
+specific publication holds and native permissions retain their separate gates.
+No nested Git repository, new submodule or synchronization daemon is implied.
+
 ## Composing with a foundation or renderer skill
 
 When this skill is used together with `saas-foundation` (or a similar renderer skill), **`sdlc-management`
