@@ -4,6 +4,36 @@ Generic policy first, then the configurable options, then a concrete GitLab/glab
 adaptation points: replace the adapter commands with the provider's equivalents; nothing else here is claimed for
 them. The instantiated runbook is `templates/docs/agents/BRANCH-WORKFLOW.md.tmpl`.
 
+## Git-first provenance
+
+For new work, Git is the source of truth for committed code and management
+artifacts. Bind reviewed inputs by repository, commit and path; record the tested
+candidate and fetched target commit in the Result. A commit identifies bytes, not
+approval or passing tests. Check for relevant tracked/untracked changes before
+claiming a run tested that commit; commit scoped implementation checkpoints before
+final qualification rather than building another source-tracking framework.
+
+Record actual commands, outcomes (including failures/interruptions), relevant tool
+versions, image IDs/digests and non-secret runtime configuration references in a
+compact Result. Link required CI jobs and selected proof artifacts. Git does not
+capture external runtime inputs or establish what executed.
+
+Snapshot/hash only relevant inputs not identified by Git: reviewed uncommitted
+changes, external configuration/fixtures or mutable artifacts. Preserve necessary
+bytes when verification or a dependent task needs them; a hash alone is not
+recoverability. Use existing secret-safe private handling for credentials; never
+commit secrets. Do not inventory/hash every committed file again, archive whole
+checkout copies or create a parallel evidence registry by default.
+
+Retain compact attributable outcomes and necessary proof, then use the existing
+closeout policy to purge disposable local bulk output. Do not erase failed-run
+history or treat a changed commit SHA alone as reason to repeat unchanged tests.
+
+This default applies to new Goals/Plans. Existing approved snapshots, wrappers,
+retention rules and exact input bindings remain required unless explicitly amended
+and reviewed; active work is not silently rebound or replanned. Security/authority,
+acceptance, rebase, CI and resource-safety gates are unchanged.
+
 ## Before every batch
 
 A batch is a named group of local checks (focused tests, builds, lint, controls, full runs). Before launching each

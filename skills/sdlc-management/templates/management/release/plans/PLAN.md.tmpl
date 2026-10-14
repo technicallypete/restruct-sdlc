@@ -2,15 +2,18 @@
 
 Revision r1, YYYY-MM-DD. Author: {{IMPLEMENTER_AGENT}}. Status: proposed for {{SUPERVISOR_AGENT}} review.
 
-- Inputs: Goal and Spec revisions with SHA-256; base `origin/{{INTEGRATION_BRANCH}}` `<sha>`.
+- Inputs: reviewed Goal/Spec repository, commit and paths; base `origin/{{INTEGRATION_BRANCH}}` `<sha>`.
 - Tier and budget: `<tier>`, `<class>` (checkpoint per class).
 
 ## 1. Approach
 
-## 2. Bound inputs
+## 2. Source binding and extra inputs
 
-| Path | SHA-256 |
-|---|---|
+Committed inputs are bound by Git commit and path. List only relevant non-Git inputs or dirty reviewed changes
+needing extra snapshots/hashes, with their reason and retention location. Honor existing approved bindings.
+
+| Input | Git commit/path or extra snapshot/hash | Reason for extra binding |
+|---|---|---|
 
 ## 3. Files
 
