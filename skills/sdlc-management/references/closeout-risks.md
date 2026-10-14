@@ -100,6 +100,31 @@ If retention, safety or summary completeness cannot be verified, report the hold
 instead of deleting. No further owner prompt is needed for routine verified
 closeout under this default; an explicit owner retention instruction takes priority.
 
+### Local evidence is temporary — owner direction, 2026-10-14
+
+Default durable evidence locations are committed Result/review records and the
+existing CI pipeline artifacts, not a permanent local evidence archive. Hosted
+runs already publish artifacts; do not keep duplicate downloads after review.
+During active work keep only what is needed to diagnose, review or resume it.
+At verified closeout purge raw logs/reports, traces/screenshots, copied tools/SDKs,
+fixtures and caches; retain compact commands, outcomes (including failures),
+source references and pipeline/job links in Git. Local-only/manual evidence may
+be published as sanitized artifacts through an existing authorized publication
+path when suitable; do not create another pipeline or upload secrets just to
+archive it. No new artifact service or CI redesign is required.
+
+Keep local proof only for a specific outstanding verification/dependency or
+required manual record unavailable elsewhere. Record why, owner and release
+condition; closure releases routine scratch holds, not an explicit unresolved
+investigation. Hosted artifacts may expire: preserve a necessary selected proof
+before expiry or acknowledge that the raw bytes are unavailable. A hash or CI
+link does not guarantee indefinite retention. Expiry alone is not a reason to
+mirror every artifact locally. Purging raw files preserves their documented
+failures and acceptance history. Private live bindings, code approvals, session
+transcripts/handoff archives and observer state are separate operational state,
+not disposable validation evidence. Apply bounded ownership/live-use checks;
+no per-file hashing campaign or new cleanup system is required.
+
 ## Progress compaction
 
 After final ACCEPT and integration closeout, the supervisor assesses PROGRESS.
