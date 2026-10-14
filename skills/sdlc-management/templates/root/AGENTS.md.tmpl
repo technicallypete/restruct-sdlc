@@ -44,6 +44,19 @@ Results follow the formats in the roles reference.
 Only final ACCEPT completes a Goal. Plan approval, readiness and conditional integration are distinct earlier
 states. Formal reviews return exactly one of **ACCEPT**, **CORRECTION LOOP** or **ARCHITECTURE DECISION REQUIRED**.
 
+## Automatic planning after integration
+
+After verified integration into `{{INTEGRATION_BRANCH}}`, {{SUPERVISOR_AGENT}}
+automatically starts planning the earliest eligible roadmap task with a ready
+existing Goal/Spec, without another owner prompt. Reuse an existing planner;
+specific owner holds remain. Pending predecessor CI/acceptance/cleanup makes
+planning provisional: record the integrated baseline and gates, and reconcile
+final accepted inputs before execution. Inspection and Plan/history only;
+no code/tests/builds/shared-stack use or direct-tier execution from this trigger.
+Keep Plan approval, dependency ACCEPTs, bindings, budgets and delivery barriers.
+Use existing coordinator/naming/effort rules. See
+[planning policy](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
+
 ## Supervisor progress publication
 
 Supervisor auto-publication: `{{SUPERVISOR_AUTO_PUBLISH}}` (enabled by default). When enabled, {{SUPERVISOR_AGENT}},

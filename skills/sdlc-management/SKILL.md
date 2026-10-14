@@ -77,6 +77,9 @@ include failures and explicit decision/approval requests, with no approval autho
 [observer procedure](../claude-session-handoff/SKILL.md#coordinator-milestone-observer-opt-in-here-an-adopting-repository-may-default-enable-it-after-verified-bindings)
 for detection limits, preserved deduplication and fail-closed recovery. Effort by role: coordinator high (xhigh when planning), planning workers xhigh, implementation workers high.
 Details: [roles and lifecycle](references/roles-lifecycle.md).
+After verified integration, automatically begin planning the earliest eligible roadmap task with an existing ready
+Goal/Spec. Pending predecessor acceptance makes planning provisional; it never releases implementation. See
+[automatic planning](references/roles-lifecycle.md#automatic-planning-after-integration).
 After verified terminal closeout, retain compact attributable evidence and purge redundant task-owned local
 validation output by default; protect active inputs and session archives. See [evidence cleanup](references/closeout-risks.md#local-validation-evidence-retain-a-compact-record-purge-bulk-output).
 Default durable proof to Git records and CI artifacts; local raw evidence is temporary.

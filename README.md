@@ -23,6 +23,8 @@ This bundle implements the software-delivery workflow within Restruct's broader 
 [Explore Restruct](https://vestive.com/restruct-methodology) or read the
 [AI as Governed Execution chapter](https://vestive.com/restruct-methodology/ai-as-governed-execution).
 
+After a task is integrated, the supervisor automatically starts planning the next eligible roadmap task when a ready Goal/Spec already exists. Planning may overlap predecessor CI and closeout; implementation still requires its dependency acceptances, Plan approval and input binding. Explicit owner holds remain.
+
 ## Skills
 
 | Skill | Responsibility |

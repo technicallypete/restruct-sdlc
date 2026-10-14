@@ -75,6 +75,12 @@ Neither skill grants a supervisor role merely by being loaded.
 
 ## Supervise the next authorized action
 
+After verified integration, automatically dispatch planning for the earliest eligible next roadmap task with an
+existing ready supervisor-owned Goal/Spec; no separate owner prompt. Reuse its current planner if assigned. Label
+pending predecessor acceptance provisional, record baseline/holds and preserve explicit owner deferrals. Planning
+does not release implementation, direct-tier work, test resources or dependency gates. Follow the adopting
+repository's rule or [portable policy](../sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
+
 - **Goal/Spec:** reconcile the actual accepted predecessor and roadmap; define a
   bounded measurable outcome, non-goals, dependencies, AC evidence, budget and
   stops using repository conventions. Do not authorize a whole epic in one batch.

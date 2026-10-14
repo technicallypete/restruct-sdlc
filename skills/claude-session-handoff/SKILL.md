@@ -266,6 +266,11 @@ clean output; avoid replaying terminal redraws into conversation context.
 
 ## Send a handoff
 
+An adopting repository's automatic post-integration planning rule can supply standing authority for a bounded
+planning dispatch. Verify the ready Goal/Spec and task owner, label pending dependencies provisional and relay the
+remaining execution gates. Neither a merge notice nor this helper independently authorizes planning or execution;
+see [lifecycle policy](../sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
+
 For an already-authorized instruction, write its concise text to a local file and
 reference the actual repository root's management documents:
 

@@ -84,6 +84,30 @@ Only final ACCEPT completes a Goal. A merge, a passing pipeline or a delivered m
 migrations, public API or tool-contract changes, new major infrastructure or vendors, irreversible data-model
 decisions. Plan approval never covers a change discovered afterward.
 
+## Automatic planning after integration
+
+Standing owner policy: once a task is verified integrated into the configured
+integration branch, the supervisor starts planning for the earliest eligible next
+task in roadmap dependency order if a complete supervisor-owned Goal/Spec exists.
+No new owner planning prompt is required. Check existing task ownership first;
+resume the assigned planner instead of creating a duplicate. Missing/draft Specs
+or unresolved planning prerequisites are reported, not filled by invented scope.
+
+Planning can overlap predecessor CI, final acceptance and cleanup: label the
+Plan provisional, record the actual integrated commit and remaining dependencies,
+and reconcile the final accepted predecessor before execution. Explicit owner
+holds remain. This replaces routine separate planning-dispatch prompts, not
+specific owner deferrals or architecture decisions.
+
+Dispatch through the verified coordinator at planning effort xhigh with existing
+worktree/naming and single-owner rules. Scope is inspection and Plan/history
+artifacts, not application/test writing, installs, builds or shared validation
+resources; probes need separate authority. Implementation, including direct-tier
+work, retains dependency ACCEPTs, required Plan review/input binding, budgets and
+delivery barriers. A failed/pending predecessor pipeline is not acceptance.
+Record/relay the planning dispatch and holds in PROGRESS. This is an agent
+workflow, not another watcher, scheduler, transport or permission override.
+
 ## Epic-closeout progress checkpoint
 
 The supervisor records a PROGRESS compaction disposition at every epic closeout,

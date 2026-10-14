@@ -4,6 +4,15 @@ Integration branch: `{{INTEGRATION_BRANCH}}`. Release branch: `{{RELEASE_BRANCH}
 {{PROTECTED_BRANCHES}}. CI provider: `{{CI_PROVIDER}}`; merge-request tool: `{{MR_TOOL}}`. Generic policy:
 [validation and integration](../../.agents/skills/sdlc-management/references/validation-integration.md).
 
+## Automatic next-task planning
+
+After verified integration into `{{INTEGRATION_BRANCH}}`, start planning the
+earliest eligible task with an existing ready Goal/Spec, using the verified
+coordinator and one planner. Record baseline/holds; pending predecessor CI,
+acceptance or cleanup permits provisional planning only. No implementation,
+shared test-stack work or bypass of explicit holds. Follow
+[planning policy](../../.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
+
 ## Before every local batch
 
 1. `git fetch origin`

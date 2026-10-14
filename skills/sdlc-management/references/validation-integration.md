@@ -4,6 +4,14 @@ Generic policy first, then the configurable options, then a concrete GitLab/glab
 adaptation points: replace the adapter commands with the provider's equivalents; nothing else here is claimed for
 them. The instantiated runbook is `templates/docs/agents/BRANCH-WORKFLOW.md.tmpl`.
 
+## Planning overlap
+
+After verified integration, apply [automatic planning](roles-lifecycle.md#automatic-planning-after-integration)
+for the next eligible existing Goal/Spec. Provisional planning may overlap CI,
+acceptance and cleanup; implementation still waits for required final dependency
+acceptance, Plan review and current input binding. Do not reserve the shared test
+stack or repeat predecessor validation merely to write the next Plan.
+
 ## Git-first provenance
 
 For new work, Git is the source of truth for committed code and management
