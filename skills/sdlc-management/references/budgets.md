@@ -109,3 +109,11 @@ or inherited model/effort, otherwise report unknown; prose does not configure a
 worker. Apply at the next phase or safe boundary, never by interrupting a running
 batch or restarting completed work. Preserve budgets, evidence, permissions and
 bindings; do not switch the current G013 worker mid-batch.
+
+Fable test-correction workers may escalate from high to xhigh when diagnosis is
+uncertain, a fix fails again, or the correction becomes substantially more
+complex. This owner-authorized effort increase needs no repeat approval. Apply
+through supported controls at the next safe boundary and record the reason and
+actual setting (or unknown) in the Result. Do not interrupt a running batch.
+Existing repeated-issue escalation and budget stops still apply; higher effort
+does not reset attempts or expand scope.
