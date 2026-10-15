@@ -169,3 +169,13 @@ For a Git-backed bundle, verify a copy without its VCS metadata rather than weak
 links, template placeholders and adoption links, reachability, file types, forbidden content and the bundle
 manifest. `adoption` checks an instantiated repository: required paths, rendered links, leftover placeholders, Goal
 fields, ignore lines and forbidden content. Tests: [scripts/test_check_sdlc.py](scripts/test_check_sdlc.py).
+
+## Model-aware effort override — 2026-10-15
+
+Fable 5.1 planning/review/diagnosis/corrections default to high, with xhigh reserved
+for especially difficult work. If the owner selects Opus 5.5 for planning or test
+corrections/diagnosis, use xhigh; routine implementation, test execution and
+coordination stay high. This overrides generic role-effort defaults for those
+models/phases. Honor owner choices, verify actual settings or report unknown,
+and apply only at the next phase/safe boundary without restarting completed work,
+interrupting a batch or resetting budgets. Prose does not configure the runtime.

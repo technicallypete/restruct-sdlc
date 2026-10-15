@@ -91,3 +91,21 @@ Scale Plan and evidence detail to scope and risk ([risk tiers](adoption.md#risk-
 accepted controls by path and version instead of rebuilding them. After the initial reading, re-read only changed
 sections and unresolved findings. A new execution framework or orchestration library is separate scope, not an
 incidental prerequisite.
+
+## Model-aware effort precedence — owner direction, 2026-10-15
+
+For Claude Fable 5.1 use **high** for planning, reviews, diagnosis and correction
+loops; use **xhigh** selectively for especially difficult architecture, security
+or concurrency work. When the owner chooses **Opus 5.5 for planning or test
+corrections**, use **xhigh**, including failure diagnosis and corrective test/fix
+work. Opus routine implementation, ordinary test execution/reporting and
+coordinator status/handoffs remain **high**. A correction phase is distinct from
+merely running an unchanged test command.
+
+These model-aware values supersede blanket planning-xhigh or implementation-high
+wording for the affected phases, without changing generic parameter fallbacks.
+Owner choices take precedence. Use supported runtime controls and verify actual
+or inherited model/effort, otherwise report unknown; prose does not configure a
+worker. Apply at the next phase or safe boundary, never by interrupting a running
+batch or restarting completed work. Preserve budgets, evidence, permissions and
+bindings; do not switch the current G013 worker mid-batch.

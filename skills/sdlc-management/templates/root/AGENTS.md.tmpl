@@ -216,3 +216,13 @@ or committed history under this rule. Archive session records before pruning. Co
 a recorded compaction disposition: archive superseded updates, record no changes needed, or explain an
 active-binding deferral and its next safe checkpoint. Compaction alone needs no test rerun. Record
 performance and other risks in [RISKS](docs/RISKS.md).
+
+## Model-aware effort override — 2026-10-15
+
+Fable 5.1 planning/review/diagnosis/corrections default to high, with xhigh reserved
+for especially difficult work. If the owner selects Opus 5.5 for planning or test
+corrections/diagnosis, use xhigh; routine implementation, test execution and
+coordination stay high. This overrides generic role-effort defaults for those
+models/phases. Honor owner choices, verify actual settings or report unknown,
+and apply only at the next phase/safe boundary without restarting completed work,
+interrupting a batch or resetting budgets. Prose does not configure the runtime.

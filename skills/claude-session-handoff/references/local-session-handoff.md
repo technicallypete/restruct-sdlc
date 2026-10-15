@@ -175,3 +175,13 @@ from the saved cursor. Both retain deduplication and advisory history; unresolve
 activation, and an already-running observer's cursor is never reset. The standalone companion is opt-in; adopted
 repositories may default-enable it after verified bindings. See [the skill](../SKILL.md) for commands, private-state
 safety, version support, size advisories and suspension/recovery rules.
+
+## Model-aware effort override — 2026-10-15
+
+Fable 5.1 planning/review/diagnosis/corrections default to high, with xhigh reserved
+for especially difficult work. If the owner selects Opus 5.5 for planning or test
+corrections/diagnosis, use xhigh; routine implementation, test execution and
+coordination stay high. This overrides generic role-effort defaults for those
+models/phases. Honor owner choices, verify actual settings or report unknown,
+and apply only at the next phase/safe boundary without restarting completed work,
+interrupting a batch or resetting budgets. Prose does not configure the runtime.
