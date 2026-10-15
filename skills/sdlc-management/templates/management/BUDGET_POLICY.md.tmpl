@@ -44,13 +44,13 @@ runtime effort as unknown.
 
 ## Workload-based model selection
 
-Model choice is independent of effort and budget. With the owner's provider/model
-selection, prefer a stronger reasoning model for complex architecture/security/data
-planning, difficult test design and diagnosis, or repeated unresolved corrections.
-Use the ordinary coding model for routine planning/implementation, precisely
-specified fixes, test execution/reporting and coordination. For Claude, the
-owner-approved examples are Fable 5.1 for the former and Opus 5.5 for the latter;
-verify current availability before adopting these examples in another project.
+Model choice is independent of effort and budget. The owner-approved Claude
+default is **Fable 5.1 high for planning and test corrections**, including failure
+diagnosis and corrective test/fix work. Default to **Opus 5.5 high for
+implementation, ordinary test execution/reporting and coordination**. The owner
+may choose Opus for planning/test corrections; then use **xhigh**. Fable xhigh is
+selective for especially difficult work. Other providers may use equivalent
+owner-selected tiers; verify availability before adopting examples elsewhere.
 
 Apply the configured role effort separately. State model/effort before a new phase,
 honor owner choices and verify actual configuration where supported, otherwise
