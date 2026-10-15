@@ -121,7 +121,8 @@ specific holds, native permissions and delivery barriers; a Plan or green pipeli
 Use exactly the governance outcomes for formal review: **ACCEPT**,
 **CORRECTION LOOP**, or **ARCHITECTURE DECISION REQUIRED**. State what ACCEPT
 accepts and the remaining gates. Corrections identify the finding, guarantee,
-minimum relevant retests and authorized budget. Stop/escalate scope, architecture,
+minimum relevant retests and authorized budget. Use the [compact repair handoff](../sdlc-management/references/coordination.md#compact-repair-handoff)
+for failures: relevant revision/diff, focused evidence, tried fixes, hypothesis and next test; reference existing records. Stop/escalate scope, architecture,
 security, public-contract, irreversible-model and resource conflicts as required;
 do not extend/reset budgets or weaken evidence to finish.
 

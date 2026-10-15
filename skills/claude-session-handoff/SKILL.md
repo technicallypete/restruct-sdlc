@@ -268,6 +268,13 @@ clean output; avoid replaying terminal redraws into conversation context.
 
 ## Send a handoff
 
+For repair/diagnosis handoffs, give the failed check, exact revision/relevant diff,
+focused sanitized evidence, tried fixes, current hypothesis and next smallest
+test, with the current attempt/scope and owner. Link existing records/artifacts
+rather than sending full logs or creating a new packet. See the
+[compact repair checklist](../sdlc-management/references/coordination.md#compact-repair-handoff)
+when that companion is installed; this summary also supports standalone use.
+
 For bounded specification/epic mandates or stop changes, cite the actual recorded owner instruction, exact task
 membership/endpoint and permitted phases. Stops override existing Specs/Plans and automatic lookahead; verify
 acknowledgment and safe pauses of affected work. No notice/receipt creates mandate or resume authority. See

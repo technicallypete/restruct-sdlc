@@ -117,7 +117,7 @@ Preserve current status and linked history; this housekeeping alone requires no 
 | [roles-lifecycle.md](references/roles-lifecycle.md) | Ownership matrix, eleven Goal fields, Spec/Plan/Result contents, IDs and history, four states, precedence, delegated review and relay. |
 | [budgets.md](references/budgets.md) | B3/B5/B7/B15, checkpoints, Goal-level attempts, shared allowance, extensions, ledger, effort. |
 | [adoption.md](references/adoption.md) | Parameters, risk tiers, procedure, installation and helper path limits, composition with foundation skills. |
-| [coordination.md](references/coordination.md) | One coordinator, one owner per task, recovery, receipts versus acknowledgment, the naming, dispatch and relocation gate. |
+| [coordination.md](references/coordination.md) | One coordinator, one owner per task, recovery, compact repair handoffs, receipts versus acknowledgment, the naming, dispatch and relocation gate. |
 | [validation-integration.md](references/validation-integration.md) | Pre-batch reconciliation, finish-fix-rerun-advance, manual feedback order, merge requests, options, GitLab/glab adapter. |
 | [closeout-risks.md](references/closeout-risks.md) | Verified cleanup, archive-before-prune, PROGRESS compaction, risk and performance reporting. |
 

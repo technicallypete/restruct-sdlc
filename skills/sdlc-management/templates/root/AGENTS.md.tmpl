@@ -44,6 +44,11 @@ Results follow the formats in the roles reference.
 Only final ACCEPT completes a Goal. Plan approval, readiness and conditional integration are distinct earlier
 states. Formal reviews return exactly one of **ACCEPT**, **CORRECTION LOOP** or **ARCHITECTURE DECISION REQUIRED**.
 
+For failed-batch/correction handoffs, use the
+[compact repair checklist](.agents/skills/sdlc-management/references/coordination.md#compact-repair-handoff).
+Reference exact source/diff, focused evidence, tried fixes, hypothesis and next test
+in existing Result/review records. No full-log payload or separate packet required.
+
 ## Bounded specification authority and owner stop boundaries
 
 Automatic continuation stops at a missing Spec unless {{OWNER_ROLE}} explicitly

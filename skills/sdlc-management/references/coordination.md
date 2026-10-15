@@ -131,3 +131,26 @@ the supervisor verifies records before acting. Keep parsing/tests in `claude-ses
 A handoff carries Goal/Spec/Plan references and revisions, phase, effort, file ownership, allowed writes, budget,
 required validation and stop conditions, and asks for acknowledgment. It never copies newer inputs into a bound
 checkout outside the accepted reconciliation procedure. Durable context goes into management records, not chat.
+
+## Compact repair handoff
+
+For a failed batch, correction or escalated diagnosis, send one short handoff using
+existing Plan/Result/review records. Include only the context needed to act:
+
+- Task, repair owner, current Goal-level attempt and remaining authority/stop gates.
+- Failed check/command, expected versus actual outcome, and whether the suspected
+  fault is application, test, environment or still unknown.
+- Exact candidate/target revisions and the relevant diff or patch reference;
+  identify material configuration/environment differences when relevant.
+- Focused sanitized error/trace excerpts and links to the complete hosted artifacts.
+- Fixes already tried with outcomes, plus the current hypothesis clearly marked
+  as a hypothesis rather than a confirmed cause.
+- Next smallest reproducer or discriminating test, the proposed bounded repair
+  and the required guarantee/retest. Identify any actual scope decision needed.
+
+Reference unchanged context rather than copying it. Unknown facts stay unknown;
+do not collect unrelated inventories to fill this checklist. Keep full logs out
+of chat/handoff payloads and follow existing hosted-artifact/local-cleanup rules.
+The receiving agent uses the same Goal budget and file/permission scope; diagnosis
+does not authorize wider self-healing or automatically require a Spec amendment.
+No new JSON manifest, packet file, worker role or workflow stage is required.
