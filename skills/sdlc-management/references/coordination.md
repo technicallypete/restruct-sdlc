@@ -117,9 +117,14 @@ Classes: `working` for routine progress, acknowledgment or recovery (no mileston
 `review-ready` for a Plan, Result or execution binding needing review; `blocked` for an unavailable
 prerequisite or native refusal; `question` for a specific supervisor/owner decision; `failed` for a
 new validation failure needing attention; `completed` for verified terminal closeout, never self-acceptance.
-For concurrent work, name the task needing supervisor attention and summarize other tasks in the body.
+For concurrent work, pending owner/supervisor decisions (`question`) and submitted reviews (`review-ready`)
+take priority over routine work: name the task needing attention, not the task whose tests are still running,
+and summarize other tasks in the body. Use `working` only when no actionable handoff is pending.
+The observer also catches explicit pending decision/review wording in a `working` marker's bounded summary;
+it does not scan historical body prose through a valid `working` marker. This fallback prevents a mixed-task
+summary from hiding a handoff; it does not replace truthful classification.
 Report failed history honestly in the body without labelling a recovery instruction as a new failure.
-The companion observer prefers a valid final marker; missing/invalid markers retain legacy prose detection.
+The companion observer otherwise prefers a valid final marker; missing/invalid markers retain legacy prose detection.
 Native question detection and source/echo exclusions remain. Markers are reports, not authority or proof;
 the supervisor verifies records before acting. Keep parsing/tests in `claude-session-handoff`.
 

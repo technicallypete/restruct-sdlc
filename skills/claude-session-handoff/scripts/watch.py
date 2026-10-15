@@ -52,6 +52,18 @@ ECHO_MARKS = (NOTICE_MARK, "[handoff-id:")
 STATUS_MARKER = re.compile(
     r"COORDINATOR_STATUS: (working|review-ready|blocked|question|failed|completed)"
     r" \| ([A-Za-z0-9][A-Za-z0-9_.-]{0,63}) \| ([^\r\n|]{1,240})")
+# A mixed-task working summary can itself report an actionable handoff. Inspect only that bounded summary,
+# not historical body prose; keep the existing source/echo and native-question checks ahead of this fallback.
+WORKING_HANDOFFS = (
+    ("question", re.compile(r"\b(?:(?:decision|approval)\s+(?:is\s+)?(?:pending|needed|required)|"
+                            r"(?:awaiting|waiting (?:on|for)|needs?|requires?)\s+"
+                            r"(?:(?:the )?(?:owner|codex|supervisor)(?:['’]s)?\s+)?"
+                            r"(?:decision|approval))\b", re.I)),
+    ("review-ready", re.compile(r"\b(?:review[- ]ready|(?:ready|submitted) for\s+"
+                                r"(?:(?:codex|supervisor)(?:['’]s)?\s+)?(?:re[- ]?)?review|"
+                                r"(?:awaiting|waiting (?:on|for))\s+"
+                                r"(?:(?:codex|supervisor)(?:['’]s)?\s+)?(?:re[- ]?)?review)\b", re.I)),
+)
 CATEGORIES = (
     ("failed", re.compile(r"\b(?:failed|failing|failures?)\b", re.I)),
     ("question", re.compile(r"\b(?:question for (?:the )?(?:owner|codex|supervisor)|"
@@ -257,7 +269,7 @@ def explicit_status(text):
                 fence = None
     if fence is not None:
         return None
-    return marker[1], handoff.safe_excerpt(f"{marker[2]}: {marker[3].strip()}", 240)
+    return marker[1], handoff.safe_excerpt(f"{marker[2]}: {marker[3].strip()}", 400)
 
 
 def milestone(row):
@@ -276,7 +288,12 @@ def milestone(row):
         return "question", "the coordinator asked a native question (inspect it in the coordinator session)"
     status = explicit_status(joined)
     if status is not None:
-        return None if status[0] == "working" else status
+        if status[0] != "working":
+            return status[0], handoff.safe_excerpt(status[1], 240)
+        for category, pattern in WORKING_HANDOFFS:
+            if active_alert(status[1], pattern):
+                return category, handoff.safe_excerpt(status[1], 240)
+        return None
     for category, pattern in CATEGORIES:
         for line in joined.split("\n"):
             if re.match(r"^\s*(?:>\s*)?COORDINATOR_STATUS:", line):

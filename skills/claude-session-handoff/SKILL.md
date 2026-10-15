@@ -360,8 +360,13 @@ Classes are `working`, `review-ready`, `blocked`, `question`, `failed`, `complet
 Use the actual nonsecret task ID and a nonempty summary of at most 240 characters
 without `|`. Routine acknowledgments/progress and recovery use `working`, which
 queues no milestone. Plans/Results/bindings awaiting review use `review-ready`;
-`completed` means verified terminal closeout, never self-acceptance. A valid final
-marker overrides prose classification; native questions still notify. Markers
+`completed` means verified terminal closeout, never self-acceptance. Pending owner/
+supervisor decisions (`question`) or submitted reviews (`review-ready`) take priority
+over another task's routine work: name the task needing attention in the final
+marker and put running tasks in the body. Never label such a handoff `working`.
+As a safety fallback, an explicit pending decision/review in a `working` marker's
+bounded summary still notifies; routine history elsewhere in the body stays silent.
+A valid final marker otherwise overrides prose classification; native questions still notify. Markers
 inside fences/quotes, nonterminal or malformed markers are not milestones;
 other legacy prose remains detectable when no valid final marker exists.
 Existing source/echo exclusions, deduplication and authority boundaries remain.

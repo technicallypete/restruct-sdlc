@@ -178,6 +178,53 @@ class NotificationSources(Base):
         self.assertEqual(self.poll()["queue_calls"], 0)
         self.assertEqual(self.codex.calls, [])
 
+    def test_mixed_task_working_summary_cannot_hide_review_handoff(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant", "G013 gate is running. G014 Plan r7 needs re-review.\n"
+                             "COORDINATOR_STATUS: working | G013 | Staging gate running; "
+                             "G014 r7 ready for Codex re-review."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        notice = self.codex.queues()[0][4]
+        self.assertIn("milestone (review-ready", notice)
+        self.assertIn("G014 r7 ready for Codex re-review", notice)
+        self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_working_handoff_is_classified_before_notice_truncation(self):
+        self.bind()
+        self.poll()
+        tail = "G014 ready for Codex re-review."
+        summary = "x" * (240 - len(tail) - 1) + " " + tail
+        self.append(self.row("assistant", f"COORDINATOR_STATUS: working | {'G' * 64} | {summary}"))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("milestone (review-ready", self.codex.queues()[0][4])
+
+    def test_working_summary_reports_pending_decision_or_review(self):
+        self.bind()
+        self.poll()
+        for index, (summary, category) in enumerate((
+                ("G014 owner approval pending.", "question"),
+                ("G014 awaiting supervisor decision.", "question"),
+                ("G014 awaiting Codex review.", "review-ready"))):
+            with self.subTest(summary=summary):
+                self.append(self.row("assistant", f"COORDINATOR_STATUS: working | G013 | {summary}"))
+                self.assertEqual(self.poll()["queue_calls"], 1)
+                self.assertIn(f"milestone ({category}", self.codex.queues()[index][4])
+
+    def test_working_handoff_fallback_keeps_negations_and_source_exclusions(self):
+        self.bind()
+        self.poll()
+        marker = "COORDINATOR_STATUS: working | G013 | G014 ready for Codex re-review."
+        for row in (self.row("assistant", "COORDINATOR_STATUS: working | G013 | "
+                                           "No approval pending; not ready for Codex review."),
+                    self.row("user", marker),
+                    self.row("assistant", marker, sidechain=True),
+                    self.row("assistant", "[observer-notice: echo]\n" + marker),
+                    self.row("assistant", "[handoff-id: echo]\n" + marker)):
+            self.append(row)
+            self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(self.codex.calls, [])
+
     def test_ready_marker_selects_the_handoff_instead_of_failed_batch_prose(self):
         self.bind()
         self.poll()
