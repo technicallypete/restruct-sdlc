@@ -167,3 +167,20 @@ no cache benchmark or additional qualification run. Distinguish logical deleted
 bytes from measured filesystem space and shared cache from task-owned resources.
 Resume interrupted cleanup from its receipt. The supervisor verifies it, updates
 progress and assesses required compaction as part of the same closeout transition.
+
+
+## Container artifact ownership
+
+When containers produce host-retained reports, arrange operator-removable output
+at creation. Preserve the browser/tool's reviewed non-root user; do not assume
+its UID matches the host operator. Reuse existing stdout/archive transfer or
+container copy-out with host ownership instead of report bind mounts that create
+foreign-owned trees. Capture owned container IDs/mounts before removal; transfer
+and cleanup failures remain failures, including when the test itself passes.
+
+A retained one-off must have positive run ownership before copying or removal;
+use an immutable ID, protect start-inventory/foreign resources and cover aborts
+with existing project cleanup. Do not add a new resource framework, switch the
+whole browser to root, weaken assertions or rely on recurring sudo/chown/broad
+permission grants to make routine closeout work. Existing explicit owner/native
+handling still governs historical remnants; no privilege workaround is implied.
