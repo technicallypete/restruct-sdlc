@@ -88,9 +88,11 @@ including lookahead planning during CI; clarify ambiguous endpoints before cross
 Record owner instruction, membership, phase/endpoint and resume authority in existing PROGRESS/handoff records.
 Policy examples grant no actual epic/range. See [mandates and stops](../sdlc-management/references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).
 
-After verified integration, automatically dispatch planning for the earliest eligible next roadmap task with an
+When a predecessor implementation MR first opens against the integration branch (drafts included), verify
+the MR/source/target/candidate and automatically dispatch provisional planning for the earliest eligible task with an
 existing ready supervisor-owned Goal/Spec; no separate owner prompt. Reuse its current planner if assigned. Label
-pending predecessor acceptance provisional, record baseline/holds and preserve explicit owner deferrals. Planning
+pending predecessor acceptance provisional, record MR/candidate baseline and holds, and preserve explicit owner
+deferrals. Do not wait for CI/Duo, ready status or merge; ignore planning-only/placeholder/probe MRs. Planning
 does not release implementation, direct-tier work, test resources or dependency gates. Follow the adopting
 repository's rule or [portable policy](../sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 

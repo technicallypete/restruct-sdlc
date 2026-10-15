@@ -65,18 +65,21 @@ ambiguous "stop at/next task" before crossing it. Pause out-of-bound work safely
 preserve artifacts and owner decision history, and never skip to a later task.
 See [mandates and stops](.agents/skills/sdlc-management/references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).
 
-## Automatic planning after integration
+<a id="automatic-planning-after-integration"></a>
+## Automatic planning at implementation MR creation
 
-After verified integration into `{{INTEGRATION_BRANCH}}`, {{SUPERVISOR_AGENT}}
-automatically starts planning the earliest eligible roadmap task with a ready
-existing Goal/Spec, without another owner prompt. Reuse an existing planner;
-specific owner holds remain. Pending predecessor CI/acceptance/cleanup makes
-planning provisional: record the integrated baseline and gates, and reconcile
-final accepted inputs before execution. Inspection and Plan/history only;
-no code/tests/builds/shared-stack use or direct-tier execution from this trigger.
-Keep Plan approval, dependency ACCEPTs, bindings, budgets and delivery barriers.
-Use existing coordinator/naming/effort rules. See
-[planning policy](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
+When a predecessor implementation MR first opens against `{{INTEGRATION_BRANCH}}`,
+{{SUPERVISOR_AGENT}} verifies its source/target/candidate and automatically starts
+provisional planning for the earliest eligible task with an existing ready Goal/Spec.
+Draft implementation MRs qualify; planning-only/placeholder/probe MRs do not.
+Do not wait for CI/Duo, ready status, merge or final acceptance to begin planning.
+Reuse the existing planner, honor owner stops and record the MR baseline and pending
+gates. Reconcile relevant revisions and final accepted inputs before execution;
+closure without integration requires reassessment. Integration is a fallback
+checkpoint if initial discovery was missed, never a duplicate dispatch.
+Inspection/Plan artifacts only; no code/tests/builds/shared-stack use or early
+execution. Final dependency ACCEPTs, Plan review, bindings, budgets, owner decisions
+and resource/release gates remain. See [planning policy](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 
 ## Automatic reassessment and execution release
 

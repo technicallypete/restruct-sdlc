@@ -88,8 +88,10 @@ Details: [roles and lifecycle](references/roles-lifecycle.md).
 Automatic continuation stops at missing Specs unless the owner records bounded specification authority (named
 endpoint/range or pinned epic). Independent owner stop/phase limits override continuation even with an existing
 Spec or accepted Plan; no lookahead beyond the stop. See [mandates and stops](references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).
-After verified integration, automatically begin planning the earliest eligible roadmap task with an existing ready
-Goal/Spec. Pending predecessor acceptance makes planning provisional; it never releases implementation. See
+At initial implementation-MR creation (drafts included), verify the MR/candidate and automatically begin provisional
+planning for the earliest eligible roadmap task with an existing ready
+Goal/Spec; do not wait for CI/Duo or merge. Planning-only/placeholder/probe MRs do not qualify; owner stops remain.
+Pending predecessor acceptance never releases implementation. See
 [automatic planning](references/roles-lifecycle.md#automatic-planning-after-integration).
 After final dependency acceptance, automatically reassess the provisional Plan and record/relay execution release
 when all review, binding, owner-decision and readiness gates close; no extra routine owner prompt. See

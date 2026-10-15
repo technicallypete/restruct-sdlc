@@ -16,11 +16,13 @@ under [mandates and stops](../../.agents/skills/sdlc-management/references/roles
 Stop limits override ready Specs/Plans and queued lookahead. Verify acknowledgment
 and safe pauses; notices/receipts never create scope or resume authority.
 
-## Planning dispatch after integration
+## Planning dispatch at initial implementation MR
 
 Under [lifecycle policy](../../.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration),
-an eligible next task with an existing ready Goal/Spec may receive an automatic
-planning-only dispatch. Include baseline, current owner and provisional gates;
+an eligible next task with an existing ready Goal/Spec receives an automatic
+provisional planning-only dispatch when the predecessor implementation MR first
+opens, including a draft. Verify MR/source/target/candidate; do not wait for CI/Duo
+or merge. Planning-only/placeholder/probe MRs do not qualify. Include baseline, current owner and provisional gates;
 receipt is not implementation approval. Preserve specific owner holds.
 
 ## Execution dispatch after acceptance

@@ -125,31 +125,34 @@ stop wins until explicitly changed by the owner; retain decision history and
 never infer resumption from a merge/observer event or skip to a later task.
 Native permissions, budget exhaustion and delivery barriers still govern.
 
-## Automatic planning after integration
+<a id="automatic-planning-after-integration"></a>
+## Automatic planning at implementation MR creation
 
-Standing owner policy: once a task is verified integrated into the configured
-integration branch, the supervisor starts planning for the earliest eligible next
-task in roadmap dependency order if a complete supervisor-owned Goal/Spec exists.
-No new owner planning prompt is required. Check existing task ownership first;
-resume the assigned planner instead of creating a duplicate. Missing/draft Specs
-or unresolved planning prerequisites are reported, not filled by invented scope;
-only a matching explicit bounded mandate permits supervisor specification first.
-Check recorded owner phase/stop limits even for a ready Spec.
+When a predecessor's implementation MR is first opened against the configured
+integration branch, automatically plan the earliest eligible next roadmap task
+with an existing ready supervisor-owned Goal/Spec. Draft implementation MRs qualify;
+planning-only, placeholder and probe-only MRs do not. Verify the actual MR,
+source/target and candidate revision. Do not wait for CI/Duo, MR ready status,
+merge, predecessor acceptance or cleanup to begin provisional planning.
 
-Planning can overlap predecessor CI, final acceptance and cleanup: label the
-Plan provisional, record the actual integrated commit and remaining dependencies,
-and reconcile the final accepted predecessor before execution. Explicit owner
-holds remain. This replaces routine separate planning-dispatch prompts, not
-specific owner deferrals or architecture decisions.
+Check existing task/planner ownership and recorded owner phase/stop bounds first;
+reuse the assigned planner and avoid duplicate dispatches on later pushes. Missing
+Specs require an existing explicit bounded specification mandate. Planning does
+not invent scope or bypass unresolved architecture/owner decisions. Record the MR,
+candidate baseline and pending gates in existing PROGRESS/handoff records.
 
-Dispatch through the verified coordinator at planning effort xhigh with existing
-worktree/naming and single-owner rules. Scope is inspection and Plan/history
-artifacts, not application/test writing, installs, builds or shared validation
-resources; probes need separate authority. Implementation, including direct-tier
-work, retains dependency ACCEPTs, required Plan review/input binding, budgets and
-delivery barriers. A failed/pending predecessor pipeline is not acceptance.
-Record/relay the planning dispatch and holds in PROGRESS. This is an agent
-workflow, not another watcher, scheduler, transport or permission override.
+Reconcile relevant predecessor revisions and final accepted content before
+execution; if its MR closes without integration or materially changes, reassess
+readiness. Integration remains a fallback discovery checkpoint if the first MR
+was missed, not the primary trigger or a second dispatch. This supersedes the
+former integration-only trigger; legacy links to that heading remain valid.
+
+Use the verified coordinator and current model-aware planning effort under the
+existing single-owner/worktree rules. Scope is inspection and Plan/history only,
+not application/test writes, builds, installs, shared validation resources or
+unauthorized probes. Execution, including direct-tier work, retains final required
+dependency ACCEPTs, Plan/input/budget/resource gates and recorded supervisor release.
+No new artifact, watcher, scheduler, transport or permission override is added.
 
 ## Automatic reassessment and execution release
 

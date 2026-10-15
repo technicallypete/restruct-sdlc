@@ -280,8 +280,10 @@ membership/endpoint and permitted phases. Stops override existing Specs/Plans an
 acknowledgment and safe pauses of affected work. No notice/receipt creates mandate or resume authority. See
 [mandates and stops](../sdlc-management/references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).
 
-An adopting repository's automatic post-integration planning rule can supply standing authority for a bounded
-planning dispatch. Verify the ready Goal/Spec and task owner, label pending dependencies provisional and relay the
+An adopting repository's automatic planning rule at initial implementation-MR creation can supply standing
+authority for a bounded
+planning dispatch (draft implementation MRs included; no CI/Duo/merge wait). Verify the real MR/candidate,
+ready Goal/Spec and task owner, label pending dependencies provisional and relay the
 remaining execution gates. Neither a merge notice nor this helper independently authorizes planning or execution;
 see [lifecycle policy](../sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 
