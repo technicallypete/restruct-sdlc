@@ -63,6 +63,24 @@ choice. Verify actual runtime effort only where session metadata exposes it, and
 handoff's wording never sets or proves the runtime setting, and effort changes never reset budgets or completed
 work.
 
+## Workload-based model selection
+
+Model choice is independent of effort and budget. With the owner's provider/model
+selection, prefer a stronger reasoning model for complex architecture/security/data
+planning, difficult test design and diagnosis, or repeated unresolved corrections.
+Use the ordinary coding model for routine planning/implementation, precisely
+specified fixes, test execution/reporting and coordination. For Claude, the
+owner-approved examples are Fable 5.1 for the former and Opus 5.5 for the latter;
+verify current availability before adopting these examples in another project.
+
+Apply the configured role effort separately. State model/effort before a new phase,
+honor owner choices and verify actual configuration where supported, otherwise
+record unknown. Never assume an instruction changed a worker's runtime. Do not
+interrupt an active batch, redo completed work, reset budgets or weaken gates
+solely to change models. A stronger model does not accelerate the underlying
+Docker/build/test process. These recommendations add no provider dependency or
+automatic configuration change.
+
 ## Proportional process
 
 An owner range/epic mandate never combines, resets or extends individual Goal
