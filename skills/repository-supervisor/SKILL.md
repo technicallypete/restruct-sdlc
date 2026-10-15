@@ -176,3 +176,11 @@ bypass permissions. Once Fable's allowance reset is verified, return to its norm
 model/effort defaults at the next safe phase boundary, without restarting work or
 repeatedly probing the allowance. This is model selection only, not scope,
 execution-release or budget-extension authority.
+
+
+Use the adopting repository’s low-overhead delivery policy; when the companion is installed, see
+[validation/failure handling](../sdlc-management/references/validation-integration.md#validation-economy-and-recurring-failures),
+[routine transitions](../sdlc-management/references/roles-lifecycle.md#continue-routine-transitions-without-owner-nudges),
+[concise messages](../sdlc-management/references/coordination.md#concise-operational-messages) and
+[closeout receipts](../sdlc-management/references/closeout-risks.md#routine-closeout-receipt).
+Preserve standalone operation and every existing authority/native-permission boundary.

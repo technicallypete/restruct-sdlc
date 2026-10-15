@@ -240,3 +240,20 @@ integration checkout, without another owner confirmation.
   session.
 - The owner may interrupt or redirect at any time. Mandatory escalations and owner merge authority remain. This
   adds no background watcher, no transport and no implementation authority before Plan approval.
+
+
+## Continue routine transitions without owner nudges
+
+Within recorded authority, continue from a verified ready submission through review,
+correction/approval relay, MR and automated-review disposition, authorized merge,
+staging disposition, final acceptance and routine closeout. Reassess the next task
+under the existing planning/execution rules. Do not end a handoff by asking the
+owner to repeat “review”, “continue” or “tell the coordinator” for an already
+covered action. Stop at actual external waits, native permissions, unresolved owner
+product/risk decisions, budgets or mandate/phase limits; name the exact wait.
+The observer supplies notices, not authority, and cannot guarantee wake-up of an
+ended supervisor turn. This adds no daemon, scheduler or permission bypass.
+
+At normal closeout, briefly note repeated validation, harness flakes or avoidable
+owner interventions in the existing Result if material. Existing timestamps and
+records suffice; no telemetry system, new metric schema or benchmark campaign.

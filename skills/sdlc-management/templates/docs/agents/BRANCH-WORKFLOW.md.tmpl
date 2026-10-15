@@ -13,10 +13,11 @@ lookahead during endpoint CI/closeout; clarify ambiguous boundaries before cross
 
 ## Automatic next-task planning
 
-After verified integration into `{{INTEGRATION_BRANCH}}`, start planning the
+When the predecessor implementation MR first opens against `{{INTEGRATION_BRANCH}}`
+(drafts included), start provisional planning for the
 earliest eligible task with an existing ready Goal/Spec, using the verified
-coordinator and one planner. Record baseline/holds; pending predecessor CI,
-acceptance or cleanup permits provisional planning only. No implementation,
+coordinator and one planner. Record baseline/holds; do not wait for predecessor CI/Duo, merge,
+acceptance or cleanup merely to plan. Integration is fallback discovery only. No implementation,
 shared test-stack work or bypass of explicit holds. Follow
 [planning policy](../../.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 
@@ -75,3 +76,9 @@ deletion **off**.
 
 Verify integrated content, unique work and live ownership before `git worktree remove`; close disposable merge
 requests; archive session records before pruning; never delete a live coordinator's directory.
+
+
+Apply [validation economy and failure handling](../../.agents/skills/sdlc-management/references/validation-integration.md#validation-economy-and-recurring-failures)
+and the [routine closeout receipt](../../.agents/skills/sdlc-management/references/closeout-risks.md#routine-closeout-receipt).
+Continue authorized review/MR/merge/closeout transitions without repeat proceed prompts;
+keep native permissions, owner limits and required qualification gates.

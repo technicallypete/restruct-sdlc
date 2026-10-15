@@ -207,3 +207,8 @@ bypass permissions. Once Fable's allowance reset is verified, return to its norm
 model/effort defaults at the next safe phase boundary, without restarting work or
 repeatedly probing the allowance. This is model selection only, not scope,
 execution-release or budget-extension authority.
+
+
+For routine status/handoffs use [concise operational messages](../../sdlc-management/references/coordination.md#concise-operational-messages).
+Report changes and actionable waits, reference the existing decision record and
+continue authorized next actions; do not repeat settled context or approval prompts.

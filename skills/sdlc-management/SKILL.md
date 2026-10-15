@@ -185,21 +185,15 @@ and apply only at the next phase/safe boundary without restarting completed work
 interrupting a batch or resetting budgets. Prose does not configure the runtime.
 
 
-## Fable weekly-limit fallback — owner direction, 2026-10-15
+## Fable weekly-limit fallback
 
-When Fable's weekly allowance is confirmed exhausted, automatically use Opus 5.5
-**xhigh for planning and test-failure diagnosis/corrections** until Fable resets.
-Opus implementation, ordinary test execution/reporting and coordination remain
-**high**. This standing fallback needs no repeat owner approval; honor an explicit
-owner override. Record the limit, fallback model/effort and actual setting (or
-unknown) in the existing Result/dispatch record. A generic tool error is not
-proof of a model limit.
+On confirmed Fable weekly exhaustion, use Opus xhigh for planning/test corrections
+and high for routine implementation/tests/coordination. Follow the
+[full fallback policy](references/budgets.md#fable-weekly-limit-fallback--owner-direction-2026-10-15)
+for safe transitions, verified reset, preserved state/budgets and native permissions.
 
-Use supported controls at the next safe boundary, preserving the existing task,
-artifacts, checkout, bindings, reviews and attempt count. Do not interrupt a
-running validation batch, redo completed work, reset budgets or weaken gates.
-If native switching is unavailable or refused, report the blocker once; do not
-bypass permissions. Once Fable's allowance reset is verified, return to its normal
-model/effort defaults at the next safe phase boundary, without restarting work or
-repeatedly probing the allowance. This is model selection only, not scope,
-execution-release or budget-extension authority.
+
+Operational defaults: use [proportionate validation and bounded flake handling](references/validation-integration.md#validation-economy-and-recurring-failures),
+[automatic routine transitions](references/roles-lifecycle.md#continue-routine-transitions-without-owner-nudges),
+[compact status/handoffs](references/coordination.md#concise-operational-messages) and the
+[closeout receipt](references/closeout-risks.md#routine-closeout-receipt). Reuse existing tools and records.

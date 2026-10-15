@@ -150,3 +150,20 @@ Record risks in `docs/RISKS.md` (template `templates/docs/RISKS.md.tmpl`). Surfa
 contention and other performance concerns there with the observed evidence, affected component and proposed
 follow-up. Recording a concern does not impose a vendor-specific architecture and never authorizes silent tuning of
 application code; changes go through a Goal.
+
+
+## Routine closeout receipt
+
+At the existing verified closeout, perform the authorized ownership-scoped cleanup
+without another routine proceed prompt. Retain unique work and specific live or
+uncertain holds; do not turn one hold into a stop for all verified cleanup. No host-
+wide volume/image prune or shared builder-cache deletion is implied.
+
+Use the existing Result/closeout receipt, not a new resource database. Summarize:
+`removed: worktrees/branches/containers/images/volumes/evidence; reclaimed: <measured
+bytes or unknown>; holds: <item, reason, release condition>; builder cache: <observed
+size/reclaimable or unavailable>`. A read-only builder-cache observation is enough;
+no cache benchmark or additional qualification run. Distinguish logical deleted
+bytes from measured filesystem space and shared cache from task-owned resources.
+Resume interrupted cleanup from its receipt. The supervisor verifies it, updates
+progress and assesses required compaction as part of the same closeout transition.

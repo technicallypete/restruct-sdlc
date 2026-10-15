@@ -14,8 +14,9 @@ authority; an epic mandate neither expands membership nor resets Goal budgets.
 
 ## Planning overlap
 
-After verified integration, apply [automatic planning](roles-lifecycle.md#automatic-planning-after-integration)
-for the next eligible existing Goal/Spec. Provisional planning may overlap CI,
+At the first predecessor implementation MR (drafts included), apply
+[automatic planning](roles-lifecycle.md#automatic-planning-after-integration)
+for the next eligible existing Goal/Spec; integration is fallback discovery only. Provisional planning may overlap CI,
 acceptance and cleanup; implementation still waits for required final dependency
 acceptance, Plan review and current input binding. Do not reserve the shared test
 stack or repeat predecessor validation merely to write the next Plan.
@@ -154,3 +155,35 @@ applies to that target, so check the setting rather than assuming the target cha
 A published, owned temporary branch that must be rebased is pushed with an exact expected-tip
 `--force-with-lease=TEMP_BRANCH:<old-sha>`, never an unconditional force. Hosted quota exhaustion is a resource
 stop, reported as such.
+
+
+## Validation economy and recurring failures
+
+Before a batch, choose the smallest checks covering the actual change and required
+security/shared boundaries. During diagnosis run the failed scenario and adjacent
+cases first; expand only for affected dependencies, unresolved failures or required
+final coverage. Reuse valid unchanged evidence with source/input provenance. Do
+not create another benchmark, harness proof campaign or duplicate full run merely
+for a new SHA or policy edit. Existing path selection and Goal requirements govern.
+
+A passing retry does not establish a root cause or prove a flake fixed. Inspect
+failure output first. Under standing integration authority, the supervisor may
+approve one retry of the failed job for an evidenced transient/unrelated failure,
+within the existing Goal budget; retain both outcomes and record the hypothesis.
+No blind repeated retries, whole-pipeline rerun when one job suffices, or treating
+an unknown failure as unrelated. A recurrence requires focused diagnosis and a
+bounded repair/disposition before another retry. Scope/security/budget and native
+permission stops still apply; repeated-issue escalation remains in force.
+
+On GitLab, for non-executable workflow-prose publication only, the supervisor may
+use `git push -o ci.skip` after reviewing the entire staged delta and verifying no
+application, tests/fixtures, executable scripts/templates, CI selectors, dependency
+or runtime inputs changed. Markdown filename or management/skills location alone
+is insufficient. Record the exact skipped publication and reason; skipped is not
+passing and cannot satisfy or erase a required application staging gate. Unknown
+impact follows normal CI. This exception does not change the path selector.
+
+Cancel a superseded duplicate hosted run only after verifying the newer run covers
+its exact changes and required suites, the older run has no failed required check,
+and no independent qualification depends on it. Record both pipeline IDs and the
+cancellation; preserve failed-run evidence and the still-required qualification.

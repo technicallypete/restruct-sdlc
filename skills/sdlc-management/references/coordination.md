@@ -154,3 +154,14 @@ of chat/handoff payloads and follow existing hosted-artifact/local-cleanup rules
 The receiving agent uses the same Goal budget and file/permission scope; diagnosis
 does not authorize wider self-healing or automatically require a Spec amendment.
 No new JSON manifest, packet file, worker role or workflow stage is required.
+
+
+## Concise operational messages
+
+Routine status gives only the current phase, what changed, next action and any
+owner decision or external wait. Handoffs give decision, task/source, record link,
+next action and remaining gates; repair handoffs use the checklist above. Reference
+settled context rather than copying it, and do not publish a new progress entry for
+an unchanged check. Preserve required truthful owner attribution, native permission
+boundaries and final-status classification. Avoid repeated acknowledgments or
+inference-based polling when an existing observer will report a milestone.
