@@ -212,3 +212,8 @@ execution-release or budget-extension authority.
 For routine status/handoffs use [concise operational messages](../../sdlc-management/references/coordination.md#concise-operational-messages).
 Report changes and actionable waits, reference the existing decision record and
 continue authorized next actions; do not repeat settled context or approval prompts.
+
+
+Observer queue compatibility verified 2026-10-15: Codex CLI 0.160.0 with daemon
+0.162.1/0.163.0. Other daemon versions remain fail-closed until verified; preserve
+the existing bound sessions, cursor, deduplication and permission boundaries.

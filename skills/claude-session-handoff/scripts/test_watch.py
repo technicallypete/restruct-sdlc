@@ -524,6 +524,16 @@ class StateAndQueue(Base):
         self.assertEqual(self.poll()["reason"], "queue-uncertain")
         self.assertEqual(self.state()["deliveries"][-1]["outcome"], "queue-uncertain-error")
 
+    def test_verified_daemon_upgrade_queues_once(self):
+        self.bind()
+        self.poll()
+        self.codex.daemon = "0.163.0"
+        self.append(self.row("assistant", "COORDINATOR_STATUS: review-ready | G013 | Closeout ready for Codex review"))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(len(self.codex.queues()), 1)
+        self.assertIsNone(self.state()["suspended"])
+
     def test_unverified_codex_version_sends_nothing(self):
         self.bind()
         self.poll()

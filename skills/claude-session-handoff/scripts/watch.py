@@ -35,7 +35,7 @@ from handoff import Blocked, require
 
 SCHEMA = "claude-session-handoff/observer/v1"
 VERIFIED_CODEX_CLI = {"0.160.0"}
-VERIFIED_CODEX_DAEMON = {"0.162.1"}
+VERIFIED_CODEX_DAEMON = {"0.162.1", "0.163.0"}
 DEFAULT_INTERVAL = 30
 DEFAULT_SIZE_THRESHOLD = 104857600  # 100 MiB
 MIN_SIZE_THRESHOLD = 1024

@@ -403,7 +403,7 @@ python3 "$W" --repo "$PWD" stop
   replay, queue receipts, notices echoed back (`[observer-notice: …]`), subagent sidechains, repository files
   (including management records), Codex transcripts and the observer's own records are never sources, so notices
   cannot loop. "Waiting" is reported as *native prompt not inspected*; inspect it before answering.
-- **Delivery.** Notices go through `codex queue --thread UUID`, with Codex CLI 0.160.0 and daemon 0.162.1
+- **Delivery.** Notices go through `codex queue --thread UUID`, with Codex CLI 0.160.0 and daemon 0.162.1/0.163.0
   verified. An idle poll makes no queue or CLI call. The outcome is recorded as `queued-not-acknowledged`, never as
   acknowledgment. Before each `codex queue` call, the notice's intent and dedup key are written to private state;
   if that write fails, nothing is queued. An intent left unfinished by a crash or a failed final write is recorded
