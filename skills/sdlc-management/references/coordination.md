@@ -196,6 +196,24 @@ Deferred tool definitions shown separately are not the active message-history to
 
 ## Worker context and phase handoffs
 
+Default worker handoff threshold: **350,000 active context tokens**, configurable
+by explicit owner direction or a reviewed Goal/dispatch override. This measures
+current working context, not cumulative input/output/cache-read usage or transcript
+file size. Respect smaller model/harness context limits. At an observed threshold,
+finish the current safe step or running test batch, safeguard the checkpoint and
+hand the remaining work to a fresh bounded worker before more substantive work.
+A fresh worker receives concise state/references, not a full-transcript fork that
+recreates the oversized context. Rotation alone neither spends nor resets a Goal
+attempt; actual implementation/correction rounds retain their normal accounting.
+
+An earlier useful handoff is allowed. If completion is imminent, record a short
+exception bounded to the finishing step/phase in the existing Result/dispatch;
+do not carry the exception into another lengthy phase. Check available native
+context metadata at existing phase/batch boundaries; no new polling agent or
+monitor. If unavailable, record unknown and use the qualitative context assessment
+below rather than claiming the cap is enforced or blocking otherwise safe work.
+The persistent coordinator retains its separate compaction policy and identity.
+
 At a completed implementation phase or prolonged validation/diagnosis boundary,
 assess whether the worker is carrying substantially obsolete history. When useful,
 hand the next bounded role to a focused worker using the existing compact repair
