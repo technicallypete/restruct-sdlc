@@ -267,6 +267,12 @@ not an instruction to kill the session immediately. Exceptions do not waive nati
 context limits, security stops, task budgets or acceptance gates.
 
 
+Owner/client navigation may be a manual final step: after a replacement thread
+and its handoff/observer route are verified, the owner can open that chat in the
+client. Do not make automatic UI switching a prerequisite or claim it is supported
+without verification. Opening the chat grants no additional task authority.
+
+
 ## Worker context and phase handoffs
 
 Default worker checkpoint target: **300,000 active context tokens**; upper handoff
