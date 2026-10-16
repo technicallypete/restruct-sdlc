@@ -182,9 +182,9 @@ findings, active batches, queued handoffs and remaining gates. Keep raw logs out
 of routine coordinator messages and reference focused reports instead of repeating
 them. Resume from those references rather than reloading every unchanged artifact.
 
-Keep the same session UUID, checkout, coordinator pin and observer binding/cursor/
-dedup state. Use supported summarization; do not clear/replace the session, purge
-its JSONL, reset budgets or alter approvals to reduce context. Preserve a running
+Compaction keeps the same session UUID, checkout, coordinator pin and observer
+binding/cursor/dedup state. Use supported summarization; do not clear/replace the
+session merely to compact, purge its JSONL, reset budgets or alter approvals. Preserve a running
 validation batch and its bindings; compaction alone requires no rebase or retest.
 If supported compaction is unavailable, report that limitation and leave state
 intact. No new watcher, recurring model poll or compaction daemon is needed.
@@ -192,6 +192,48 @@ intact. No new watcher, recurring model poll or compaction daemon is needed.
 Context composition is not usage attribution: investigate actual coordinator/
 worker usage and cache behavior before changing models or pruning useful skills.
 Deferred tool definitions shown separately are not the active message-history total.
+
+
+## Coordinator checkpoints and retirement
+
+Use **300,000 active context tokens** as the coordinator checkpoint target and
+**350,000** as the compaction-or-handoff threshold, respecting smaller harness
+limits and recorded owner overrides. Measure current working context, not total
+transcript bytes or cumulative/cache-read tokens. Check at existing task/phase
+boundaries; do not add polling. If measurement is unavailable, record unknown and
+use the qualitative history assessment above.
+
+At 300k, safeguard concise state and arrange supported compaction at the next safe
+boundary. At or above 350k, do not begin another substantial phase until compaction
+or a controlled replacement has been assessed. Preserve a safe running batch;
+record a short completion-imminent exception when appropriate. This is not a hard
+kill or automatic retirement solely for crossing a counter. Reassess at epic
+closeout. Prefer retirement when compaction leaves excessive obsolete working
+context, repeated stale decisions/missed handoffs persist, or the session/harness
+is unstable. A healthy compacted coordinator can continue under the same UUID.
+
+For retirement, reuse the existing supervisor handoff/Result: current authorities
+and stops, task/checkout/SHAs, Plan/input references, budget, open decisions, active
+agents/resources, pending messages and next gates. Finish surviving child work,
+or verify a supported explicit transfer before changing its parent; never assume
+workers can be adopted by another session. Establish one quiescent old coordinator
+before granting a replacement ownership. Preserve unique work and existing history.
+
+Automatic replacement is allowed only under recorded session-creation authority
+and a qualified native launch/cutover procedure. Verify complete discovery and
+one coordinator, the replacement's role/checkout/model/effort and acknowledgment;
+update the verified coordinator pin and explicitly rebind the observer to the new
+UUID while retaining delivery history and deduplication. Do not replay old notices
+as new work. Do not fork the full oversized transcript, bypass a creation gate or
+native prompt, or automatically resume the retired coordinator. If native child
+transfer, launch or observer cutover is unsupported/uncertain, defer replacement
+and report the specific supported owner action once. Preserve independent running
+work. No new daemon, automatic privilege change, test restart or budget reset.
+
+This policy documents the lifecycle; it does not implement automatic session
+replacement or retire the current coordinator. Until the adopting repository has
+qualified that route and recorded its authority, use supported compaction and
+prepare a handoff rather than claiming automatic cutover is available.
 
 
 ## Worker context and phase handoffs
