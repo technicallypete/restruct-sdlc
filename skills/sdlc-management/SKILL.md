@@ -105,7 +105,7 @@ one scoped pass, a compact receipt, and individual holds instead of another veri
 
 Validation follows [Git-first provenance and proportionate coverage](references/validation-integration.md):
 assess target deltas before batches, reconcile relevant/unknown changes and always reconcile before final/MR.
-Select expensive CI meta-tests by their actual dependencies; retain required application/security evidence.
+Use [focused executable selections](references/validation-integration.md#focused-selection-before-the-first-run); broad local exceptions need a technical reason before launch. Retain required application/security/hosted checks.
 Existing approved bindings remain in force until explicitly amended.
 
 Every epic closeout requires a supervisor-owned [PROGRESS compaction checkpoint](references/closeout-risks.md#progress-compaction):

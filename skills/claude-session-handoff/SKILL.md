@@ -524,3 +524,9 @@ Use the adopting repository’s low-overhead delivery policy; when the companion
 [concise messages](../sdlc-management/references/coordination.md#concise-operational-messages) and
 [closeout receipts](../sdlc-management/references/closeout-risks.md#routine-closeout-receipt).
 Preserve standalone operation and every existing authority/native-permission boundary.
+
+Local validation handoffs specify focused executable selectors for changed
+behavior from the first run, not umbrella suites by default. The coordinator
+checks actual command scope before dispatch; broad exceptions need a technical
+coverage reason and supervisor disposition, not convenience. Reuse approved
+exceptions; preserve required hosted checks and existing authority/native gates.

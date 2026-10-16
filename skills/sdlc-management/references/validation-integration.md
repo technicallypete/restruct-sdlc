@@ -208,6 +208,41 @@ its exact changes and required suites, the older run has no failed required chec
 and no independent qualification depends on it. Record both pipeline IDs and the
 cancellation; preserve failed-run evidence and the still-required qualification.
 
+## Focused selection before the first run
+
+Focused checks are the default for **every local run**, including initial
+implementation, corrections and final local qualification. Start with changed
+behavior and required technical guarantees, then choose the smallest existing
+package/test filters, service checks, browser projects and integration entrypoints
+that cover them. Inspect what the command actually runs; a narrow task name or
+"focused batch" label does not make an umbrella command narrow.
+
+Before Plan approval and before launching a batch, the supervisor/coordinator
+checks the proposed executable selectors against that scope. Reject unexplained
+`all`, generic unit/migration/ops suites or full control suites when they include
+unaffected work. Prefer supported filtered/direct existing test commands; record
+coverage and required setup in the normal Plan/Result, without a new checklist,
+manifest, test wrapper or reporting stage. Reuse valid attributable prior passes.
+
+A broad local run is an exception requiring a concrete technical reason and
+supervisor disposition **before launch**: for example a changed shared boundary,
+a specified indivisible guarantee, or an identified unresolved dependency impact.
+State what wider coverage is needed and why the narrower checks cannot establish
+it. Existing reviewed Plan justification can supply that disposition; do not ask
+again for an unchanged approved exception. Tool convenience, "to be safe", a fresh
+wrapper PASS, or an unavailable narrow harness selector alone is not justification.
+If selection is unavailable, report the exact limitation once and propose the
+smallest safe existing command for supervisor disposition; do not automatically
+fall back to the broad suite or modify the harness to add another framework.
+
+If an overbroad run is already active, retain completed evidence and narrow its
+remaining work at a supported safe boundary with owned cleanup. Required schema
+setup, real affected regressions and atomic/global guarantees remain; never mark
+unexecuted checks passed. Mandatory hosted MR/integration jobs retain their actual
+configured scope. This is local selection policy, not permission to skip required
+CI, weaken security evidence or change budgets. Apply to active tasks at the next
+safe boundary; reassess inherited umbrella selections without a full replan.
+
 ## Targeted reruns and attributable coverage default
 
 After failures, rerun the smallest failed case/control and checks affected by the

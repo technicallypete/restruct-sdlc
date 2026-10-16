@@ -192,3 +192,10 @@ Use [targeted reruns and attributable coverage](../sdlc-management/references/va
 for local qualification. Review frozen source while independent tests run; preserve
 preliminary/final distinctions, input provenance and later-delta review. A partial
 rerun never becomes a full passing report or waives required hosted checks.
+
+Before approving local validation or accepting its selection, check the actual
+executable scope from the first run. Reject unexplained broad umbrella suites;
+require a concrete technical guarantee/dependency reason before approving an
+exception. Reuse an unchanged approved exception without another permission loop.
+The companion's focused-selection policy applies when installed; required hosted
+jobs, security evidence and native gates remain unchanged.
