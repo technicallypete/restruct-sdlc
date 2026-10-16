@@ -81,6 +81,26 @@ target has not moved. Always reconcile before final qualification and again befo
 MR opening, rerunning affected checks only. No directory-wide management/skills exemption.
 Existing approved active contracts retain their required sequence until explicitly amended.
 
+## Reuse existing coverage during planning
+
+Before proposing tests, inspect the relevant existing suites and fixtures. In the
+Plan's existing validation/AC mapping, cite test paths or check IDs and distinguish
+**reuse**, **extend**, and **new** coverage. State the actual uncovered behavior or
+regression that each new case proves; prefer extending the existing fixture/test
+at that boundary. One existing test may cover several acceptance criteria.
+
+Do not clone a suite/fixture, rebuild an accepted invariant or add Goal-named
+checks merely to give the new task its own evidence. Similar scenarios at distinct
+boundaries (for example policy unit, runtime RLS and browser integration) may be
+necessary: explain the distinct failure each catches. The supervisor requests a
+bounded correction when proposed duplication has no such justification.
+
+Record this in the normal Plan, not a new inventory/framework or planning-time
+test campaign. Relevant regressions and required local/hosted/security coverage
+remain mandatory; reuse of earlier passing results still requires reconciliation
+of actual changed code, dependencies and runtime inputs. Test reuse is not a waiver
+of current validation, manual feedback or evidence requirements.
+
 ## Proportionate coverage
 
 Committed test/approval inputs use Git commit/path. Unconsumed status documents

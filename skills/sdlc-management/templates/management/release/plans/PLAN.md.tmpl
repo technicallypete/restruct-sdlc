@@ -25,6 +25,11 @@ None, or the change with risk handling.
 
 ## 6. Validation batches
 
+Cite relevant existing test paths/check IDs in this section or the AC mapping. Mark coverage as reuse/extend/new,
+and name the uncovered behavior for new cases. Extend existing fixtures first; justify similar tests at distinct
+boundaries. Do not duplicate suites or add Goal-specific checks solely to produce fresh evidence. This is not a
+new inventory or permission to omit required regression/local/hosted/security checks.
+
 Before every batch: fetch and assess target-delta relevance to validation and authority. Reconcile relevant/unknown
 changes; record any permitted irrelevant-delta deferral under the validation policy. Reconcile before final/MR and run
 {{PRE_BATCH_ENV_CHECK}}. Batches finish, fix, rerun, advance. Manual feedback precedes final qualification.

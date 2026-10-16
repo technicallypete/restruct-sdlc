@@ -110,6 +110,9 @@ specific holds, native permissions and delivery barriers; a Plan or green pipeli
   and never infer epic authority or expand its pinned membership.
 - **Plan review:** compare the exact Plan and changed inputs with the Spec, all
   ACs, security/architecture, budget and required evidence. Reuse accepted controls.
+  Check cited reuse/extend/new test coverage against actual gaps; request bounded
+  corrections for unjustified duplication. Distinct policy/RLS/integration boundaries
+  can need similar scenarios; require their purpose, not a separate test inventory.
   Resolve a mechanical binding change without reopening settled design unless a
   substantive defect or changed assumption requires it. Import accepted Plan,
   inventory/history and review bytes into the local integration branch as required.
