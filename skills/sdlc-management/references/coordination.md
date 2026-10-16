@@ -196,8 +196,12 @@ Deferred tool definitions shown separately are not the active message-history to
 
 ## Worker context and phase handoffs
 
-Default worker handoff threshold: **350,000 active context tokens**, configurable
-by explicit owner direction or a reviewed Goal/dispatch override. This measures
+Default worker checkpoint target: **300,000 active context tokens**; upper handoff
+threshold: **350,000 active context tokens**, configurable by explicit owner
+direction or a reviewed Goal/dispatch override. Around 300k, use the next safe
+step/batch boundary to safeguard work and prepare a concise handoff, leaving room
+to transfer before 350k rather than beginning another large phase near the limit.
+Checkpointing alone does not require immediate rotation or a new review. This measures
 current working context, not cumulative input/output/cache-read usage or transcript
 file size. Respect smaller model/harness context limits. At an observed threshold,
 finish the current safe step or running test batch, safeguard the checkpoint and

@@ -147,8 +147,10 @@ At handoffs/closeout or when old conversation history dominates context, follow
 [coordinator context compaction](.agents/skills/sdlc-management/references/coordination.md#coordinator-context-compaction-at-safe-boundaries).
 Preserve durable state, session/observer identity and running batches; no per-turn compaction or new monitor.
 Use [bounded worker handoffs](.agents/skills/sdlc-management/references/coordination.md#worker-context-and-phase-handoffs)
-when obsolete context warrants them; default threshold **350,000 active context tokens**
-at a safe boundary. Preserve budgets/evidence; no full-transcript fork, mandatory per-phase rotation or test restart.
+when obsolete context warrants them; default checkpoint target **300,000 active context tokens**,
+upper handoff threshold **350,000**. Prepare concise transfer state around 300k at a safe boundary;
+checkpointing alone does not force immediate rotation or review. Preserve budgets/evidence;
+no full-transcript fork, mandatory per-phase rotation or test restart.
 
 Use [targeted reruns and attributable coverage](.agents/skills/sdlc-management/references/validation-integration.md#targeted-reruns-and-attributable-coverage-default) by default:
 rerun failed cases and affected dependencies, reuse unchanged passes, preserve
