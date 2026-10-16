@@ -192,3 +192,33 @@ intact. No new watcher, recurring model poll or compaction daemon is needed.
 Context composition is not usage attribution: investigate actual coordinator/
 worker usage and cache behavior before changing models or pruning useful skills.
 Deferred tool definitions shown separately are not the active message-history total.
+
+
+## Worker context and phase handoffs
+
+At a completed implementation phase or prolonged validation/diagnosis boundary,
+assess whether the worker is carrying substantially obsolete history. When useful,
+hand the next bounded role to a focused worker using the existing compact repair
+handoff and approved task records, rather than forwarding the full transcript.
+First safeguard scoped work and record candidate/target SHAs, approved inputs,
+findings, completed/failed checks, resource ownership and next action. Verify one
+write owner, checkout/isolation and any unfinished resource handover before dispatch.
+Reuse attributable evidence; a replacement worker does not restart tests or budgets.
+
+Do not require fresh agents per phase or batch, rotate a useful ongoing owner solely
+because time passed, or add review rounds. Agent setup/re-reading also costs usage.
+Keep the single coordinator; supported compaction of a continuing worker may suffice.
+Use the existing phase-specific model/effort policy and supported controls. A saved
+model default or dispatch instruction is not independent runtime verification;
+record actual metadata when available and label owner-reported/unknown settings.
+If compaction or effort selection needs an owner-only native command, report that
+specific action once at a safe boundary. Do not bypass it, repeatedly prompt, or
+block otherwise authorized unrelated work merely for that optimization.
+
+Combine this with existing concise messages, targeted reruns, delta-only source
+reviews and duplicate-CI safeguards; do not create another framework or checklist
+artifact. Inspect available usage attribution/cache statistics when consumption is
+unexpectedly high. Context occupancy, elapsed test time and tool-call counts alone
+do not establish weekly allowance shares. Compaction consumes usage itself, does
+not restore allowance and has no guaranteed saving. Record useful observations in
+the normal Result/closeout; no new benchmark campaign or reporting requirement.
