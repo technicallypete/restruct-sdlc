@@ -27,9 +27,12 @@ SUPER = "00000000-0000-4000-8000-0000000000d1"
 class FakeCodex:
     def __init__(self):
         self.calls, self.queue_rc, self.cli, self.daemon, self.raise_timeout = [], 0, "0.160.0", "0.162.1", False
+        self.help_text = "Usage: codex queue [OPTIONS] --thread <THREAD> --message <TEXT>"
 
     def __call__(self, arguments, timeout):
         self.calls.append(list(arguments))
+        if arguments == ["queue", "--help"]:
+            return subprocess.CompletedProcess(arguments, 0, self.help_text, "")
         if arguments[:1] == ["--version"]:
             return subprocess.CompletedProcess(arguments, 0, f"codex-cli {self.cli}\n", "")
         if arguments[:3] == ["app-server", "daemon", "version"]:
@@ -39,7 +42,7 @@ class FakeCodex:
         return subprocess.CompletedProcess(arguments, self.queue_rc, "", "")
 
     def queues(self):
-        return [c for c in self.calls if c[:1] == ["queue"]]
+        return [c for c in self.calls if c[:2] == ["queue", "--thread"]]
 
 
 class Base(unittest.TestCase):
@@ -534,12 +537,49 @@ class StateAndQueue(Base):
         self.assertEqual(len(self.codex.queues()), 1)
         self.assertIsNone(self.state()["suspended"])
 
-    def test_unverified_codex_version_sends_nothing(self):
+    def test_unavailable_codex_capabilities_send_nothing(self):
         self.bind()
         self.poll()
-        self.codex.daemon = "9.9.9"
+        self.codex.daemon = "unknown"
         self.append(self.row("assistant", "Ready for review."))
-        self.assertEqual(self.poll()["reason"], "unverified-codex-version")
+        self.assertEqual(self.poll()["reason"], "incompatible-codex-capabilities")
+        self.assertEqual(self.codex.queues(), [])
+
+    def test_unbaselined_versions_with_supported_capabilities_queue_once(self):
+        self.bind()
+        self.poll()
+        self.codex.cli, self.codex.daemon = "0.999.7", "9.9.9"
+        self.append(self.row("assistant", "Ready for review."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertEqual(self.state()["deliveries"][-1]["compatibility_warnings"],
+                         ["unbaselined-codex-cli", "unbaselined-codex-daemon"])
+        self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(len(self.codex.queues()), 1)
+
+    def test_missing_queue_options_never_attempt_delivery(self):
+        for help_text in ("Usage: codex queue --thread <THREAD>",
+                          "Usage: other --thread <THREAD> --message <TEXT>"):
+            with self.subTest(help_text=help_text):
+                self.setUp()
+                self.bind()
+                self.poll()
+                self.codex.help_text = help_text
+                self.append(self.row("assistant", "Ready for review."))
+                self.assertEqual(self.poll()["reason"], "incompatible-codex-capabilities")
+                self.assertEqual(self.codex.queues(), [])
+                self.assertEqual(self.state()["keys"], [])
+
+    def test_help_probe_timeout_is_known_unsent(self):
+        self.bind()
+        self.poll()
+        original = self.codex
+        def timeout_help(arguments, timeout):
+            if arguments == ["queue", "--help"]:
+                raise subprocess.TimeoutExpired(arguments, timeout)
+            return original(arguments, timeout)
+        self.append(self.row("assistant", "Ready for review."))
+        with patch.object(watch, "run_codex", timeout_help):
+            self.assertEqual(self.poll()["reason"], "incompatible-codex-capabilities")
         self.assertEqual(self.codex.queues(), [])
 
     def test_smoke_delivers_exactly_once(self):
@@ -550,6 +590,138 @@ class StateAndQueue(Base):
         with self.assertRaises(handoff.Blocked):
             watch.main(["--repo", str(self.repo), "smoke", "--label", "again"])
         self.assertEqual(len(self.codex.queues()), 1)
+
+
+class KnownUnsentRecovery(Base):
+    kinds = ("milestone", "advisory", "waiting", "smoke")
+
+    def prepare(self, kind):
+        self.bind("--size-threshold", "4096")
+        self.poll()
+        if kind == "milestone":
+            row = self.row("assistant", "Plan is ready for review.")
+            self.append(row)
+            return watch.row_key(json.loads(row)), "review-ready"
+        if kind == "advisory":
+            with self.transcript.open("a") as stream:
+                stream.write(" " * 5000 + "\n")
+            return f"size:{COORD}:4096", "size-advisory"
+        if kind == "waiting":
+            self.status["registration_status"] = "waiting"
+            return "waiting:legacy", "waiting"
+        return "smoke:recovery smoke", "smoke"
+
+    def fire(self, kind):
+        if kind == "smoke":
+            return watch.main(["--repo", str(self.repo), "smoke", "--label", "recovery smoke"])
+        return self.poll()
+
+    def legacy_blocked(self, kind, key, category):
+        state = self.state()
+        state["keys"].append(key)
+        state["deliveries"].append({"key": key, "kind": category,
+                                    "outcome": "not-sent-unverified-codex-version"})
+        state["suspended"] = {"reason": "incompatible-codex-capabilities", "time": "2026-10-12T00:00:00Z"}
+        if kind == "advisory":
+            state["size_advised"].append(key)
+            state["transcript"]["advised"] = True
+        elif kind == "waiting":
+            state["waiting"] = True
+        elif kind == "smoke":
+            state["smoke"] = {"label": "recovery smoke", "outcome": "pending-intent"}
+        watch.save(watch.observer_dir(self.root), "state.json", state)
+
+    def assert_consumed_once(self, kind):
+        if kind == "smoke":
+            with self.assertRaises(handoff.Blocked):
+                self.fire(kind)
+        else:
+            self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(len(self.codex.queues()), 1)
+
+    def test_capability_blocked_markers_recover_only_after_explicit_rebind(self):
+        for kind in self.kinds:
+            for version in ("cli", "daemon"):
+                with self.subTest(kind=kind, version=version):
+                    self.setUp()
+                    self.prepare(kind)
+                    original = getattr(self.codex, version)
+                    setattr(self.codex, version, "unknown")
+                    self.assertEqual(self.fire(kind)["reason"], "incompatible-codex-capabilities")
+                    state = self.state()
+                    self.assertEqual(state["keys"], [])
+                    self.assertEqual(state["size_advised"], [])
+                    self.assertFalse(state["waiting"])
+                    self.assertIsNone(state["smoke"])
+                    self.assertEqual(self.codex.queues(), [])
+                    setattr(self.codex, version, original)
+                    self.assertEqual(self.poll()["status"], "suspended")
+                    self.bind("--replace", "--size-threshold", "4096")
+                    self.assertEqual(self.codex.queues(), [])  # rebinding is never delivery
+                    self.assertEqual(self.fire(kind)["queue_calls"], 1)
+                    self.assert_consumed_once(kind)
+
+    def test_waiting_survives_another_event_being_version_blocked(self):
+        self.prepare("milestone")
+        self.status["registration_status"] = "waiting"
+        self.codex.daemon = "unknown"
+        self.assertEqual(self.poll()["reason"], "incompatible-codex-capabilities")
+        self.assertFalse(self.state()["waiting"])
+        self.codex.daemon = "0.162.1"
+        self.bind("--replace", "--size-threshold", "4096")
+        self.assertEqual(self.poll()["queue_calls"], 2)
+        self.assertIn("(waiting", self.codex.queues()[1][4])
+        self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_legacy_known_unsent_markers_recover_on_rebind(self):
+        for kind in self.kinds:
+            with self.subTest(kind=kind):
+                self.setUp()
+                key, category = self.prepare(kind)
+                self.legacy_blocked(kind, key, category)
+                self.bind("--replace", "--size-threshold", "4096")
+                self.assertNotIn(key, self.state()["keys"])
+                self.assertEqual(self.codex.queues(), [])
+                self.assertEqual(self.fire(kind)["queue_calls"], 1)
+                self.assert_consumed_once(kind)
+
+    def test_legacy_unsent_record_never_releases_an_attempted_key(self):
+        for kind in self.kinds:
+            for outcome in ("queued-not-acknowledged", "uncertain-interrupted", "pending-intent"):
+                with self.subTest(kind=kind, outcome=outcome):
+                    self.setUp()
+                    key, category = self.prepare(kind)
+                    self.legacy_blocked(kind, key, category)
+                    state = self.state()
+                    state["deliveries"].append({"key": key, "kind": category, "outcome": outcome,
+                                                "notice_id": "00000000-0000-4000-8000-0000000000e1"})
+                    watch.save(watch.observer_dir(self.root), "state.json", state)
+                    self.bind("--replace", "--size-threshold", "4096")
+                    self.assertIn(key, self.state()["keys"])
+                    if kind == "smoke":
+                        with self.assertRaises(handoff.Blocked):
+                            self.fire(kind)
+                    else:
+                        self.assertEqual(self.poll()["queue_calls"], 0)
+                    self.assertEqual(self.codex.queues(), [])
+
+    def test_version_change_mid_poll_does_not_repeat_the_first_notice(self):
+        self.prepare("milestone")
+        self.append(self.row("assistant", "Now blocked on input."))
+        def change_version(arguments, timeout):
+            result = self.codex(arguments, timeout)
+            if arguments[:2] == ["queue", "--thread"]:
+                self.codex.daemon = "unknown"
+            return result
+        with patch.object(watch, "run_codex", change_version):
+            result = self.poll()
+        self.assertEqual((result["reason"], result["queue_calls"]), ("incompatible-codex-capabilities", 1))
+        self.codex.daemon = "0.162.1"
+        self.bind("--replace", "--size-threshold", "4096")
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("(blocked", self.codex.queues()[1][4])
+        self.assertEqual(len(self.codex.queues()), 2)
+        self.assertEqual(self.poll()["queue_calls"], 0)
 
 
 class SizeAdvisory(Base):
@@ -681,7 +853,7 @@ class DurableIntent(Base):
 
         def call(arguments, timeout):
             result = real(arguments, timeout)
-            if arguments[:1] == ["queue"]:
+            if arguments[:2] == ["queue", "--thread"]:
                 raise self.Died()  # the process dies right after the external enqueue
             return result
         return patch.object(watch, "run_codex", call)

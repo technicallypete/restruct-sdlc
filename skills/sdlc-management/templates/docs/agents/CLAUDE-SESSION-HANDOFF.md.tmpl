@@ -51,7 +51,9 @@ Do not rename live workers or bypass permission/ownership/isolation checks.
 Not verified. Until a row above records it, coordinator relocation stays deferred
 ([coordination](../../.agents/skills/sdlc-management/references/coordination.md#naming-dispatch-and-relocation-gate)).
 
-Unsupported versions fail closed in the helper; record a new verification before relying on a changed CLI.
+Transport versions are diagnostic baselines; require the companion’s protocol/capability and identity checks.
+Refresh the same UUID’s socket; retry only one pre-write missing/refused connection, never an uncertain send.
+Record compatibility warnings and actual receipt; session creation retains its separate verified-version gate.
 
 
 ## Fable weekly-limit fallback — owner direction, 2026-10-15

@@ -42,8 +42,10 @@ tools serve.
   stop rules such as “Any failure stops it” are not reports of an actual failure. The observer uses bounded text
   patterns rather than language inference; verify the linked records before acting. Keep detection code and tests
   in `claude-session-handoff`, rather than duplicating them in this skill.
-- Tested support is Linux/WSL with the companion's verified CLI versions. Unsupported or ambiguous discovery fails
-  closed; there is no new compatibility promise.
+- Transport support is Linux/WSL with the companion’s protocol/capability checks. Release versions warn rather
+  than gate messaging; unsupported protocols/options, ambiguous identity and uncertain delivery still stop.
+  Refresh the same session/socket; one pre-write missing/refused reconnect is allowed, never an uncertain resend.
+  Session creation keeps its separate verified-version gate; there is no blanket future-compatibility promise.
 
 ## Naming, dispatch and relocation gate
 

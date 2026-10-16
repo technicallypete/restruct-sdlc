@@ -9,14 +9,15 @@ Use shell tools to communicate with an existing local Claude Code session. Codex
 
 ## Select the procedure
 
-Read the active repository's `AGENTS.md` and `docs/agents/CLAUDE-SESSION-HANDOFF.md` when present. That repository runbook is authoritative for its local interface and workflow. Otherwise read [the bundled reference](references/local-session-handoff.md), adapted from the originating repository's runbook verified with Claude Code 2.1.290/2.1.291 and 2.1.296 on Linux/WSL. Its internal socket interface is version-specific; verify compatibility before messaging after an upgrade. Resolve repository paths against the target checkout, not this skill's installation directory.
+Read the active repository's `AGENTS.md` and `docs/agents/CLAUDE-SESSION-HANDOFF.md` when present. That repository runbook is authoritative for its local interface and workflow. Otherwise read [the bundled reference](references/local-session-handoff.md), adapted from the originating repository's runbook verified with Claude Code 2.1.290/2.1.291 and 2.1.296 on Linux/WSL. Its internal socket interface is protocol-checked; release versions are diagnostic baselines, not transport allowlists. Resolve repository paths against the target checkout, not this skill's installation directory.
 
 ## Check progress
 
 Use [scripts/handoff.py](scripts/handoff.py) for routine checks and authorized
 messages. It uses the standard library and the runbook's Linux protocol, currently
-verified for Claude Code 2.1.290/2.1.291/2.1.296. A changed version/protocol fails closed;
-reverify the interface before adapting it. Run scripts without reading their whole
+baselined with Claude Code 2.1.290/2.1.291/2.1.296. Protocol 1, current registration,
+peer identity and key shape remain required; other release versions produce
+`compatibility_warnings`, not a transport block. An incompatible protocol still stops delivery. Run scripts without reading their whole
 source into conversation context. Resolve the script path from this skill folder.
 
 ```sh
@@ -79,7 +80,7 @@ python3 "$H" --repo "$PWD" unpin --session FULL_UUID
 ```
 
 - `pin` runs the same live verification as `send` (one live registration for the
-  UUID in this repository, matching process start, protocol 1, verified version).
+  UUID in this repository, matching process start and integer protocol 1). Versions are diagnostics.
   Newer live peers require `--confirm-target` after verifying them; replacing a
   different pin requires `--replace`. It never sends or spawns.
 - `status` is one of `unpinned`, `pin-unsafe`, `pinned-live-verified`,
@@ -113,6 +114,22 @@ new PID revalidates automatically; a changed UUID (copy or fork) shows as
 
 **Claude ↔ Claude:** Claude sessions use native `ListAgents`/`SendMessage` (or
 `/list-agents`) and short identifiers. This helper remains the Codex → Claude route.
+
+## Compatibility and stale connections
+
+The helper refreshes the same UUID's live registration/socket before connecting.
+Only a pre-write missing/refused connection may trigger one rediscovery and retry;
+recheck repository, process start, protocol, key and authenticated peer. Never
+choose a different UUID or create a session. Once `sendall` starts, its failure is
+uncertain: no automatic retry, even if the receipt has not appeared. Socket writes
+and queue success still require the existing receipt/acknowledgment checks.
+
+Capability checks establish the interface in use, not guaranteed compatibility
+with every future release. Changed protocol/schema/options or uncertain delivery
+stop the transport. The separate read-only **session-creation** gate retains its
+verified-version restriction; this change grants no creation/permission authority.
+Legacy suspended version blocks need one explicit verified rebind; retained
+attempted/uncertain sends are never released by that recovery.
 
 ## Recovery and delegation
 
@@ -403,13 +420,20 @@ python3 "$W" --repo "$PWD" stop
   replay, queue receipts, notices echoed back (`[observer-notice: …]`), subagent sidechains, repository files
   (including management records), Codex transcripts and the observer's own records are never sources, so notices
   cannot loop. "Waiting" is reported as *native prompt not inspected*; inspect it before answering.
-- **Delivery.** Notices go through `codex queue --thread UUID`, with Codex CLI 0.160.0 and daemon 0.162.1/0.163.0
-  verified. An idle poll makes no queue or CLI call. The outcome is recorded as `queued-not-acknowledged`, never as
+- **Delivery.** Notices go through `codex queue --thread UUID`. Before sending, read-only checks require the
+  queue command’s `--thread`/`--message` options and readable CLI/daemon version metadata. Codex CLI 0.160.0 and
+  daemon 0.162.1/0.163.0 are baselines; other releases warn, without an exact- or major-version gate. An idle poll makes no queue or CLI call. The outcome is recorded as `queued-not-acknowledged`, never as
   acknowledgment. Before each `codex queue` call, the notice's intent and dedup key are written to private state;
   if that write fails, nothing is queued. An intent left unfinished by a crash or a failed final write is recorded
-  as `uncertain-interrupted` and never retried, even after rebinding. Queue failure or uncertainty, an unverified
-  version, identity loss, a retired session or a changed pin suspends delivery, with no retry, until an explicit
+  as `uncertain-interrupted` and never retried, even after rebinding. Queue failure or uncertainty, incompatible
+  capabilities, identity loss, a retired session or a changed pin suspends delivery, with no retry, until an explicit
   `bind --replace`.
+  A capability rejection before any queue call records a known-unsent outcome without consuming event/advisory/
+  waiting/smoke markers. After explicit verified rebinding, these may be delivered; use `start --resume` when
+  recovering transcript events from the saved cursor (fresh `start` intentionally skips old backlog). Rebinding
+  also releases older known-unsent markers only when retained history contains no attempted/uncertain send for
+  that key. Queued or uncertain deliveries remain deduplicated. Smoke recovery requires another explicit `smoke`
+  command; rebinding itself never queues anything.
 - **Parsing limit.** A JSONL row longer than 1 MiB is not parsed. The observer scans past it in bounded chunks,
   resuming across polls while it grows, and records it under `status` `parse_limit`. If the row was coordinator
   output, one notice says it could not be assessed for milestones. Later rows are still delivered.

@@ -443,9 +443,6 @@ class T04Pin(Base):
         self.register(self.session, self.root, protocol=2)
         self.rejects(reason="changed-peer-protocol")
         self.unregister(self.session)
-        self.register(self.session, self.root, version="2.1.999")
-        self.rejects(reason="changed-cli-version-reverify-runbook")
-        self.unregister(self.session)
         self.register(self.session, self.root)
         self.register(self.session, self.root)
         self.rejects(reason="missing-or-ambiguous-live-session")
@@ -1486,6 +1483,83 @@ class T15Failures(Base):
         self.assertEqual((str(caught.exception), caught.exception.details["pruned"]), ("pruned-manifest-update-failed", True))
         self.assertEqual(ids_in(self.log.read_bytes()), {self.kept})
         self.preserved()
+
+class TransportCompatibility(Base):
+    def setUp(self):
+        super().setUp()
+        self.root = self.make_repo()
+        self.session = str(uuid.uuid4())
+
+    def test_new_version_keeps_protocol_gate_and_warns(self):
+        self.register(self.session, self.root, version="9.9.9")
+        self.pin(self.root, self.session)
+        result = run_main("--repo", self.root, "status")
+        self.assertEqual(result["status"], "pinned-live-verified")
+        self.assertEqual(result["compatibility_warnings"], ["unbaselined-claude-version"])
+        self.unregister(self.session)
+        for protocol in (2, True):
+            self.register(self.session, self.root, version="9.9.9", protocol=protocol)
+            with self.assertRaises(handoff.Blocked):
+                handoff.live_registration(self.registry, self.session, self.root)
+            self.unregister(self.session)
+
+    def test_stale_prewrite_connect_refreshes_same_session_once(self):
+        from unittest.mock import MagicMock
+        row = {"cwd": str(self.root), "sessionId": self.session}
+        refreshed = {**row, "pid": 2, "version": "9.9.9"}
+        client = MagicMock()
+        with patch.object(handoff, "live_registration", side_effect=[row, refreshed]) as lookup, \
+             patch.object(handoff, "connect_peer", side_effect=[FileNotFoundError(2, "stale"), (client, "fixture")]) as connect:
+            self.assertEqual(handoff.send(self.registry, row, "authorized fixture", HANDOFF), refreshed)
+        self.assertEqual(lookup.call_count, 2)
+        self.assertTrue(all(call.args[1] == self.session for call in lookup.call_args_list))
+        self.assertEqual(connect.call_count, 2)
+        client.sendall.assert_called_once()
+        frames = [json.loads(line) for line in client.sendall.call_args.args[0].splitlines()]
+        self.assertEqual((frames[1]["session_id"], frames[1]["uuid"]), (self.session, HANDOFF))
+
+    def test_connect_retry_is_bounded_and_never_retargets(self):
+        row = {"cwd": str(self.root), "sessionId": self.session}
+        with patch.object(handoff, "live_registration", return_value=row) as lookup, \
+             patch.object(handoff, "connect_peer", side_effect=ConnectionRefusedError(111, "stale")) as connect:
+            with self.assertRaises(OSError):
+                handoff.send(self.registry, row, "fixture", HANDOFF)
+        self.assertEqual((lookup.call_count, connect.call_count), (2, 2))
+
+    def test_peer_mismatch_and_uncertain_write_are_never_retried(self):
+        from unittest.mock import MagicMock
+        row = {"cwd": str(self.root), "sessionId": self.session}
+        with patch.object(handoff, "live_registration", return_value=row), \
+             patch.object(handoff, "connect_peer", side_effect=handoff.Blocked("socket-peer-mismatch")) as connect:
+            with self.assertRaises(handoff.Blocked):
+                handoff.send(self.registry, row, "fixture", HANDOFF)
+            connect.assert_called_once()
+        client = MagicMock()
+        client.sendall.side_effect = BrokenPipeError(32, "uncertain partial send")
+        with patch.object(handoff, "live_registration", return_value=row) as lookup, \
+             patch.object(handoff, "connect_peer", return_value=(client, "fixture")) as connect:
+            with self.assertRaises(OSError):
+                handoff.send(self.registry, row, "fixture", HANDOFF)
+        self.assertEqual((lookup.call_count, connect.call_count, client.sendall.call_count), (1, 1, 1))
+
+    def test_real_peer_credentials_checked_before_any_bytes(self):
+        import socket
+        address = str(self.tmp / "peer.sock")
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as listener:
+            listener.bind(address)
+            listener.listen(1)
+            listener.settimeout(2)
+            pid = os.getpid() + 1
+            key = self.registry / f"{pid}.{handoff.digest(address.encode())}.key"
+            key.write_text(json.dumps({"peerToken": "fixture"}))
+            key.chmod(0o600)
+            with self.assertRaises(handoff.Blocked) as caught:
+                handoff.connect_peer(self.registry, {"pid": pid, "messagingSocketPath": address})
+            self.assertEqual(str(caught.exception), "socket-peer-mismatch")
+            peer, _ = listener.accept()
+            with peer:
+                peer.settimeout(2)
+                self.assertEqual(peer.recv(4096), b"")
 
 if __name__ == "__main__":
     unittest.main()

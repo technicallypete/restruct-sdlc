@@ -12,7 +12,7 @@ creation, settings changes, raw transcript forwarding or implicit retargeting. N
   watch.py --repo PATH poll-once               # one foreground poll (diagnostics)
 
 State is private (0700/0600) under the handoff helper's repository state directory, in `observer/`, outside Git.
-Uncertain identity, versions, state or queue outcome suspends delivery until an explicit `bind --replace`.
+Uncertain identity, incompatible capabilities, state or queue outcome suspends delivery until an explicit `bind --replace`.
 Each poll also reads the coordinator transcript's size from file metadata; at or above the bound threshold (default
 100 MiB) one advisory is queued per coordinator UUID and threshold. Nothing is pruned and no session is changed.
 """
@@ -34,8 +34,8 @@ import handoff
 from handoff import Blocked, require
 
 SCHEMA = "claude-session-handoff/observer/v1"
-VERIFIED_CODEX_CLI = {"0.160.0"}
-VERIFIED_CODEX_DAEMON = {"0.162.1", "0.163.0"}
+BASELINE_CODEX_CLI = {"0.160.0"}
+BASELINE_CODEX_DAEMON = {"0.162.1", "0.163.0"}
 DEFAULT_INTERVAL = 30
 DEFAULT_SIZE_THRESHOLD = 104857600  # 100 MiB
 MIN_SIZE_THRESHOLD = 1024
@@ -150,9 +150,28 @@ def codex_versions():
     daemon = run_codex(["app-server", "daemon", "version"], 15)
     try:
         server = json.loads(daemon.stdout).get("appServerVersion")
+        if not isinstance(server, str) or not re.fullmatch(r"\d+\.\d+\.\d+", server):
+            server = None
     except (ValueError, AttributeError):
         server = None
     return (match.group(1) if cli.returncode == 0 and match else None), (server if daemon.returncode == 0 else None)
+
+
+def queue_compatibility():
+    """Read-only surface checks, not a guarantee about future implementations. No test message is sent."""
+    cli, daemon = codex_versions()
+    help_result = run_codex(["queue", "--help"], 15)
+    help_text = help_result.stdout or ""
+    supported = (cli is not None and daemon is not None and help_result.returncode == 0
+                 and "Usage: codex queue" in help_text
+                 and all(re.search(r"--" + flag + r"[ =]+<[^>\n]+>", help_text)
+                         for flag in ("thread", "message")))
+    warnings = []
+    if cli not in BASELINE_CODEX_CLI:
+        warnings.append("unbaselined-codex-cli")
+    if daemon not in BASELINE_CODEX_DAEMON:
+        warnings.append("unbaselined-codex-daemon")
+    return supported, cli, daemon, warnings
 
 
 def verified_identity(root, binding):
@@ -325,20 +344,52 @@ def recover_pending(state):
     return found
 
 
+def recover_known_unsent(state):
+    """Explicit rebind may release legacy version-blocked markers, never a key with an attempted/uncertain send."""
+    records = state.get("deliveries", [])
+    unsent = {"not-sent-unverified-codex-version", "not-sent-incompatible-codex-capabilities"}
+    attempted = {r.get("key") for r in records if r.get("outcome") not in unsent or r.get("notice_id")}
+    release = {r.get("key") for r in records
+               if r.get("outcome") in unsent and isinstance(r.get("key"), str)} - attempted
+    state["keys"] = [key for key in state["keys"] if key not in release]
+    state["size_advised"] = [key for key in state.get("size_advised", []) if key not in release]
+    transcript = state.get("transcript")
+    if transcript and f"size:{transcript.get('coordinator')}:{transcript.get('threshold')}" in release:
+        transcript["advised"] = False
+    waiting = [r for r in records if r.get("kind") == "waiting"]
+    if waiting and waiting[-1].get("key") in release:
+        state["waiting"] = False
+    smoke = state.get("smoke")
+    if smoke and f"smoke:{smoke.get('label')}" in release:
+        state["smoke"] = None
+
+
 def deliver(directory, state, binding, text, key, kind):
     """Queue one notice. The intent and its dedup key are persisted first (no queue if that fails); uncertainty is
-    recorded and suspends delivery; there are no retries."""
-    cli, daemon = codex_versions()
-    if cli not in VERIFIED_CODEX_CLI or daemon not in VERIFIED_CODEX_DAEMON:
-        remember(state, key)
-        state["deliveries"].append({"key": key, "kind": kind, "outcome": "not-sent-unverified-codex-version",
+    recorded and suspends delivery; stored intents and attempted sends are never retried."""
+    try:
+        supported, cli, daemon, warnings = queue_compatibility()
+    except (OSError, subprocess.SubprocessError):
+        supported, cli, daemon, warnings = False, None, None, []
+    if not supported:
+        state["deliveries"].append({"key": key, "kind": kind, "outcome": "not-sent-incompatible-codex-capabilities",
                                     "cli": cli, "daemon": daemon})
-        return suspend(directory, state, "unverified-codex-version")
+        return suspend(directory, state, "incompatible-codex-capabilities")
     notice_id = str(uuid.uuid4())
     message = f"{NOTICE_MARK} {notice_id}] {text}"
     remember(state, key)
+    # Consume markers only after capability verification, in the same durable write as the queue intent.
+    if kind == "size-advisory":
+        state["size_advised"] = (state.get("size_advised", []) + [key])[-200:]
+        state["transcript"]["advised"] = True
+    elif kind == "waiting":
+        state["waiting"] = True
+    elif kind == "smoke":
+        state["smoke"] = {"label": key.removeprefix("smoke:"), "outcome": "pending-intent",
+                          "time": handoff.utc_now().isoformat()}
     record = {"key": key, "kind": kind, "notice_id": notice_id, "time": handoff.utc_now().isoformat(),
               "message_sha256": hashlib.sha256(message.encode()).hexdigest(), "cli": cli, "daemon": daemon,
+              "compatibility_warnings": warnings,
               "outcome": "pending-intent"}
     state["deliveries"] = (state["deliveries"] + [record])[-200:]
     save(directory, "state.json", state)  # durable intent before the external queue; raises -> nothing queued
@@ -351,7 +402,8 @@ def deliver(directory, state, binding, text, key, kind):
     if outcome != "queued-not-acknowledged":
         return suspend(directory, state, "queue-uncertain")
     save(directory, "state.json", state)
-    return {"status": "queued-not-acknowledged", "notice_id": notice_id, "queue_calls": 1}
+    return {"status": "queued-not-acknowledged", "notice_id": notice_id, "queue_calls": 1,
+            "compatibility_warnings": warnings}
 
 
 def poll_once(root):
@@ -395,12 +447,11 @@ def poll_once(root):
         events.append((f"waiting:{handoff.utc_now().isoformat()}", "waiting",
                        "the coordinator reports waiting; the native prompt was not inspected (inspect with claude "
                        "attach before answering)", ""))
-    state["waiting"] = waiting
+    if not waiting:
+        state["waiting"] = False
     calls = 0
     if advisory:
         key, size, threshold = advisory
-        state["size_advised"] = (state["size_advised"] + [key])[-200:]  # recorded before delivery: no retry
-        state["transcript"]["advised"] = True
         text = (f"Claude coordinator transcript size advisory: {size} bytes ({size / 1048576:.1f} MiB) is at or above "
                 f"the {threshold}-byte threshold. Recommendation: assess a safe session handoff or archive at a safe "
                 "point under the recovery rules. Nothing was pruned, no session was changed, and this notice carries "
@@ -567,6 +618,7 @@ def cmd_bind(root, args):
                             "coordinator": current["coordinator"]} if current else None}
     save(directory, "binding.json", binding)
     state = load(directory, "state.json", empty_state())
+    recover_known_unsent(state)
     recover_pending(state)  # still uncertain and deduplicated: rebinding never retries them
     state["suspended"] = None
     save(directory, "state.json", state)
@@ -596,9 +648,9 @@ def cmd_smoke(root, label):
     require(ok, reason or "identity-unverified")
     text = (f"OBSERVER SMOKE TEST ({label}): labelled, benign delivery check only. No reply, task action or approval "
             "is requested, and this notice carries no authority.")
-    state["smoke"] = {"label": label, "outcome": "pending-intent", "time": handoff.utc_now().isoformat()}
     result = deliver(directory, state, binding, text, f"smoke:{label}", "smoke")  # persists the smoke intent first
-    state["smoke"]["outcome"] = result["status"]
+    if state.get("smoke"):
+        state["smoke"]["outcome"] = result["status"]
     save(directory, "state.json", state)
     last = state["deliveries"][-1]
     return {**result, "cli": last.get("cli"), "daemon": last.get("daemon"),

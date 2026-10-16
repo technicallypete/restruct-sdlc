@@ -31,8 +31,7 @@ restricted PID namespace) prevents verification and does not prove shutdown.
 Installed CLI 2.1.296 still has no native `agents send` command. Its registered
 protocol-1 inbox accepted an authenticated, peer-verified handoff; transcript
 replay and the recipient acknowledgment were verified. This supports the same
-narrow helper protocol, not a claim of a new public messaging API. Keep
-unverified versions blocked. Claude-to-Claude messaging uses the CLI's native
+narrow helper protocol, not a claim of a new public messaging API. The old exact-version transport restriction is superseded by the compatibility policy below. Claude-to-Claude messaging uses the CLI's native
 `ListAgents`/`SendMessage` tools; this inbox procedure is for Codex → Claude.
 
 ## Check status and progress
@@ -58,7 +57,7 @@ or settings change is implied.
 
 In the locally verified CLI, `claude agents` discovers/manages sessions but has no documented `send` subcommand. We used Claude Code's authenticated local Unix-socket inbox instead of starting another copy of the running conversation.
 
-**This inbox is an internal, version-specific interface.** Before using it after a Claude upgrade, verify the current local registration/protocol and installed CLI implementation. Do not assume the wire format, key layout or socket namespace is a stable public API. If it is unavailable or incompatible, use `claude attach <id>` for a background session or the owner's existing interactive terminal, or report that the handoff could not be delivered. Do not write a fabricated user entry into the transcript or job files.
+**This inbox is an internal, protocol-sensitive interface.** Verify the current live registration, protocol, key and authenticated peer before messaging; release-version differences warn rather than gate transport. Do not assume the wire format, key layout or socket namespace is a stable public API. If it is unavailable or incompatible, use `claude attach <id>` for a background session or the owner's existing interactive terminal, or report that the handoff could not be delivered. Do not write a fabricated user entry into the transcript or job files.
 
 Verified protocol 1 on this host:
 
@@ -215,5 +214,27 @@ continue authorized next actions; do not repeat settled context or approval prom
 
 
 Observer queue compatibility verified 2026-10-15: Codex CLI 0.160.0 with daemon
-0.162.1/0.163.0. Other daemon versions remain fail-closed until verified; preserve
+0.162.1/0.163.0. Other versions now warn under the transport compatibility policy below; preserve
 the existing bound sessions, cursor, deduplication and permission boundaries.
+## Transport compatibility and stale sockets — 2026-10-15
+
+Owner replaces exact-version transport allowlists with protocol/capability checks.
+Claude still requires integer peerProtocol1, the same UUID/repository, live process
+start, canonical Unix socket, private peer-key shape and matching PID/UID peer.
+Each send rediscovers that UUID’s current registration. A pre-write ENOENT or
+ECONNREFUSED allows one fresh lookup/reconnect; no other UUID, session creation,
+endpoint guessing or cached direct supervisor socket is used. Once `sendall`
+starts, failure is uncertain and must not trigger another send. Verify replay and
+acknowledgment as before.
+
+Codex delivery uses the installed CLI’s queue command, which resolves its daemon
+endpoint, rather than a stored supervisor socket. Read-only help/version checks
+verify the required command options/metadata; versions outside tested baselines
+produce warnings in delivery records. They do not prove every future release’s
+semantics. Missing capabilities, changed protocol, identity mismatch and uncertain
+queue results still suspend. No automatic probe message or repeated retry is added.
+Known-unsent capability blocks and historical version blocks can recover through
+explicit verified rebind; attempted/uncertain sends retain dedup protection.
+The separate coordinator-creation check remains version-restricted and authorized
+independently. Restart a running observer at a safe point with `stop`, then
+`start --resume` to load this code without resetting the pair/cursor/dedup.

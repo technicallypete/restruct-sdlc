@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compact Linux Claude Code handoffs for locally verified versions; stdlib only."""
+"""Compact Linux Claude Code protocol-1 handoffs; stdlib only."""
 import argparse
 from collections import Counter
 import contextlib
@@ -21,8 +21,8 @@ import uuid
 from datetime import datetime, timezone
 
 # Protocol 1: 2.1.296 reverified by authenticated G051 handoff replay and
-# acknowledgment on 2026-10-10. Keep unknown versions fail-closed.
-VERIFIED_VERSIONS = {"2.1.290", "2.1.291", "2.1.296"}
+# acknowledgment on 2026-10-10. Versions are diagnostic baselines, not transport gates.
+BASELINE_VERSIONS = {"2.1.290", "2.1.291", "2.1.296"}
 # The read-only creation gate accepts only the version whose creation interface was
 # read locally. A change is a bounded escalation; never widen this automatically.
 CREATION_VERIFIED_VERSIONS = {"2.1.296"}
@@ -208,8 +208,7 @@ def live_registration(registry, session, root):
             continue
     require(len(matches) == 1, "missing-or-ambiguous-live-session")
     row = matches[0]
-    require(row.get("peerProtocol") == 1, "changed-peer-protocol")
-    require(row.get("version") in VERIFIED_VERSIONS, "changed-cli-version-reverify-runbook")
+    require(type(row.get("peerProtocol")) is int and row["peerProtocol"] == 1, "changed-peer-protocol")
     return row
 
 
@@ -326,26 +325,54 @@ def append_record(root, relative, record):
         os.close(fd)
 
 
-def send(registry, registration, message, handoff_id):
+def compatibility_warnings(registration):
+    return [] if registration.get("version") in BASELINE_VERSIONS else ["unbaselined-claude-version"]
+
+
+def connect_peer(registry, registration):
+    """Prepare an authenticated peer connection; no bytes are written here."""
     pid = registration["pid"]
     address = registration["messagingSocketPath"]
-    require(Path(address).is_absolute() and os.path.realpath(address) == address,
+    require(isinstance(address, str) and Path(address).is_absolute() and os.path.realpath(address) == address,
             "noncanonical-socket")
     require(stat.S_ISSOCK(os.stat(address).st_mode), "not-a-unix-socket")
     key = registry / f"{pid}.{digest(address.encode())}.key"
     info = key.stat()
     require(info.st_uid == os.getuid() and info.st_mode & 0o077 == 0, "unsafe-peer-key")
     token = json.loads(key.read_text())["peerToken"]
-    frame = {"type": "user", "session_id": registration["sessionId"],
-             "uuid": handoff_id, "from": "codex-supervisor", "priority": "next",
-             "message": {"role": "user", "content": message}}
-    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+    require(isinstance(token, str) and bool(token), "unsupported-peer-key-shape")
+    client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    try:
         client.settimeout(5)
         client.connect(address)
         peer_pid, peer_uid, _ = struct.unpack("3i", client.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12))
         require(peer_pid == pid and peer_uid == os.getuid(), "socket-peer-mismatch")
-        client.sendall((json.dumps({"type": "auth", "token": token}) + "\n"
-                        + json.dumps(frame) + "\n").encode())
+    except BaseException:
+        client.close()
+        raise
+    return client, token
+
+
+def send(registry, registration, message, handoff_id):
+    # Refresh the same UUID from the same repository before every connection, not a cached socket/PID.
+    root = repo_root(Path(registration["cwd"]))
+    session = canonical_uuid(registration["sessionId"])
+    for attempt in range(2):
+        current = live_registration(registry, session, root)
+        try:
+            client, token = connect_peer(registry, current)
+        except OSError as error:
+            # Only these pre-write failures prove nothing could have been delivered. Never retry sendall.
+            if attempt == 0 and error.errno in (errno.ENOENT, errno.ECONNREFUSED):
+                continue
+            raise
+        frame = {"type": "user", "session_id": session,
+                 "uuid": handoff_id, "from": "codex-supervisor", "priority": "next",
+                 "message": {"role": "user", "content": message}}
+        with client:
+            client.sendall((json.dumps({"type": "auth", "token": token}) + "\n"
+                            + json.dumps(frame) + "\n").encode())
+        return current
 
 
 # --- private machine-local state (pin, maintenance lock, archives) ----------------------------
@@ -646,7 +673,7 @@ def pinned_route(registry, session, root):
     if not rows:
         return "pinned-not-live", None
     row = rows[0]
-    if row.get("peerProtocol") != 1 or row.get("version") not in VERIFIED_VERSIONS:
+    if type(row.get("peerProtocol")) is not int or row["peerProtocol"] != 1:
         return "pinned-unverified", row
     return "pinned-live-verified", row
 
@@ -715,6 +742,7 @@ def status_report(root, registry, projects):
                                   for r in found["cli"] or [] if r["session"] == pin["session"]],
               "discovery": found}
     if row:
+        report["compatibility_warnings"] = compatibility_warnings(row)
         report["live"] = {"pid": row.get("pid"), "checkout": row.get("cwd"), "name": safe_name(row.get("name")),
                           "version": row.get("version"), "peer_protocol": row.get("peerProtocol")}
         report["changes"] = {
@@ -1376,6 +1404,7 @@ def main():
         return {"status": registration.get("status"), "session": session, "route": route,
                 "pid": registration["pid"], "version": registration["version"],
                 "peer_protocol": registration["peerProtocol"],
+                "compatibility_warnings": compatibility_warnings(registration),
                 "checkout": registration["cwd"], "reported_not_validated": excerpts[-args.limit:],
                 "newer_live_sessions_check_target": mark_peers(newer_sessions(registry, projects, root, session), root)}
     newer = newer_sessions(registry, projects, root, session)
@@ -1404,8 +1433,9 @@ def main():
     # Shared for the whole invocation, so a handoff's records are never split by compaction.
     with maintenance_lock(root, record_path(root, args.record), False, args.lock_wait_seconds):
         append_record(root, args.record, record)  # Fail before delivery if tracking cannot be written.
-        send(registry, registration, message, handoff_id)
-        record = {**record, "status": "sent-receipt-pending"}
+        delivered_to = send(registry, registration, message, handoff_id)
+        record = {**record, "status": "sent-receipt-pending",
+                  "compatibility_warnings": compatibility_warnings(delivered_to or registration)}
         append_record(root, args.record, record)
         deadline = time.monotonic() + args.wait_seconds
         result = receipt_status(projects, session, handoff_id)
@@ -1414,6 +1444,7 @@ def main():
             result = receipt_status(projects, session, handoff_id)
         append_record(root, args.record, {**record, "status": result["status"]})
     return {**result, "record": args.record, "route": route,
+            "compatibility_warnings": record.get("compatibility_warnings", []),
             "newer_live_sessions_check_target": mark_peers(newer_sessions(registry, projects, root, session), root),
             "next": "Verify model acknowledgment and task dispatch." if result["status"] == "receipt-confirmed"
             else "Do not claim delivery or retry automatically. Re-discover the intended session; inspect approval/refusal/queue state."}
