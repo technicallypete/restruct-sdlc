@@ -236,6 +236,37 @@ qualified that route and recorded its authority, use supported compaction and
 prepare a handoff rather than claiming automatic cutover is available.
 
 
+## Supervisor session continuity
+
+The same checkpoint, compaction-first and safe-retirement principles apply to
+supervisor sessions, including Codex supervisors and Claude supervisors. The
+300k/350k defaults apply only when the selected model/harness supports that working
+window; honor an earlier native compaction boundary or smaller limit. Never raise
+or invent a context-window setting to fit policy numbers. Record unknown occupancy
+as unknown. Use native automatic/manual compaction where supported; do not infer
+that a long saved transcript means the active context exceeds a threshold.
+
+Before a supervisor handoff, preserve current mandates/stops, reviews and exact
+SHAs, budgets, pending deliveries/decisions and active delegates in the existing
+supervisor handoff and progress records. Complete or explicitly account for
+surviving delegates; a new supervisor does not automatically adopt them. Transfer
+one supervisor role and explicitly verify/rebind the observer's supervisor thread
+before retiring the old route. Preserve coordinator identity when only the
+supervisor changes. Resume/fork is not assumed to produce a fresh bounded context;
+new sessions receive concise durable state rather than the complete transcript.
+Do not self-launch a second supervisor or claim a current client can switch its
+own thread unless that native route and authority are verified. Report a required
+owner/client action once; no new monitoring agent or forced live restart.
+
+A recorded owner transition exception can defer policy-driven retirement through
+a named task/phase, even above the normal threshold. Preserve the active session,
+children and work; use only non-disruptive preparation until that boundary. At the
+first safe boundary afterwards, reassess actual context and supported compaction
+before deciding on retirement. The boundary is the earliest reassessment point,
+not an instruction to kill the session immediately. Exceptions do not waive native
+context limits, security stops, task budgets or acceptance gates.
+
+
 ## Worker context and phase handoffs
 
 Default worker checkpoint target: **300,000 active context tokens**; upper handoff

@@ -204,3 +204,9 @@ For planning and review, apply [early risk review and short correction loops](..
 changed trust boundaries first, approved risky slice early, bounded caller/pin
 inventory and consolidated corrections. Use existing phases/gates and compact
 handoffs; do not restart active work or create another process framework.
+
+Apply [supervisor session continuity](../sdlc-management/references/coordination.md#supervisor-session-continuity)
+when the companion is installed: native context limits, checkpoint/compaction
+first, durable role/delegate handoff and explicit observer thread rebind. Honor
+recorded owner transition exceptions; a long transcript alone does not require
+retirement or authorize a replacement session.
