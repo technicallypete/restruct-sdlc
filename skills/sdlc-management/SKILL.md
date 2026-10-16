@@ -197,3 +197,7 @@ Operational defaults: use [proportionate validation and bounded flake handling](
 [automatic routine transitions](references/roles-lifecycle.md#continue-routine-transitions-without-owner-nudges),
 [compact status/handoffs](references/coordination.md#concise-operational-messages) and the
 [closeout receipt](references/closeout-risks.md#routine-closeout-receipt). Reuse existing tools and records.
+
+Default to [targeted reruns and attributable coverage](references/validation-integration.md#targeted-reruns-and-attributable-coverage-default):
+reuse unchanged passes and overlap frozen-source review with independent validation;
+retain real failure history and required final/hosted gates.

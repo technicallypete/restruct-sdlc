@@ -279,3 +279,8 @@ See [planning coverage reuse](.agents/skills/sdlc-management/references/validati
 At handoffs/closeout or when old conversation history dominates context, follow
 [coordinator context compaction](.agents/skills/sdlc-management/references/coordination.md#coordinator-context-compaction-at-safe-boundaries).
 Preserve durable state, session/observer identity and running batches; no per-turn compaction or new monitor.
+
+Use [targeted reruns and attributable coverage](.agents/skills/sdlc-management/references/validation-integration.md#targeted-reruns-and-attributable-coverage-default) by default:
+rerun failed cases and affected dependencies, reuse unchanged passes, preserve
+failed/canceled history, and overlap frozen-source review with independent tests.
+Keep required hosted/atomic evidence and final acceptance gates.

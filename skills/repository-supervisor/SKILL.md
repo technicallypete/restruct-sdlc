@@ -187,3 +187,8 @@ Use the adopting repository’s low-overhead delivery policy; when the companion
 [concise messages](../sdlc-management/references/coordination.md#concise-operational-messages) and
 [closeout receipts](../sdlc-management/references/closeout-risks.md#routine-closeout-receipt).
 Preserve standalone operation and every existing authority/native-permission boundary.
+
+Use [targeted reruns and attributable coverage](../sdlc-management/references/validation-integration.md#targeted-reruns-and-attributable-coverage-default)
+for local qualification. Review frozen source while independent tests run; preserve
+preliminary/final distinctions, input provenance and later-delta review. A partial
+rerun never becomes a full passing report or waives required hosted checks.

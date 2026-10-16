@@ -117,7 +117,7 @@ approved snapshots and Goal validation requirements are not silently waived.
 ## Finish, fix, rerun, advance
 
 Within a batch, let ordinary failures finish collecting results. At the boundary, preserve every outcome and verify
-owned cleanup. Gather all outstanding failures, fix them, rerun each failed batch and the checks the fixes affect,
+owned cleanup. Gather all outstanding failures, fix them, rerun failed cases/controls and checks affected by the fixes,
 then advance. Keep an outstanding-findings checklist in the Result. Unsafe or invalid work (resource or security
 failures, corrupted evidence, fail-closed gates) stops immediately; dependent checks that cannot run are recorded as
 blocked or skipped, never passing.
@@ -207,3 +207,38 @@ Cancel a superseded duplicate hosted run only after verifying the newer run cove
 its exact changes and required suites, the older run has no failed required check,
 and no independent qualification depends on it. Record both pipeline IDs and the
 cancellation; preserve failed-run evidence and the still-required qualification.
+
+## Targeted reruns and attributable coverage default
+
+After failures, rerun the smallest failed case/control and checks affected by the
+fix. Reuse unrelated passing results with unchanged relevant code, schema,
+fixtures, dependencies, configuration and runtime inputs. A suite, batch or job
+name is not itself a reason to repeat every case. CI/harness self-tests follow
+the same dependency rule; ordinary feature work does not automatically invalidate
+the entire control suite. Unknown impact or a real shared dependency requires
+broader relevant coverage, with the reason recorded.
+
+Complete local coverage may combine earlier attributable passes and later focused
+reruns. Record the original/rerun source and input provenance and outstanding IDs
+in the existing Result/review, not a new registry or aggregation framework. Never
+rewrite failed/canceled runs as successful, synthesize a full-pass report or use
+an older pass to conceal a new substantive failure. Preserve known root-cause
+uncertainty; a passing retry does not prove a flake fixed. Required atomic/global
+checks still need their actual evidence, and required hosted jobs remain unchanged.
+
+If a rerun is unnecessarily broad, preserve its completed outcomes and use
+supported cancellation at a safe case/control boundary with owned cleanup; do not
+interrupt unsafe-to-stop work or declare unexecuted cases passed. Required coverage
+and unresolved failures remain gates. No full restart solely for a new SHA,
+management edit, wrapper tally or clean summary when attributable coverage suffices.
+
+When implementation is frozen, perform bounded read-only source review in
+parallel with independent validation. Label preliminary source findings honestly;
+final acceptance still waits for the Result, reconciled code/inputs, required
+checks and automated-review findings. Review later changes as deltas rather than
+repeating the unchanged source review. Preserve the current task, owner and budget.
+
+Apply this default to active tasks at the next safe boundary and future tasks;
+it supersedes generic wording to rerun an entire failed batch. If a specific Goal
+needs one indivisible run for a technical guarantee, preserve that guarantee and
+record the bounded exception. This policy adds no script, test stage or monitor.
