@@ -167,3 +167,28 @@ settled context rather than copying it, and do not publish a new progress entry 
 an unchanged check. Preserve required truthful owner attribution, native permission
 boundaries and final-status classification. Avoid repeated acknowledgments or
 inference-based polling when an existing observer will report a milestone.
+
+## Coordinator context compaction at safe boundaries
+
+At task handoffs/closeout and when usage shows conversation history dominating
+context, assess whether obsolete messages/tool output outweigh the current working
+state. Prefer targeted, harness-supported compaction at the next safe boundary;
+do not wait solely for the context window to fill. Avoid frequent tiny compactions
+or claiming a guaranteed quota saving from the context meter alone.
+
+First preserve concise current state in existing management records: task/owner,
+checkout and candidate SHAs, approved Plan/input references, decisions, open
+findings, active batches, queued handoffs and remaining gates. Keep raw logs out
+of routine coordinator messages and reference focused reports instead of repeating
+them. Resume from those references rather than reloading every unchanged artifact.
+
+Keep the same session UUID, checkout, coordinator pin and observer binding/cursor/
+dedup state. Use supported summarization; do not clear/replace the session, purge
+its JSONL, reset budgets or alter approvals to reduce context. Preserve a running
+validation batch and its bindings; compaction alone requires no rebase or retest.
+If supported compaction is unavailable, report that limitation and leave state
+intact. No new watcher, recurring model poll or compaction daemon is needed.
+
+Context composition is not usage attribution: investigate actual coordinator/
+worker usage and cache behavior before changing models or pruning useful skills.
+Deferred tool definitions shown separately are not the active message-history total.
