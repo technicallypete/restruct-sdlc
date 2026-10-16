@@ -199,3 +199,8 @@ require a concrete technical guarantee/dependency reason before approving an
 exception. Reuse an unchanged approved exception without another permission loop.
 The companion's focused-selection policy applies when installed; required hosted
 jobs, security evidence and native gates remain unchanged.
+
+For planning and review, apply [early risk review and short correction loops](../sdlc-management/references/validation-integration.md#early-risk-review-and-short-correction-loops):
+changed trust boundaries first, approved risky slice early, bounded caller/pin
+inventory and consolidated corrections. Use existing phases/gates and compact
+handoffs; do not restart active work or create another process framework.

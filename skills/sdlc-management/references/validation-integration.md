@@ -83,6 +83,37 @@ Existing approved active contracts retain their required sequence until explicit
 
 ## Reuse existing coverage during planning
 
+### Early risk review and short correction loops
+
+Use the existing Plan and review, rather than another checklist artifact:
+
+- Review changed trust boundaries first: what can a malicious tenant, domain/DNS
+  owner or credential holder now control, capture or replay? Check global identity
+  separately from credential authority. Include affected migration/legacy-row,
+  revocation and downgrade behavior when durable security state changes.
+- Order approved implementation to prove the riskiest end-to-end path and its
+  principal denial early, before surrounding features. Use existing fixtures and
+  a thin functional slice; no planning-time build/probe or extra test campaign.
+- Inventory affected callers, schema/version/count pins and actual executable
+  selectors during planning using bounded searches. Include necessary paths in
+  the approved touch-list; discovered design/scope gaps still stop affected work
+  for review, rather than granting unrestricted file access.
+- Keep a worker on a bounded coherent phase, with the existing context checkpoint
+  and compact handoff at safe boundaries. Do not rotate useful workers merely
+  per phase, forward entire transcripts or restart attributable tests/budgets.
+- Diagnose and rerun the failed selector first. Reuse unchanged passing evidence;
+  broaden only for a concrete changed dependency/guarantee under the existing
+  supervisor exception rule. No broad run just for a fresh wrapper PASS.
+- Batch related findings from the current bounded review into one actionable
+  correction handoff with the guarantee, relevant files and minimum evidence.
+  Consolidate available independent findings; do not serialize avoidable nudges
+  or delay an urgent security hold waiting for unrelated review completion.
+
+Apply these as improvements to existing execution, not a new approval stage,
+mandatory phase-agent scheme, monitoring system, metric/reporting requirement or
+framework. For active work, assess only the remaining delta at a safe boundary;
+do not restart completed planning or running validation to satisfy this guidance.
+
 Before proposing tests, inspect the relevant existing suites and fixtures. In the
 Plan's existing validation/AC mapping, cite test paths or check IDs and distinguish
 **reuse**, **extend**, and **new** coverage. State the actual uncovered behavior or
