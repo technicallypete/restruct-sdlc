@@ -3,6 +3,38 @@
 Adoption instantiates the management structure in a target repository. It is an agent-performed procedure checked
 by `scripts/check_sdlc.py`; there is no generator framework.
 
+## Repository-local private files
+
+Default for newly started tasks: use `.local/` in the **main integration checkout**,
+shared by all of its linked worker worktrees, with `evidence/<task-or-run>/`,
+`secrets/<task-or-run>/` and `tmp/<task-or-run>/`. Record that absolute root in the
+existing dispatch/Result; do not resolve it against a worker's own checkout or
+create a different `.local/` per worker. Use existing supported path options;
+this policy does not rewrite tools, immutable bindings or fixed native state.
+
+Ignore `/.local/` in Git. Exclude `.local/` from every applicable Docker build
+context (including Dockerfile-specific ignore files, which override a root
+`.dockerignore`) and source/export/upload inputs. Publish only explicitly selected,
+sanitized evidence; never upload the whole root or its secrets. Keep private
+folders mode0700 and secret files mode0600; do not force-add private files.
+This is operator/task-local storage, not an application production secret store.
+
+Evidence and scratch follow mandatory acceptance cleanup. Secrets remain separate:
+never recursively delete the shared root as evidence cleanup. Remove a finished
+task's disposable credentials only under their recorded ownership/lifecycle;
+retain shared active credentials without copying them into evidence or patches.
+Durable evidence still belongs in compact committed records and authorized hosted
+artifacts; the local folder is temporary, not a permanent archive.
+
+Existing/in-flight tasks may retain their current home-directory evidence/secret
+paths through final acceptance and cleanup. Do not move active files, change their
+bound hashes, or rerun validation for this default. Existing shared credentials
+remain at their current recorded paths until deliberately migrated; new tasks put
+newly created private files under the new root, without duplicating shared secrets.
+Native session transcripts, observer/transport state and operating-system temporary
+files keep their supported locations. No blanket home-directory migration,
+settings change or new artifact/secret-management framework is introduced.
+
 ## Parameters
 
 Every parameter is explicit. [`templates/parameters.example.json`](../templates/parameters.example.json) lists
@@ -54,7 +86,9 @@ The supervisor states the tier in each Goal's Execution Policy; agents never sel
 4. **Create only missing files.** For an existing file, write the rendering beside it as `<path>.sdlc-proposed`
    and record the owner's merge decision. Existing governance is never silently overwritten or merged.
 5. Append [`templates/root/gitignore.lines`](../templates/root/gitignore.lines) to `.gitignore` (session log and
-   private worktree roots), skipping lines already present.
+   private worktree roots and `/.local/`), skipping lines already present. Add `.local`
+   to the root and each applicable Dockerfile-specific ignore file without replacing
+   existing exclusions; exclude it from artifact/export selection too.
 6. Create the release directories `goals/`, `specs/`, `plans/`, `results/` and `archive/`.
 7. **Observer activation** (when `OBSERVER_AUTO_ACTIVATE` is `true`). Once the owner-selected coordinator is pinned
    and `pinned-live-verified`, and the existing supervisor UUID has been supplied explicitly (never inferred from a

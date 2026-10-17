@@ -230,3 +230,12 @@ with existing project cleanup. Do not add a new resource framework, switch the
 whole browser to root, weaken assertions or rely on recurring sudo/chown/broad
 permission grants to make routine closeout work. Existing explicit owner/native
 handling still governs historical remnants; no privilege workaround is implied.
+
+
+## Private files for new tasks — 2026-10-17
+
+Use the main integration checkout's ignored `.local/{evidence,secrets,tmp}/` for
+new task-private files, shared across worker worktrees. Follow the [local storage
+policy](adoption.md#repository-local-private-files): task-scoped paths, private permissions, Git/build/upload exclusions
+and separate evidence/secret cleanup. Existing tasks keep current paths through
+acceptance cleanup; do not migrate active bindings or native session state.

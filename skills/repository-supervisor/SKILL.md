@@ -231,3 +231,12 @@ work before force removal when needed. Clean task-owned containers, unused image
 another routine approval. Keep active coordinator/successor/preview resources and
 specific recorded retention/native-permission holds. Verify a compact receipt;
 no silent lock/dirty-work deferral, blanket host prune or extra test campaign.
+
+
+## Private files for new tasks — 2026-10-17
+
+Use the main integration checkout's ignored `.local/{evidence,secrets,tmp}/` for
+new task-private files, shared across worker worktrees. Follow the [local storage
+policy](../sdlc-management/references/adoption.md#repository-local-private-files): task-scoped paths, private permissions, Git/build/upload exclusions
+and separate evidence/secret cleanup. Existing tasks keep current paths through
+acceptance cleanup; do not migrate active bindings or native session state.
