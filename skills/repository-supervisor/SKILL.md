@@ -101,7 +101,8 @@ Record/relay release for isolated implementation once Plan/input/scope, owner-de
 close; it may overlap predecessor staging CI/closeout without another routine owner prompt. Final predecessor
 ACCEPT still gates successor integration/final acceptance. Material changes need bounded updates/review; pause
 affected work for unresolved security/architecture/contracts or failed qualification, preserving unaffected work.
-Scope attributable repairs separately with existing ledgers/one writer. Honor explicit holds and delivery barriers.
+The predecessor implementation owner keeps its staging repairs/ledger in parallel with successor work; do not
+assign them to successor workers by default. Preserve one writer, explicit holds and delivery barriers.
 A merge/Plan alone is not release; apply current model-aware effort. Follow
 [release policy](../sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
 

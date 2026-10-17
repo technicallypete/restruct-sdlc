@@ -181,9 +181,12 @@ native permissions and delivery barriers override this default; do not silently
 rewrite an active Goal/Spec's stricter binding or expand a phase mandate.
 
 If predecessor qualification fails, diagnose attributable evidence and pause only
-affected or unsafe dependent work; preserve unaffected work. Available workers may
-perform supervisor-scoped predecessor repairs with exact paths, branch/writer,
-focused validation and the predecessor's existing attempt ledger. Keep repair and
+affected or unsafe dependent work; preserve unaffected work. The predecessor's
+assigned implementation owner retains responsibility for diagnosing/fixing its
+staging failures, on its repair branch and existing attempt ledger. Run those
+repairs in parallel with successor implementation; do not transfer them to the
+successor's workers by default. Any worker reassignment must be explicit and keep
+predecessor ownership, exact repair scope and focused validation. Keep repair and
 successor changes attributable, prevent concurrent writers/shared-resource clashes,
 and reconcile changed interfaces before dependent work resumes. No silent scope
 expansion, automatic retry campaign or failed-to-pass conversion.

@@ -307,8 +307,8 @@ see [lifecycle policy](../sdlc-management/references/roles-lifecycle.md#automati
 For automatic execution dispatch, cite reviewed predecessor integration, pending staging qualification and the
 supervisor's recorded reconciliation/release with closed start gates. Isolated implementation may overlap
 predecessor CI; final predecessor ACCEPT still gates successor integration/final acceptance. Preserve explicit
-holds and affected security/architecture/contract stops; record any scoped repair's branch/writer and separate
-ledger. Verify acknowledgment/dispatch; a merge, CI or observer notice alone grants no execution authority. See
+holds and affected security/architecture/contract stops. Route staging repairs to the predecessor implementation
+owner, with its branch/writer and ledger; successor implementation proceeds independently. Verify acknowledgment/dispatch; a merge, CI or observer notice alone grants no execution authority. See
 [release policy](../sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
 
 For an already-authorized instruction, write its concise text to a local file and

@@ -29,8 +29,9 @@ Material Plan changes require bounded implementer updates and review; unchanged
 design requires reconciliation only. Verify every execution gate and record/
 relay the supervisor release before work, without another routine owner prompt.
 Predecessor final ACCEPT still gates successor integration/final acceptance. A failed
-predecessor gate pauses affected work only; scope attributable repairs and preserve
-separate ledgers/resources. Use existing binding and focused validation; no unchanged full rerun for a SHA.
+predecessor gate pauses affected work only. The predecessor implementation owner
+keeps its staging repairs and attempt ledger, working in parallel with the successor;
+do not shift repair responsibility to successor workers. Preserve separate resources. Use existing binding and focused validation; no unchanged full rerun for a SHA.
 
 ## Git-first provenance
 
