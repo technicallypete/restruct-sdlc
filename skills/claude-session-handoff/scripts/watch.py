@@ -51,7 +51,7 @@ NOTICE_MARK = "[observer-notice:"
 ECHO_MARKS = (NOTICE_MARK, "[handoff-id:")
 STATUS_MARKER = re.compile(
     r"COORDINATOR_STATUS: (working|review-ready|blocked|question|failed|completed)"
-    r" \| ([A-Za-z0-9][A-Za-z0-9_.-]{0,63}) \| ([^\r\n|]{1,240})")
+    r" \| ([A-Za-z0-9][A-Za-z0-9_.-]{0,63}) \| ([^\r\n|]+)")
 # A mixed-task working summary can itself report an actionable handoff. Inspect only that bounded summary,
 # not historical body prose; keep the existing source/echo and native-question checks ahead of this fallback.
 WORKING_HANDOFFS = (
@@ -272,7 +272,7 @@ def active_alert(line, pattern):
 
 
 def explicit_status(text):
-    """Only a final plain status line qualifies; fenced examples do not."""
+    """Parse the full final status within the row limit; truncate only after classification."""
     lines = text.rstrip().split("\n")
     marker = STATUS_MARKER.fullmatch(lines[-1])
     if marker is None or not marker[3].strip():
@@ -288,7 +288,7 @@ def explicit_status(text):
                 fence = None
     if fence is not None:
         return None
-    return marker[1], handoff.safe_excerpt(f"{marker[2]}: {marker[3].strip()}", 400)
+    return marker[1], f"{marker[2]}: {marker[3].strip()}"
 
 
 def milestone(row):

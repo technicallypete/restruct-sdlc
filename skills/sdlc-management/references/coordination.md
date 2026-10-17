@@ -115,6 +115,9 @@ COORDINATOR_STATUS: review-ready | G008 | Plan ready for supervisor review.
 ```
 
 Use a nonsecret task ID and a nonempty single-line summary of at most 240 characters, without `|`.
+This is an authoring limit, not a notification rejection rule: the observer classifies the full summary within
+its existing transcript-row limit, then truncates the delivered excerpt to 240 characters. Oversized summaries
+must not silently lose their notification or hide pending handoffs beyond the excerpt cutoff.
 Classes: `working` for routine progress, acknowledgment or recovery (no milestone notice);
 `review-ready` for a Plan, Result or execution binding needing review; `blocked` for an unavailable
 prerequisite or native refusal; `question` for a specific supervisor/owner decision; `failed` for a
@@ -122,7 +125,7 @@ new validation failure needing attention; `completed` for verified terminal clos
 For concurrent work, pending owner/supervisor decisions (`question`) and submitted reviews (`review-ready`)
 take priority over routine work: name the task needing attention, not the task whose tests are still running,
 and summarize other tasks in the body. Use `working` only when no actionable handoff is pending.
-The observer also catches explicit pending decision/review wording in a `working` marker's bounded summary;
+The observer also catches explicit pending decision/review wording in a `working` marker's full summary;
 it does not scan historical body prose through a valid `working` marker. This fallback prevents a mixed-task
 summary from hiding a handoff; it does not replace truthful classification.
 Report failed history honestly in the body without labelling a recovery instruction as a new failure.

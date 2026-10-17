@@ -202,6 +202,40 @@ class NotificationSources(Base):
         self.assertEqual(self.poll()["queue_calls"], 1)
         self.assertIn("milestone (review-ready", self.codex.queues()[0][4])
 
+    def test_oversized_attention_summary_is_delivered_once_with_bounded_excerpt(self):
+        self.bind()
+        self.poll()
+        missed = ("Scope gap 2: audit_integration_test.go AT-INV requires an observed branding_changed producer "
+                  "(outside 43-pattern list); request exact path for one guarded UpdateBranding call; "
+                  "WIP 66594af6 (Result deb9bc08); fresh successor after disposition")
+        self.assertEqual(len(missed), 241)
+        for category in ("question", "review-ready", "blocked", "failed", "completed"):
+            for summary in ("x" * 240, missed, "x" * 8192):
+                with self.subTest(category=category, length=len(summary)):
+                    row = self.row("assistant", f"COORDINATOR_STATUS: {category} | G017 | {summary}")
+                    found = watch.milestone(json.loads(row))
+                    self.assertIsNotNone(found)
+                    self.assertEqual(found[0], category)
+                    self.assertLessEqual(len(found[1]), 240)
+                    self.append(row)
+                    self.assertEqual(self.poll()["queue_calls"], 1)
+                    self.assertIn(f"milestone ({category}", self.codex.queues()[-1][4])
+                    self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_oversized_working_summary_classifies_tail_before_truncation(self):
+        self.bind()
+        self.poll()
+        for tail, category in (("G018 ready for Codex re-review.", "review-ready"),
+                               ("G018 owner approval pending.", "question")):
+            summary = "x" * 8192 + " " + tail
+            self.append(self.row("assistant", f"COORDINATOR_STATUS: working | G017 | {summary}"))
+            self.assertEqual(self.poll()["queue_calls"], 1)
+            self.assertIn(f"milestone ({category}", self.codex.queues()[-1][4])
+            self.assertEqual(self.poll()["queue_calls"], 0)
+        self.append(self.row("assistant", "Earlier the gate failed.\n"
+                             "COORDINATOR_STATUS: working | G017 | " + "x" * 8192))
+        self.assertEqual(self.poll()["queue_calls"], 0)
+
     def test_working_summary_reports_pending_decision_or_review(self):
         self.bind()
         self.poll()
@@ -255,7 +289,7 @@ class NotificationSources(Base):
         for marker in ("COORDINATOR_STATUS: unknown | G008 | Check records.",
                        "COORDINATOR_STATUS: working | ../G008 | Check records.",
                        "COORDINATOR_STATUS: working | G008 | ",
-                       "COORDINATOR_STATUS: working | G008 | " + "x" * 241):
+                       "COORDINATOR_STATUS: working | G008 | invalid | separator"):
             self.append(self.row("assistant", "The staging gate failed.\n" + marker))
             self.assertEqual(self.poll()["queue_calls"], 1)
             self.assertIn("milestone (failed", self.codex.queues()[-1][4])
