@@ -96,11 +96,13 @@ deferrals. Do not wait for CI/Duo, ready status or merge; ignore planning-only/p
 does not release implementation, direct-tier work, test resources or dependency gates. Follow the adopting
 repository's rule or [portable policy](../sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 
-After final predecessor acceptance and applicable integration disposition, automatically reassess the provisional
-Plan against accepted content and current Goal/Spec. Material changes need bounded implementer-owned updates and
-review; irrelevant deltas need reconciliation only. Once all dependencies, Plan/input, owner decisions, budget and
-resource gates close, record/relay execution release and dispatch without another routine owner prompt. Preserve
-specific holds, native permissions and delivery barriers; a Plan or green pipeline alone is not release. Follow
+After reviewed predecessor source is integrated, reassess the provisional Plan against that exact integration.
+Record/relay release for isolated implementation once Plan/input/scope, owner-decision, budget and resource gates
+close; it may overlap predecessor staging CI/closeout without another routine owner prompt. Final predecessor
+ACCEPT still gates successor integration/final acceptance. Material changes need bounded updates/review; pause
+affected work for unresolved security/architecture/contracts or failed qualification, preserving unaffected work.
+Scope attributable repairs separately with existing ledgers/one writer. Honor explicit holds and delivery barriers.
+A merge/Plan alone is not release; apply current model-aware effort. Follow
 [release policy](../sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
 
 - **Goal/Spec:** reconcile the actual accepted predecessor and roadmap; define a

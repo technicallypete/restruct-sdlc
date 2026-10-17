@@ -74,24 +74,24 @@ provisional planning for the earliest eligible task with an existing ready Goal/
 Draft implementation MRs qualify; planning-only/placeholder/probe MRs do not.
 Do not wait for CI/Duo, ready status, merge or final acceptance to begin planning.
 Reuse the existing planner, honor owner stops and record the MR baseline and pending
-gates. Reconcile relevant revisions and final accepted inputs before execution;
+gates. Reconcile relevant revisions and integrated inputs before execution;
 closure without integration requires reassessment. Integration is a fallback
 checkpoint if initial discovery was missed, never a duplicate dispatch.
 Inspection/Plan artifacts only; no code/tests/builds/shared-stack use or early
-execution. Final dependency ACCEPTs, Plan review, bindings, budgets, owner decisions
-and resource/release gates remain. See [planning policy](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
+execution. Plan review, bindings, budgets, owner decisions and resource/release
+gates remain; implementation overlap follows the release policy below. See [planning policy](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 
 ## Automatic reassessment and execution release
 
-After final predecessor ACCEPT and required integration CI disposition,
-{{SUPERVISOR_AGENT}} automatically reassesses the provisional Plan against the
-accepted integration and current Goal/Spec. Material changes need bounded
-{{IMPLEMENTER_AGENT}} Plan updates/review; irrelevant deltas need reconciliation.
-When all dependencies, Plan ACCEPT (or explicit direct-tier authority), current
-binding, owner decisions, budget and resources are ready, record/relay execution
-release and start scoped work without another routine owner-proceed prompt.
-Plan existence/CI alone is insufficient. Preserve specific holds, native
-permissions and delivery barriers; no budget reset or duplicate qualification.
+After reviewed predecessor source is integrated, {{SUPERVISOR_AGENT}} reassesses
+and may release isolated implementation of the next approved task while predecessor
+staging CI/closeout runs. Verify Plan/input/scope, owner decisions, other dependencies,
+budget and resources; record the exact predecessor revision and pending qualification.
+No extra owner prompt. Predecessor final ACCEPT still gates successor integration
+and final acceptance. Material changes require bounded Plan updates/review;
+unresolved security/architecture/contracts, explicit holds, native permissions and
+delivery barriers stop affected work. Preserve unaffected work and scope any
+predecessor repair with one writer, attributable changes and its existing ledger.
 See [release policy](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
 
 ## Supervisor progress publication

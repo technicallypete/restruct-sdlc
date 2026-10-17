@@ -26,9 +26,10 @@ This does not release implementation. Follow
 [planning policy](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 
 After [supervisor reassessment/release](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release)
-closes all dependency/review/input/owner-decision gates, begin/resume scoped work
-without another routine owner prompt. A Plan/merge/green pipeline alone is not
-release; material Plan updates require review and specific holds remain.
+closes start gates, begin/resume isolated scoped implementation during predecessor
+staging CI without another routine owner prompt. Final predecessor ACCEPT gates
+successor integration/final acceptance. A Plan/merge/green pipeline alone is not
+release; material Plan updates require review and explicit holds remain.
 
 As coordinator, finish each turn with a plain final status line:
 `COORDINATOR_STATUS: working | TASK-ID | Brief current status.`

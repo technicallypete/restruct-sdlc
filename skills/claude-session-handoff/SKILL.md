@@ -304,9 +304,11 @@ ready Goal/Spec and task owner, label pending dependencies provisional and relay
 remaining execution gates. Neither a merge notice nor this helper independently authorizes planning or execution;
 see [lifecycle policy](../sdlc-management/references/roles-lifecycle.md#automatic-planning-after-integration).
 
-For automatic execution dispatch, cite the supervisor's recorded reconciliation/release and verified closed gates;
-the standing lifecycle policy removes a routine owner-proceed prompt, not Plan review, binding or specific holds.
-Verify acknowledgment/dispatch; predecessor CI or an observer notice alone carries no execution authority. See
+For automatic execution dispatch, cite reviewed predecessor integration, pending staging qualification and the
+supervisor's recorded reconciliation/release with closed start gates. Isolated implementation may overlap
+predecessor CI; final predecessor ACCEPT still gates successor integration/final acceptance. Preserve explicit
+holds and affected security/architecture/contract stops; record any scoped repair's branch/writer and separate
+ledger. Verify acknowledgment/dispatch; a merge, CI or observer notice alone grants no execution authority. See
 [release policy](../sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
 
 For an already-authorized instruction, write its concise text to a local file and

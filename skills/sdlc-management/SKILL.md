@@ -88,14 +88,12 @@ Details: [roles and lifecycle](references/roles-lifecycle.md).
 Automatic continuation stops at missing Specs unless the owner records bounded specification authority (named
 endpoint/range or pinned epic). Independent owner stop/phase limits override continuation even with an existing
 Spec or accepted Plan; no lookahead beyond the stop. See [mandates and stops](references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).
-At initial implementation-MR creation (drafts included), verify the MR/candidate and automatically begin provisional
-planning for the earliest eligible roadmap task with an existing ready
-Goal/Spec; do not wait for CI/Duo or merge. Planning-only/placeholder/probe MRs do not qualify; owner stops remain.
-Pending predecessor acceptance never releases implementation. See
-[automatic planning](references/roles-lifecycle.md#automatic-planning-after-integration).
-After final dependency acceptance, automatically reassess the provisional Plan and record/relay execution release
-when all review, binding, owner-decision and readiness gates close; no extra routine owner prompt. See
-[execution release](references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
+At the first eligible implementation MR (drafts included), verify it and begin provisional next-task planning
+with an existing Goal/Spec; owner stops remain. Planning alone grants no implementation authority.
+See [planning](references/roles-lifecycle.md#automatic-planning-after-integration).
+After reviewed predecessor integration, release isolated implementation once start gates close, overlapping CI.
+Final predecessor ACCEPT gates successor integration/final acceptance; security/contracts and explicit holds remain.
+See [execution release](references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
 After verified terminal closeout, retain compact attributable evidence and purge redundant task-owned local
 validation output by default; protect active inputs and session archives. See [evidence cleanup](references/closeout-risks.md#local-validation-evidence-retain-a-compact-record-purge-bulk-output).
 Default durable proof to Git records and CI artifacts; local raw evidence is temporary.
@@ -183,7 +181,6 @@ coordination stay high. This overrides generic role-effort defaults for those
 models/phases. Honor owner choices, verify actual settings or report unknown,
 and apply only at the next phase/safe boundary without restarting completed work,
 interrupting a batch or resetting budgets. Prose does not configure the runtime.
-
 
 ## Fable weekly-limit fallback
 

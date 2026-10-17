@@ -17,18 +17,20 @@ authority; an epic mandate neither expands membership nor resets Goal budgets.
 At the first predecessor implementation MR (drafts included), apply
 [automatic planning](roles-lifecycle.md#automatic-planning-after-integration)
 for the next eligible existing Goal/Spec; integration is fallback discovery only. Provisional planning may overlap CI,
-acceptance and cleanup; implementation still waits for required final dependency
-acceptance, Plan review and current input binding. Do not reserve the shared test
+acceptance and cleanup. Implementation may overlap predecessor staging CI after
+reviewed source integration and supervisor release under the policy below. Do not reserve the shared test
 stack or repeat predecessor validation merely to write the next Plan.
 
 ## Reassessment and execution release
 
-After final predecessor acceptance and applicable CI disposition, automatically
-reassess the provisional Plan using [the release policy](roles-lifecycle.md#automatic-reassessment-and-execution-release).
+After reviewed predecessor source integration, automatically reassess the
+provisional Plan; permit isolated implementation during predecessor staging CI using [the release policy](roles-lifecycle.md#automatic-reassessment-and-execution-release).
 Material Plan changes require bounded implementer updates and review; unchanged
 design requires reconciliation only. Verify every execution gate and record/
 relay the supervisor release before work, without another routine owner prompt.
-Use existing binding and relevant validation; no unchanged full rerun for a SHA.
+Predecessor final ACCEPT still gates successor integration/final acceptance. A failed
+predecessor gate pauses affected work only; scope attributable repairs and preserve
+separate ledgers/resources. Use existing binding and focused validation; no unchanged full rerun for a SHA.
 
 ## Git-first provenance
 

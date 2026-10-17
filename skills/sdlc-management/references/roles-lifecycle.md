@@ -141,7 +141,7 @@ Specs require an existing explicit bounded specification mandate. Planning does
 not invent scope or bypass unresolved architecture/owner decisions. Record the MR,
 candidate baseline and pending gates in existing PROGRESS/handoff records.
 
-Reconcile relevant predecessor revisions and final accepted content before
+Reconcile relevant predecessor revisions and integrated content before
 execution; if its MR closes without integration or materially changes, reassess
 readiness. Integration remains a fallback discovery checkpoint if the first MR
 was missed, not the primary trigger or a second dispatch. This supersedes the
@@ -150,36 +150,47 @@ former integration-only trigger; legacy links to that heading remain valid.
 Use the verified coordinator and current model-aware planning effort under the
 existing single-owner/worktree rules. Scope is inspection and Plan/history only,
 not application/test writes, builds, installs, shared validation resources or
-unauthorized probes. Execution, including direct-tier work, retains final required
-dependency ACCEPTs, Plan/input/budget/resource gates and recorded supervisor release.
+unauthorized probes. Execution, including direct-tier work, follows the release
+policy below; planning dispatch alone never grants implementation authority.
 No new artifact, watcher, scheduler, transport or permission override is added.
 
 ## Automatic reassessment and execution release
 
-After final predecessor ACCEPT and the repository's required integration CI
-disposition, the supervisor automatically reassesses the next task's existing
-provisional Plan against the actual accepted integration and current Goal/Spec.
-Verify all dependencies and explicit holds; a Plan existing or CI passing alone
-does not authorize implementation.
+Default: once a predecessor's source has passed required pre-integration review
+and is merged into the integration branch, reassess the next authorized task's
+approved provisional Plan against that exact integration and current Goal/Spec.
+Implementation may overlap the predecessor's running staging/integration checks
+and closeout; do not wait for final predecessor ACCEPT solely to start it.
+Record the merged revision, pending qualification and affected dependency in the
+existing binding/Result and PROGRESS. A merge or Plan existing alone is not release.
 
-For material changed assumptions or technical scope, request bounded implementer-
-owned Plan updates, preserve history and review the affected revision. Escalate
-owner decisions. An irrelevant documentation/SHA delta needs a recorded
-reconciliation, not a full replan or changed immutable Plan bytes.
+Before release, verify Plan ACCEPT (or explicit direct-tier authority), current
+input/scope binding, owner decisions, budget, isolated task branch/checkout and
+resource readiness. Other required dependencies must be satisfied. For material
+changed assumptions, request bounded implementer-owned Plan updates and review;
+otherwise record reconciliation without rewriting immutable approved Plan bytes
+or repeating unchanged validation. Record and relay supervisor execution release;
+no additional routine owner proceed prompt is needed. Reuse the task owner and
+current model-aware effort, with no budget reset.
 
-When the Goal/Spec, required Plan ACCEPT (or explicit direct-tier authority),
-dependency ACCEPTs, applicable CI, owner decisions, current input binding,
-budget and resource readiness are satisfied, record execution release in the
-existing review/binding and PROGRESS and relay it to the verified coordinator.
-The implementer begins/resumes scoped work without another routine owner
-"proceed" prompt. Reuse the task owner and naming rules; implementation defaults
-to high effort and budgets are not reset.
+Predecessor final ACCEPT and its required staging disposition still gate the next
+task's integration and final ACCEPT. Pending or failed checks remain pending or
+failed. Unresolved security, architecture or contract changes that affect the next
+task block its affected implementation. Explicit task/owner holds, manual gates,
+native permissions and delivery barriers override this default; do not silently
+rewrite an active Goal/Spec's stricter binding or expand a phase mandate.
 
-Specific owner deferrals/manual approvals, architecture/security escalations,
-native permission gates and delivery barriers remain. Failed/pending required
-checks do not become acceptance. This replaces only the extra routine dispatch
-prompt, never the supervisor's release record. Use existing review/import/relay
-and provenance procedures; no new scheduler, helper or validation campaign.
+If predecessor qualification fails, diagnose attributable evidence and pause only
+affected or unsafe dependent work; preserve unaffected work. Available workers may
+perform supervisor-scoped predecessor repairs with exact paths, branch/writer,
+focused validation and the predecessor's existing attempt ledger. Keep repair and
+successor changes attributable, prevent concurrent writers/shared-resource clashes,
+and reconcile changed interfaces before dependent work resumes. No silent scope
+expansion, automatic retry campaign or failed-to-pass conversion.
+
+Planning still starts at the first eligible implementation MR; implementation
+starts only after reviewed source integration and recorded release. No new watcher,
+scheduler, artifact framework or blanket specification authority is introduced.
 
 ## Epic-closeout progress checkpoint
 
