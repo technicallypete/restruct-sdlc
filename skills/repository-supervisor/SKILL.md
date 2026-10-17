@@ -219,3 +219,15 @@ when the companion is installed: native context limits, checkpoint/compaction
 first, durable role/delegate handoff and explicit observer thread rebind. Honor
 recorded owner transition exceptions; a long transcript alone does not require
 retirement or authorize a replacement session.
+
+
+## Mandatory task-acceptance cleanup — owner direction, 2026-10-17
+
+At every final task ACCEPT, immediately remove all finished task-owned worktrees
+and temporary resources under the [mandatory cleanup policy](../sdlc-management/references/closeout-risks.md#mandatory-cleanup-at-every-task-acceptance).
+Unlock finished agent-tool worktrees; preserve unique commits and dirty/untracked
+work before force removal when needed. Clean task-owned containers, unused images
+(including attributable untagged IDs), volumes and disposable evidence without
+another routine approval. Keep active coordinator/successor/preview resources and
+specific recorded retention/native-permission holds. Verify a compact receipt;
+no silent lock/dirty-work deferral, blanket host prune or extra test campaign.

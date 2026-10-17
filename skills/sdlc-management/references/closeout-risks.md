@@ -8,8 +8,8 @@ without losing unique work, live ownership or history.
 Before removing a worktree, branch or in-flight marker, or closing a disposable merge request, verify:
 - **Integrated content:** the integration branch contains the accepted changes (ancestry, or content and
   provenance reconciliation for rebased or squashed work).
-- **Unique work:** no unmerged commits, dirty files or unpreserved evidence. Dirty work is reconciled or archived
-  outside the checkout first; never force-remove it.
+- **Unique work:** no unmerged commits, dirty files or unpreserved evidence. Dirty work is reconciled or preserved
+  outside the checkout first; force removal is allowed only under the mandatory cleanup policy below.
 - **Live ownership:** no live session, process, validation run or required resource uses it. A live coordinator's
   directory is **never** deleted.
 
@@ -21,6 +21,52 @@ exceptions with reasons in the closeout record.
 
 Clear an in-flight marker or lock only after verifying its owner ended; never clear another live run's marker.
 Append a superseding status; never rewrite historical facts or turn withheld or failed evidence into a pass.
+
+## Mandatory cleanup at every task acceptance
+
+Owner direction, 2026-10-17: every final task ACCEPT triggers immediate cleanup
+of all finished task-owned workers/worktrees, temporary branches, containers,
+images, volumes and disposable local evidence. Do not wait for an epic closeout
+or another owner prompt. Plan approval or conditional integration is not final
+ACCEPT. Acceptance history remains; closeout is incomplete until cleanup has a
+verified receipt or an explicit live-use, retention or native-permission hold.
+
+- Verify the task's accepted integration and that each worker/process has ended.
+  An agent-tool Git worktree lock on a finished worker is not a retention reason:
+  use `git worktree unlock`, then remove the checkout. This standing authority
+  includes `git worktree remove --force` after preservation below; do not request
+  another approval merely because the finished checkout is locked or dirty.
+- Before removing a dirty checkout, save a binary-capable `git diff --binary HEAD`
+  patch outside it, plus any unique untracked files (a Git diff does not include
+  them). Preserve necessary ignored files separately; do not copy credentials or
+  reproducible build bulk into a patch archive. Record source HEAD, paths and the
+  verified preservation location in the existing receipt. Preserve local-only
+  commits with an exact retained branch/ref or durable Git bundle before removing
+  their checkout; never delete the sole reference to unique work. Once reconciled
+  or integrated, remove the temporary preservation copy/ref too.
+- Remove all verified task-owned containers and volumes and unused task-built
+  images, including attributable untagged images by exact ID. Remove merged
+  temporary branches after their unique work is reconciled. Protect configured
+  long-lived branches. Do not use host-wide prune, tag/age alone as ownership,
+  or remove another task's/shared base images, volumes or builder cache.
+- Purge task-local logs, screenshots, traces, downloads and build scratch after
+  retaining the compact Result/review and required hosted artifact links. Almost
+  nothing should remain locally by default. A preservation patch or selected
+  proof needed for unresolved unique work has a named owner and release condition;
+  it is not an indefinite raw-evidence archive.
+- Keep the live coordinator, active successor/preview checkouts and resources,
+  required private session/observer state and committed management history.
+  Transfer any real dependent use explicitly; an obsolete worker lock alone is
+  never a live-use hold. Native permission refusals remain real holds, reported
+  once for supported owner handling; unlocking a stale Git worktree lock is not
+  permission to bypass a native access denial or a live harness/process lock.
+
+Use the existing inventory and one bounded cleanup pass. Record removed counts,
+measured reclaimed bytes (or unknown), preserved unique work and exact holds with
+owner/release condition. The supervisor verifies the receipt and updates progress;
+do not silently skip worktrees, images or evidence. No new framework, test run,
+full replan or budget reset is required. This supersedes older blanket prohibitions
+on force-removing preserved dirty checkouts or unlocking finished worker worktrees.
 
 ## Session records: archive before prune
 

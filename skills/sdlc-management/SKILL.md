@@ -198,3 +198,15 @@ Operational defaults: use [proportionate validation and bounded flake handling](
 Default to [targeted reruns and attributable coverage](references/validation-integration.md#targeted-reruns-and-attributable-coverage-default):
 reuse unchanged passes and overlap frozen-source review with independent validation;
 retain real failure history and required final/hosted gates.
+
+
+## Mandatory task-acceptance cleanup — owner direction, 2026-10-17
+
+At every final task ACCEPT, immediately remove all finished task-owned worktrees
+and temporary resources under the [mandatory cleanup policy](references/closeout-risks.md#mandatory-cleanup-at-every-task-acceptance).
+Unlock finished agent-tool worktrees; preserve unique commits and dirty/untracked
+work before force removal when needed. Clean task-owned containers, unused images
+(including attributable untagged IDs), volumes and disposable evidence without
+another routine approval. Keep active coordinator/successor/preview resources and
+specific recorded retention/native-permission holds. Verify a compact receipt;
+no silent lock/dirty-work deferral, blanket host prune or extra test campaign.
