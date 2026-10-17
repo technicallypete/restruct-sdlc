@@ -211,6 +211,16 @@ A published, owned temporary branch that must be rebased is pushed with an exact
 stop, reported as such.
 
 
+## Autonomous mechanical repair
+
+Apply [mechanical-correction authority](roles-lifecycle.md#autonomous-mechanical-corrections):
+fix in-scope selectors, fixtures, approved-value catalog/count/version pins and
+harness/import bookkeeping directly after diagnosis. Preserve assertions, negative
+controls, scope and frozen inputs; record the focused failing/affected evidence in
+the existing Result. No approval round, replan or new worker solely for such fixes.
+Security/contracts, scope, unapproved production schema/constraints, budget and
+native gates still escalate; full hosted retry authority is unchanged.
+
 ## Validation economy and recurring failures
 
 Before a batch, choose the smallest checks covering the actual change and required

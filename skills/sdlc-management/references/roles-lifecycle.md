@@ -82,7 +82,39 @@ Only final ACCEPT completes a Goal. A merge, a passing pipeline or a delivered m
 
 **Mandatory escalations:** architecture contradictions, scope expansion, security-model changes, destructive
 migrations, public API or tool-contract changes, new major infrastructure or vendors, irreversible data-model
-decisions. Plan approval never covers a change discovered afterward.
+decisions. Plan approval never covers an unreviewed material change discovered afterward.
+The standing mechanical-correction authority below covers routine implementation consistency.
+
+## Autonomous mechanical corrections
+
+After the approved task's execution release, the implementer diagnoses and fixes
+mechanical inconsistencies within its approved functional scope, file allow-list
+and remaining budget without a separate supervisor approval or Plan-revision
+round. This includes stale test selectors/fixtures, schema-version and count pins,
+expected inventories/catalog parity for already-approved values, and missing
+imports or harness file-list entries for already-approved behavior.
+
+The intended behavior must be unambiguous in the Goal/Spec, architecture and
+accepted contracts. Fix the cause, retain meaningful assertions and negative
+controls, and run the smallest failed/affected selectors. Do not update an expected
+value merely to match a regression or declare a failure unrelated without evidence.
+Simple Plan wording mistakes may be reconciled in the existing Result/addendum;
+preserve accepted Plan/history bytes and frozen running inputs. Record the cause,
+exact paths, focused evidence and any reconciliation at the existing safe boundary;
+continue the current task/worker rather than waiting for another routine proceed.
+
+Escalate affected work for functional/file scope expansion, ambiguous intended
+behavior, security/authority/tenancy changes, public API/MCP contract changes,
+unapproved schema/constraint/grant/data or risky migration changes, major vendors/
+infrastructure, irreversible decisions, budget exhaustion, explicit owner holds or
+native refusals. A catalog label does not make a production constraint change
+mechanical. New production semantics still require the existing review.
+
+Supervisor initial Goal/Spec/Plan decisions and final actual-diff/evidence review
+remain. Required CI/manual checks, merge authority, attempt accounting and stop
+boundaries are unchanged. A fixed case is reported as fixed, not self-accepted;
+routine repair progress uses working status, and only real decisions/review-ready
+submissions interrupt the supervisor. No new artifact framework or test campaign.
 
 ## Bounded specification authority and owner stop boundaries
 

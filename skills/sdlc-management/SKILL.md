@@ -84,7 +84,7 @@ coordinator and supervisor bindings are explicitly verified; otherwise it stays 
 include failures and explicit decision/approval requests, with no approval authority. Follow the companion's
 [observer procedure](../claude-session-handoff/SKILL.md#coordinator-milestone-observer-opt-in-here-an-adopting-repository-may-default-enable-it-after-verified-bindings)
 for detection limits, preserved deduplication and fail-closed recovery. Effort by role: coordinator high (xhigh when planning), planning workers xhigh, implementation workers high.
-Details: [roles and lifecycle](references/roles-lifecycle.md).
+Released implementers fix [mechanical inconsistencies](references/roles-lifecycle.md#autonomous-mechanical-corrections) within scope/budget; preserve assertions, evidence, substantive escalation and final review.
 Automatic continuation stops at missing Specs unless the owner records bounded specification authority (named
 endpoint/range or pinned epic). Independent owner stop/phase limits override continuation even with an existing
 Spec or accepted Plan; no lookahead beyond the stop. See [mandates and stops](references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).

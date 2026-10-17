@@ -139,6 +139,12 @@ any declared delivery barrier. Read service-root instructions/skills for service
 work. The skill contains no substitute permission matrix, CI policy or fixed
 execution baseline; those belong to current approved repository records.
 
+For [mechanical corrections](../sdlc-management/references/roles-lifecycle.md#autonomous-mechanical-corrections),
+let the released implementer fix approved-scope selectors/fixtures/pins/catalog parity
+and harness bookkeeping directly. Review the eventual diff/evidence; do not turn
+routine progress into a new approval/replan or duplicate review. Material scope,
+security/contracts, unapproved schema/constraints, budgets and explicit holds remain stops.
+
 ## Leave durable state
 
 Record decisions in goal-specific reviews/Results and index them in PROGRESS.

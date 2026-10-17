@@ -311,6 +311,11 @@ holds and affected security/architecture/contract stops. Route staging repairs t
 owner, with its branch/writer and ledger; successor implementation proceeds independently. Verify acknowledgment/dispatch; a merge, CI or observer notice alone grants no execution authority. See
 [release policy](../sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
 
+For in-scope mechanical repairs under standing execution authority, use working
+status and the existing Result; do not request another permission/replan handoff.
+Escalate actual scope/security/contract or unapproved production schema changes,
+ambiguity and budget/native stops; transport never supplies that authority.
+
 For an already-authorized instruction, write its concise text to a local file and
 reference the actual repository root's management documents:
 
