@@ -256,3 +256,9 @@ labeled bullets, sentence fragments and revision/record references. Trim filler
 and repetition, not evidence, uncertainty, decisions or gates. Avoid cryptic
 shorthand or reducing detailed reports to a dashboard. Preserve final-status
 marker syntax and truthful delivery/review distinctions.
+
+
+For integration repairs, independently reconcile the Result's complete failed-run
+inventory with actual suite logs before pre-integration ACCEPT; see
+[repair completeness](../sdlc-management/references/validation-integration.md#complete-repair-inventory-and-supervisor-verification).
+Do not accept a later passing subset as proof that earlier failures cleared.

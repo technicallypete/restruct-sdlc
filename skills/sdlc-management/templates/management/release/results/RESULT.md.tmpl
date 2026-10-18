@@ -24,6 +24,16 @@ Failed, skipped and interrupted checks are listed here with their evidence; none
 Record relevant tool/image versions and non-secret runtime configuration/extra-input references. Keep compact
 outcomes, CI links and necessary proof; no duplicate per-file hashes of committed source or full checkout archives.
 
+## Repair completeness (when repairing a failed integration)
+
+| Check / scenario | Failing pipeline / job / SHA | Correction or evidenced disposition | Passing candidate / selector / proof, or remaining hold |
+|---|---|---|---|
+
+Include earlier unresolved failures even when later runs did not execute them.
+Distinguish fixed/pass, unresolved, unchanged evidence reused, derived aggregate
+and authorized retry. Missing/skipped/canceled evidence is not passing. Keep this
+in the existing Result; link original failures and update the current disposition.
+
 ## Outstanding findings
 
 - [ ] `<finding>` — batch, cause, fix, rerun result.

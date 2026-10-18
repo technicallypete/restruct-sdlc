@@ -22,6 +22,14 @@ for that name.
 | ID | Finding | Required guarantee | Minimum validation |
 |---|---|---|---|
 
+## Repair completeness verification (when applicable)
+
+Reconcile the Result inventory independently against failed runs/suite logs,
+including earlier unresolved failures. Verify every correction/disposition and
+candidate/input attribution; a passing subset or underlying test does not clear
+a failed wrapper/pin. Record missing evidence and holds before pre-integration
+ACCEPT; do not treat a retry hypothesis or non-execution as a pass.
+
 ## What this outcome accepts and the remaining gates
 
 ## Relay

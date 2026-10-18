@@ -252,6 +252,42 @@ its exact changes and required suites, the older run has no failed required chec
 and no independent qualification depends on it. Record both pipeline IDs and the
 cancellation; preserve failed-run evidence and the still-required qualification.
 
+
+## Complete repair inventory and supervisor verification
+
+Before opening a staging/integration repair MR, reconcile every non-passing
+required check across the task's failed runs, including earlier failures not
+re-executed later. In the existing Result, record check/scenario, pipeline/job,
+failing candidate, correction or evidenced disposition, and attributable passing
+proof or remaining hold. Read suite logs as well as summaries; aggregate failures
+must point to their underlying failures. Account for skipped/interrupted/canceled
+checks without calling them product failures or passes. No entry may be silently
+omitted or assumed cleared by a later subset.
+
+Prove affected corrections with the smallest executable selector on the actual
+candidate/inputs; a passing underlying test does not clear its failed wrapper or
+pin. Derive pin expectations from actual catalog/output and inspect all affected
+consumers. Reuse unchanged valid evidence after relevant-delta reconciliation.
+If local proof is genuinely unavailable, use the existing supported pre-merge
+integration entrypoint and require its success before merging; document why that
+broader run is necessary. Do not default to a full suite or use post-merge staging
+to discover whether an unproven repair works. Opening the necessary MR to access
+its pre-merge job is distinct from merging it.
+
+The supervisor independently compares that inventory with the failed artifacts,
+verifies evidence attribution and records repair completeness before pre-integration
+ACCEPT. Distinguish fixed/pass, unresolved, not rerun with valid evidence reuse,
+derived aggregate and explicitly authorized retry/disposition. An unavailable
+artifact, non-execution or timing hypothesis is not a pass. The existing one-job
+retry rule still applies: retain both outcomes; recurrence needs focused diagnosis
+and a bounded repair, not repeated unchanged runs. A passing retry does not prove
+a root cause or repair. Final acceptance and post-integration gates remain.
+
+Use existing Result/review records, one current failure inventory and existing
+owners/budgets. No new tracking framework, duplicate full validation, retroactive
+pass or permission bypass. Apply equally when the supervisor reviews its own
+workflow/CI changes: inspect the actual delta and required self-checks.
+
 ## Focused selection before the first run
 
 Focused checks are the default for **every local run**, including initial
