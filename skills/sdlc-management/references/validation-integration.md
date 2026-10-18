@@ -287,6 +287,32 @@ configured scope. This is local selection policy, not permission to skip require
 CI, weaken security evidence or change budgets. Apply to active tasks at the next
 safe boundary; reassess inherited umbrella selections without a full replan.
 
+### Change-impact selection before merge
+
+Owner direction, 2026-10-18: choose local checks from the consequences of a
+change, not only its feature/package directory. In the existing Plan validation
+mapping, use bounded searches of the actual diff, callers and CI/harness selectors
+to connect each affected guarantee to an existing executable check. Consider only
+applicable dependencies: shared authentication/authorization fixtures; historical
+migration paths and upgrade/down preconditions; schema/catalog/version/count pins;
+startup imports and disabled-feature/copy variants; and concurrent or timing-sensitive
+paths. Extend existing coverage only where it leaves a concrete gap.
+
+The coordinator checks that mapping before the first affected batch and refreshes
+it for material implementation or integration deltas. Codex reviews coverage of
+those effects, not merely whether the selected commands look narrow. Reconcile
+against the actual target integration before merge; run newly affected checks or
+cite attributable unchanged evidence. A known omitted impact must be resolved
+before merge, rather than delegated to staging discovery. Record a real harness
+limitation and the smallest justified exception under the existing selection rule.
+
+This is smarter selection within the current Plan/Result, not another inventory,
+approval stage, mandatory matrix or broad local suite. Preserve running batches
+and assess remaining active work at its next safe boundary; no full replan or
+rerun of completed unaffected work. Report exactly what passed locally and what
+only hosted qualification covers. Required staging integration remains the final
+combined check; a local pass is not a claim of full integration equivalence.
+
 ## Targeted reruns and attributable coverage default
 
 After failures, rerun the smallest failed case/control and checks affected by the
