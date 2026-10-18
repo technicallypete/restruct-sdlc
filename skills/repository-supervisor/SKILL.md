@@ -249,14 +249,20 @@ actual loaded rules for the session/worker launch directory. Owner-authorized
 configuration is distinct from task authority; native rejection gates remain.
 Follow the adopting repository's permission placement/adoption procedure.
 
-## Abbreviated prose, preserved detail
+## Mandatory short owner reports
 
-Keep useful owner-readable detail in status and acknowledgments, but use short
-labeled bullets, sentence fragments and revision/record references. Trim filler
-and repetition, not evidence, uncertainty, decisions or gates. Avoid cryptic
-shorthand or reducing detailed reports to a dashboard. Preserve final-status
-marker syntax and truthful delivery/review distinctions.
-
+Routine owner-facing updates MUST be at most 80 words and three short bullets
+(or one short paragraph), plus the existing final-status marker. Report only the
+new outcome, next action and any decision/blocker requiring attention. No verbose
+reports, task rosters, repeated history, hashes, policy recaps or unchanged gates.
+Routine acknowledgments, dispatch receipts and unchanged waiting states get no
+separate report. Put evidence, inventories and full handbacks in the existing
+Result/review and link it; do not paste them into chat. Detailed chat is allowed
+only when the owner explicitly asks for detail. A failure/decision must remain
+clear within the limit; do not hide it in a link. Preserve truthful uncertainty,
+source/final-ACCEPT distinctions and the exact status-marker syntax. This hard
+default supersedes earlier guidance to preserve detailed status prose or avoid
+fixed-length reports; it changes no technical, native-permission or review gate.
 
 For integration repairs, independently reconcile the Result's complete failed-run
 inventory with actual suite logs before pre-integration ACCEPT; see

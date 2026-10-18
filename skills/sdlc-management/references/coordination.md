@@ -163,33 +163,23 @@ No new JSON manifest, packet file, worker role or workflow stage is required.
 
 ## Concise operational messages
 
-Keep useful owner-readable detail; abbreviate the prose, not the facts. Prefer
-short labeled bullets and sentence fragments: “Shared rules: tracked file; GitLab
-rules retained” rather than a full explanatory paragraph. Keep task/owner, attempt,
-revision, concrete changes, evidence/result, unresolved decisions, next action and
-material gates when relevant. Do not replace a requested detailed report with only
-a three-line dashboard, hide a blocker in a link, or invent cryptic abbreviations.
+### Mandatory short reports — owner direction, 2026-10-18
 
-Group facts under short labels such as **Policy ack**, **Workers**, **Evidence**
-and **Next** when useful. State each fact once; trim introductions, repeated
-assurances and long acknowledgment text. Example:
+Routine owner-facing updates MUST be at most 80 words and three short bullets
+(or one short paragraph), plus the existing final-status marker. Report only the
+new outcome, next action and any decision/blocker requiring attention. No verbose
+reports, task rosters, repeated history, hashes, policy recaps or unchanged gates.
+Routine acknowledgments, dispatch receipts and unchanged waiting states get no
+separate report. Put evidence, inventories and full handbacks in the existing
+Result/review and link it; do not paste them into chat. Detailed chat is allowed
+only when the owner explicitly asks for detail. A failure/decision must remain
+clear within the limit; do not hide it in a link. Preserve truthful uncertainty,
+source/final-ACCEPT distinctions and the exact status-marker syntax. This hard
+default supersedes earlier guidance to preserve detailed status prose or avoid
+fixed-length reports; it changes no technical, native-permission or review gate.
 
-- **Policy ack — revision:** shared rules tracked; personal exceptions ignored;
-  cross-project preferences in home settings. Personal rules untouched; memory updated.
-- **Workers unchanged:** task A, attempt1, revision; refresh governance at next safe
-  boundary, reuse evidence. Task B planning continues. Task C awaits named disposition.
-
-Short commit IDs and artifact links suit chat; full hashes/bindings stay in existing
-records unless exact bytes are needed for the decision. Preserve distinctions such
-as sent/received/acknowledged, reported/verified and design/source/final ACCEPT.
-Keep changed authority, native refusals, owner attribution and stop boundaries
-explicit. Handoffs retain source, decision, next action and material gates; repair
-handoffs retain their checklist. This is a writing preference, not a fixed schema,
-character cap, lossy truncation rule or new status artifact. Keep the existing
-machine-readable final-status marker and observer classification unchanged.
-
-Reference settled context; do not publish a new progress entry for an unchanged
-check or repeatedly poll when the existing observer will report a milestone.
+Apply equally to coordinator and supervisor. Required formal evidence belongs in
+artifacts, not long announcement messages. No new timer, monitor or parser change.
 
 ### Update frequency — owner refinement, 2026-10-18
 
