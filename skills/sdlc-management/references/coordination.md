@@ -191,6 +191,21 @@ machine-readable final-status marker and observer classification unchanged.
 Reference settled context; do not publish a new progress entry for an unchanged
 check or repeatedly poll when the existing observer will report a milestone.
 
+### Update frequency — owner refinement, 2026-10-18
+
+Default to event-driven updates: a meaningful completed milestone, changed blocker,
+new failure, decision request or material ETA change. Answer owner status questions
+promptly. During long active work, give brief progress at the harness-required
+cadence; do not turn that into a detailed multi-task report. Routine receipts,
+policy acknowledgments, dispatch confirmations and unchanged waiting states need
+no separate owner-facing report. Batch related changes into one update; state
+only the delta and link settled context. Keep actionable failures/decisions explicit
+and preserve requested detail in the durable Result or on request. Do not repeat
+full hashes, inventories, unchanged task rosters or already-recorded gates in every
+message. Required review handbacks and machine-readable status remain truthful;
+this does not suppress failures or change observer parsing. Apply to coordinator
+and supervisor alike, without a new timer, monitor or reporting framework.
+
 ## Enforce existing usage limits
 
 When allowance use is excessive, inspect available coordinator/worker request usage
