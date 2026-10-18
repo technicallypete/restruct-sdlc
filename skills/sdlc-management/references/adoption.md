@@ -40,7 +40,8 @@ settings change or new artifact/secret-management framework is introduced.
 Keep reviewed, shared project rules in tracked `.claude/settings.json`. Keep
 personal or machine-specific exceptions for that repository in ignored
 `.claude/settings.local.json`; reserve `~/.claude/settings.json` for preferences
-intentionally shared across projects. Do not publish home paths, credentials or
+intentionally shared across projects and native classifier settings that require
+home scope (see below). Do not publish home paths, credentials or
 operator-specific evidence/lock/deletion rules as portable project defaults.
 Ignore `/.claude/settings.local.json` and `/.claude/worktrees/`, while leaving
 shared settings tracked. Never overwrite existing rules during adoption.
@@ -67,6 +68,35 @@ reference one canonical rule set, avoiding divergent service/worktree copies.
 Validate JSON and Git exclusions for config-only changes. Carry unresolved native
 discovery/access issues into the existing consolidation/adoption Plan rather than
 adding a permission framework or treating the task allow-list as a sandbox.
+
+### Tool permissions and classifier rules
+
+Treat tool allow/ask/deny rules and auto-mode classifier rules as separate layers.
+Check the installed version's supported configuration scopes. Current Claude reads
+`autoMode` from personal home settings, managed settings or supported invocation
+configuration, not repository `.claude/settings*.json`. Repository-local tool
+permissions remain the default; when native configuration requires home scope,
+record that explicit exception and its cross-project effect. Do not create
+ineffective project copies or change permission mode merely to finish adoption.
+
+Classifier customization is an owner choice, not a distribution default. Preserve
+existing settings and rule breadth; never ship personal paths, exact task-file
+exceptions, blanket shell grants or disabled security rules in reusable templates.
+For an authorized rule change, inspect effective rules, make the smallest supported
+change, and compare the effective result. Replacing a complete default rule list
+pins its remaining rules; reconcile upstream defaults after tool upgrades.
+
+Verify loading with the supported permission/config interface and the next actual
+approved edit/test/commit operation. Tool rules match command forms: a `git commit`
+prefix need not cover `git -c ... commit`. A successful edit does not establish
+that tests or commits are permitted. Do not add probe campaigns or restart workers
+just to verify loading. On first refusal, capture the actual operation and native
+reason, identify the layer, and use existing owner authority for a supported fix.
+A remaining native gate stays explicit; do not switch executor or impersonate an
+owner response. Preserve safe independent work and all evidence.
+
+References: [tool permission configuration](https://code.claude.com/docs/en/permissions)
+and [classifier scope and defaults](https://code.claude.com/docs/en/auto-mode-config).
 
 ## Parameters
 

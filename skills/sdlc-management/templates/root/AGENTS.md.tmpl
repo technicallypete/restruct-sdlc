@@ -348,7 +348,8 @@ acceptance cleanup; do not migrate active bindings or native session state.
 Follow [adoption policy](.agents/skills/sdlc-management/references/adoption.md#repository-scoped-claude-permissions):
 track shared `.claude/settings.json`; ignore repository-specific personal
 `.claude/settings.local.json` and worker checkouts. Home settings are intentionally
-cross-project only. Verify actual worker/service-root loading; rules do not grant
+cross-project except native classifier configuration requiring that scope.
+Verify actual worker/service-root loading; rules do not grant
 task authority or waive native gates. Preserve existing configuration on adoption.
 
 ## Detailed status with abbreviated prose
@@ -357,3 +358,16 @@ Keep useful owner-readable detail using short labeled bullets, fragments and
 record references. Trim filler/repetition, not evidence, uncertainty, decisions or
 gates. See [operational messages](.agents/skills/sdlc-management/references/coordination.md#concise-operational-messages).
 Preserve the final-status marker; this is not a dashboard-only or fixed-length rule.
+
+
+## Permission failures and focused validation
+
+Distinguish project tool permissions from native classifier configuration using
+[adoption guidance](.agents/skills/sdlc-management/references/adoption.md#tool-permissions-and-classifier-rules).
+Keep classifier changes explicitly owner-selected, never bundled security-rule
+removals or machine/task-specific grants. Verify effective configuration and
+actual approved operations; a native refusal is not cleared by documentation.
+Apply [first-failure intervention](.agents/skills/sdlc-management/references/validation-integration.md#first-failure-requires-intervention--2026-10-18)
+and [resource-based locking](.agents/skills/sdlc-management/references/validation-integration.md#isolated-checks-and-shared-resource-locks).
+Diagnose the first CI failure/refusal and test a correction; do not repeatedly run
+unchanged known-failing source or dispatch the same blocked operation elsewhere.

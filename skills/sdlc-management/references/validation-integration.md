@@ -321,3 +321,44 @@ Apply this default to active tasks at the next safe boundary and future tasks;
 it supersedes generic wording to rerun an entire failed batch. If a specific Goal
 needs one indivisible run for a technical guarantee, preserve that guarantee and
 record the bounded exception. This policy adds no script, test stage or monitor.
+
+
+## First failure requires intervention — 2026-10-18
+
+The coordinator owns each task MR pipeline from push through terminal outcome.
+Check the previous outcome before the next CI-triggering push; record the pipeline,
+SHA, failed job/test and responsible correction owner in the existing Result.
+The supervisor acts on a reported blocker/failure promptly instead of waiting for
+a final handback. A failed CI run is executed-and-failed evidence even when local
+execution was blocked; never summarize that state as tests not executed.
+
+On the first failure, inspect its available log and run the smallest reproducer.
+Do not repeatedly push or retry unchanged known-failing source to rediscover the
+same error. The next validation run must test a specific correction or an evidenced
+retry hypothesis within existing authority. Keep independent work and safekeeping
+authority; explain an unavoidable checkpoint-triggered run rather than treating
+it as another diagnostic attempt. Do not suppress required CI for application
+changes or erase failed evidence. Existing MR supersession handles redundant runs.
+
+On the first native permission refusal, separate configuration/resource scheduling
+from product security: report the exact refused operation and propose the narrow
+supported remedy immediately. The authorized operator uses existing owner authority to correct
+workflow/configuration where authorized; ask only for genuinely missing authority.
+Verify an actual successful tool call. Do not repeatedly dispatch blocked workers,
+require owner-run commands by default, or compensate with repeated CI runs.
+Keep isolation and real security/permission boundaries; this is prompt diagnosis
+and supported configuration, not permission to evade a native refusal.
+
+
+## Isolated checks and shared resource locks
+
+Where the adopting repository uses a shared harness lock, apply it to shared
+mutable resources, not automatically to every container command. Focused unit or
+static checks can run without that lock with read-only source and prepared
+read-only dependency caches, disposable per-run writable build/temp state, no
+network, database/Compose stack, published ports or shared mutable fixtures.
+Dependency downloads/shared cache preparation and integration/browser stacks
+retain their existing resource locks. Use supported native commands and keep
+worker isolation, bounded resource ownership, cleanup and source/input attribution.
+This scheduling distinction neither changes test expectations nor waives required
+hosted checks, security evidence, task scope or native permissions.
