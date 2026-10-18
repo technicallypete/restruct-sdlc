@@ -191,6 +191,34 @@ machine-readable final-status marker and observer classification unchanged.
 Reference settled context; do not publish a new progress entry for an unchanged
 check or repeatedly poll when the existing observer will report a milestone.
 
+## Enforce existing usage limits
+
+When allowance use is excessive, inspect available coordinator/worker request usage
+and cache counters before attributing cost. Generated tokens include reasoning;
+cache totals and context sizes are not the provider's billed allowance percentage.
+Use existing Results and handoffs, not a second monitoring framework.
+
+- Enforce the existing 300k checkpoint and 350k safe handoff threshold. A new
+  substantial phase above the threshold needs compaction/transfer or a specific
+  completion-imminent exception. Preserve a safe running batch and its evidence.
+- Default to one implementation worker. Nested delegation needs a concrete
+  independent benefit and bounded inputs; do not duplicate diagnosis or reporting.
+- After mandatory initial reading, continuations read relevant changed sections,
+  source and open findings. Do not reload complete historical Results/reviews.
+  A reading-only phase must produce a patch, minimal reproducer or explicit blocker
+  before another substantial exploration phase is started.
+- After a verified clean terminal handback, ignore duplicate completion notices
+  unless there is evidence of new post-close writes. Do not repeat host inventories
+  or policy acknowledgments for unchanged state. Preserve requested owner detail.
+- Record each disposition once in its review/Result. PROGRESS and the supervisor
+  handoff retain current state and links; archive superseded history instead of
+  copying successive summaries into every current-state document.
+
+Apply to active work at safe boundaries without resetting attempts, rerunning
+unchanged checks, weakening required proof or changing native permissions/models.
+If compaction is owner-only, report the precise supported action once; do not
+claim that a policy note or checkpoint compacted the actual session.
+
 ## Coordinator context compaction at safe boundaries
 
 At task handoffs/closeout and when usage shows conversation history dominating
