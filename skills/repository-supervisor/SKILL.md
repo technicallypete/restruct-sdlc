@@ -240,3 +240,11 @@ new task-private files, shared across worker worktrees. Follow the [local storag
 policy](../sdlc-management/references/adoption.md#repository-local-private-files): task-scoped paths, private permissions, Git/build/upload exclusions
 and separate evidence/secret cleanup. Existing tasks keep current paths through
 acceptance cleanup; do not migrate active bindings or native session state.
+
+## Repository-scoped permission configuration
+
+Keep shared project rules tracked and repository-specific personal exceptions
+ignored; home settings are for intentional cross-project preferences. Verify the
+actual loaded rules for the session/worker launch directory. Owner-authorized
+configuration is distinct from task authority; native rejection gates remain.
+Follow the adopting repository's permission placement/adoption procedure.

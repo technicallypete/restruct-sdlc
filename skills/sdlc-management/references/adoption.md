@@ -35,6 +35,39 @@ Native session transcripts, observer/transport state and operating-system tempor
 files keep their supported locations. No blanket home-directory migration,
 settings change or new artifact/secret-management framework is introduced.
 
+## Repository-scoped Claude permissions
+
+Keep reviewed, shared project rules in tracked `.claude/settings.json`. Keep
+personal or machine-specific exceptions for that repository in ignored
+`.claude/settings.local.json`; reserve `~/.claude/settings.json` for preferences
+intentionally shared across projects. Do not publish home paths, credentials or
+operator-specific evidence/lock/deletion rules as portable project defaults.
+Ignore `/.claude/settings.local.json` and `/.claude/worktrees/`, while leaving
+shared settings tracked. Never overwrite existing rules during adoption.
+
+Changes to shared allow rules require actual owner authorization and repository
+review/publication under that authority. Preserve the owner's chosen rule breadth;
+do not silently narrow or broaden it. Tool permission does not replace Goal/Plan,
+scope, budget, merge, production or native approval authority. This policy grants
+no automatic permission-mode switch, settings self-modification or ability to
+route around a native rejection.
+
+Verify current tool documentation before choosing path syntax. In current Claude
+project settings `/path` anchors at the session primary working directory/settings
+source; `//path` is filesystem-absolute. A machine-specific absolute rule belongs
+in personal local settings, not the shared file. Project trust, managed deny/ask
+rules and hooks still apply. Verify loaded settings through the supported native
+permission interface, especially for service-root launches and existing workers;
+committed bytes, a merge and a successful unrelated command are not proof of
+loading. Do not create/restart workers or rerun application tests solely to prove
+configuration discovery. Record the actual limitation and use a safe boundary.
+
+Before adopting, check all documented launch directories and actual worker loading;
+reference one canonical rule set, avoiding divergent service/worktree copies.
+Validate JSON and Git exclusions for config-only changes. Carry unresolved native
+discovery/access issues into the existing consolidation/adoption Plan rather than
+adding a permission framework or treating the task allow-list as a sandbox.
+
 ## Parameters
 
 Every parameter is explicit. [`templates/parameters.example.json`](../templates/parameters.example.json) lists
