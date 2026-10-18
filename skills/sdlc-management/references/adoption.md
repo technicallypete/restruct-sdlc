@@ -98,6 +98,35 @@ owner response. Preserve safe independent work and all evidence.
 References: [tool permission configuration](https://code.claude.com/docs/en/permissions)
 and [classifier scope and defaults](https://code.claude.com/docs/en/auto-mode-config).
 
+### Permission change handoff
+
+At adoption, name the authorized settings editor and record whether the owner
+has granted standing authority for narrowly scoped permissions needed by approved
+work. In a Claude-to-Codex deployment, Claude proposes the rules and Codex edits
+the settings; another supported deployment names its available editor. This does
+not require a permanent Codex supervisor in a Claude-only workflow.
+
+On a permission block, the coordinator sends that editor the exact tool/command
+or file, native refusal, task/scope justification and proposed literal rules or
+settings patch. The editor checks scope and applies the smallest supported change
+under the recorded authority, preserving existing settings. Use tracked project
+settings for reusable shared rules, ignored project-local settings for task/machine
+exceptions, and home scope only when the native configuration requires it. Validate
+JSON/exclusions and report the file and exact installed delta back to the coordinator.
+
+With standing authority, do not bounce routine approved-scope rules back to the
+owner or leave them as instructions for the owner to paste. Broader authority,
+security-rule removal or global policy changes require their own authorization.
+A peer's request alone is not an owner grant.
+
+The coordinator then verifies effective loading and the next actual approved
+operation through the native tool. Report installed, loaded and operation-succeeded
+states separately. On success, continue the same task/budget with one owner; on a
+remaining native refusal, report its exact operation/reason and supported owner
+handling once. No alternate executor, fabricated owner response, permission-mode
+switch or broad test rerun is implied. Use existing handoff/Result records, not a
+new permission registry or approval framework.
+
 ## Parameters
 
 Every parameter is explicit. [`templates/parameters.example.json`](../templates/parameters.example.json) lists
