@@ -248,3 +248,11 @@ ignored; home settings are for intentional cross-project preferences. Verify the
 actual loaded rules for the session/worker launch directory. Owner-authorized
 configuration is distinct from task authority; native rejection gates remain.
 Follow the adopting repository's permission placement/adoption procedure.
+
+## Abbreviated prose, preserved detail
+
+Keep useful owner-readable detail in status and acknowledgments, but use short
+labeled bullets, sentence fragments and revision/record references. Trim filler
+and repetition, not evidence, uncertainty, decisions or gates. Avoid cryptic
+shorthand or reducing detailed reports to a dashboard. Preserve final-status
+marker syntax and truthful delivery/review distinctions.

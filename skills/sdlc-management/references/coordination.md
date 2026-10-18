@@ -163,13 +163,33 @@ No new JSON manifest, packet file, worker role or workflow stage is required.
 
 ## Concise operational messages
 
-Routine status gives only the current phase, what changed, next action and any
-owner decision or external wait. Handoffs give decision, task/source, record link,
-next action and remaining gates; repair handoffs use the checklist above. Reference
-settled context rather than copying it, and do not publish a new progress entry for
-an unchanged check. Preserve required truthful owner attribution, native permission
-boundaries and final-status classification. Avoid repeated acknowledgments or
-inference-based polling when an existing observer will report a milestone.
+Keep useful owner-readable detail; abbreviate the prose, not the facts. Prefer
+short labeled bullets and sentence fragments: “Shared rules: tracked file; GitLab
+rules retained” rather than a full explanatory paragraph. Keep task/owner, attempt,
+revision, concrete changes, evidence/result, unresolved decisions, next action and
+material gates when relevant. Do not replace a requested detailed report with only
+a three-line dashboard, hide a blocker in a link, or invent cryptic abbreviations.
+
+Group facts under short labels such as **Policy ack**, **Workers**, **Evidence**
+and **Next** when useful. State each fact once; trim introductions, repeated
+assurances and long acknowledgment text. Example:
+
+- **Policy ack — revision:** shared rules tracked; personal exceptions ignored;
+  cross-project preferences in home settings. Personal rules untouched; memory updated.
+- **Workers unchanged:** task A, attempt1, revision; refresh governance at next safe
+  boundary, reuse evidence. Task B planning continues. Task C awaits named disposition.
+
+Short commit IDs and artifact links suit chat; full hashes/bindings stay in existing
+records unless exact bytes are needed for the decision. Preserve distinctions such
+as sent/received/acknowledged, reported/verified and design/source/final ACCEPT.
+Keep changed authority, native refusals, owner attribution and stop boundaries
+explicit. Handoffs retain source, decision, next action and material gates; repair
+handoffs retain their checklist. This is a writing preference, not a fixed schema,
+character cap, lossy truncation rule or new status artifact. Keep the existing
+machine-readable final-status marker and observer classification unchanged.
+
+Reference settled context; do not publish a new progress entry for an unchanged
+check or repeatedly poll when the existing observer will report a milestone.
 
 ## Coordinator context compaction at safe boundaries
 
