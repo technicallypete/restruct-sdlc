@@ -322,3 +322,46 @@ authorized editor installation, effective-config comparison, then coordinator
 verification of the next legitimate operation. Distinguish installed, loaded
 and operation-succeeded; no synthetic merge, extra CI run, alternate executor or
 mode switch merely to prove the exception. Reconcile pinned defaults on upgrades.
+
+
+### Reusable private-test permission rules
+
+With explicit owner authorization, use stable project-owned test resource names
+rather than a new permission grant per Goal. Merge these example narrow Bash
+allows into tracked `.claude/settings.json`, preserving every existing rule:
+
+```json
+[
+  "Bash(docker build --label platform.test_run=* -t platform-test-*)",
+  "Bash(docker run --rm --network none --label platform.test_run=*)",
+  "Bash(docker compose -p platform-test-*)",
+  "Bash(docker image rm platform-test-*)"
+]
+```
+
+Choose/record the adopting project's reserved prefix/label (example `platform-test-`
+and `platform.test_run`) and include task/run identity in names and label values.
+Commands must use the reviewed argument order to match. This covers private image
+builds, network-disabled disposable checks, project-scoped Compose and tagged-image
+cleanup; unmatched commands/untagged-ID cleanup retain normal native handling.
+Do not replace these with blanket Docker, arbitrary-shell or host-prune grants.
+Allow matching is a workflow convenience, not a resource-ownership sandbox:
+review the complete actual command, contexts/mounts/options/targets and task
+ownership; never append unrelated cleanup targets or use a prefix as authority.
+
+Evidence Write/Edit rules use the owner's repository-specific evidence root in
+ignored `.claude/settings.local.json` when machine-absolute, never published home
+paths. Secrets/settings/native session directories are not generic evidence roots.
+Shared provider/GitLab rules and other owner preferences remain unchanged.
+Permanent reusable rules survive task cleanup; remove only task-specific bridge
+rules listed in that task's installation receipt. Keep an active task's existing
+names/allowances until its safe transition or acceptance cleanup; do not restart,
+rename resources or repeat tests merely to adopt the prefix.
+
+Check JSON, Git exclusions, actual loaded sources and actual tool success separately.
+Supported allow rules normally resolve before the auto classifier, with documented
+exceptions; they do not disable native worktree checks, protected-path/managed
+constraints or session permission controls. Installed is not loaded or successful.
+Keep the shared private DB/browser cap, sequential build slot, ownership/cleanup,
+source binding, Goal scope and review/validation gates. This is a portable adoption
+pattern, not automatic settings self-modification or a blanket bypass.
