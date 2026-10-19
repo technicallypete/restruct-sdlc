@@ -430,3 +430,20 @@ owner approval. Reuse the coordinator/run inventory, queue on uncertain ownershi
 Shared builds/cache preparation/Compose/browser/shared-resource operations remain
 locked. Use native plain commands; no permission bypass or validation waiver.
 See the skill's validation reference for detailed conditions and owner overrides.
+
+
+## Private browser scheduling and sequential builds
+
+Private database and browser test runs share one repository-wide pool: two total,
+a third only with explicit owner approval. A browser stack's database counts within
+that run. Private browser/Compose stacks use run-owned resources, read-only source/
+prepared caches, no shared mutable fixtures, and unique reserved loopback ports
+when needed; record ownership and verify cleanup. They omit the shared harness lock.
+
+Build images sequentially: one build at a time across coordinator/workers, including
+multi-service builds. Reserve the existing coordinator's exclusive build slot;
+private task-owned tags/bound contexts/disposable outputs may use plain Docker
+without the harness lock. Keep shared cache preparation/shared-stack/port/data
+locks, native worktree guards and required validation. Queue uncertain ownership;
+no new scheduler, alternate executor or hidden wrapper. This supersedes earlier
+blanket browser/Compose/build locking for qualifying private operations only.

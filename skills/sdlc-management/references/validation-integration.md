@@ -492,3 +492,30 @@ Compose/browser stacks, shared ports/data/fixtures and other shared mutations
 retain their locks. Unavailable pinned images remain a separate preparation
 blocker; do not substitute unpinned images or claim unexecuted tests passed.
 Task scope, validation coverage, source binding, budgets and native guards remain.
+
+
+### Private browser runs and sequential image builds
+
+Private browser runs (including fully private Compose stacks) share the adopted
+repository's private database-test concurrency pool: default **two total test
+runs**, a third only with explicit owner approval. Count a browser stack and its
+internal database once. Each run owns project/names/labels, containers, network,
+credentials and writable storage/fixtures; mounts source and prepared caches
+read-only; and reuses no live stack. Required host ports must be uniquely reserved,
+nonconflicting loopback ports, never shared fixed ports. Record slots/resources,
+exact tested source and verified cleanup. These qualifying runs omit the shared
+harness lock; shared stacks/ports/data/fixtures retain their existing lock.
+
+Image builds are **sequential, one at a time across the repository's coordinator
+and workers**, including individual images in a multi-service build. Reserve one
+build slot through the existing coordinator/run inventory, verify current owned
+builds, queue on uncertain ownership and release on completion. A private build
+can use native plain Docker commands without the harness lock under this exclusive
+reservation: task-owned tags, bound context, disposable outputs, no active-tag
+replacement or shared writable-cache preparation. Shared cache preparation/other
+shared mutations retain their lock. Third-test-run approval does not expand build
+concurrency. No extra scheduler, executor, hidden wrapper or native-check bypass.
+Reconcile live work at a safe boundary without restart, budget reset or coverage
+waiver. This supersedes earlier blanket browser/Compose/build locking only for
+qualifying private reserved operations. Adopting owners may explicitly override
+limits; preserve the recorded choice and real native permission boundaries.
