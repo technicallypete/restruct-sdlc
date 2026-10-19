@@ -1,14 +1,10 @@
 # Validation and integration
 
-## Local full qualification after review
+## Post-merge qualification runs locally
 
-Default order for implementation MRs: focused checks → current hosted fast checks and supervisor/Duo review → freeze/reconcile the candidate → local full-profile qualification → merge. Use the complete local full profile, not an integration-only subset or hosted remainder. Preserve exact candidate/target/evidence attribution, honest failures, resource cleanup and explicit low-risk/documentation exemptions. Never arm auto-merge before local proof; a material candidate/target change requires reconciliation, not blind reuse or an unchanged rerun for prose.
+Default sequence for implementation MRs: focused checks and current hosted fast/supervisor/Duo review → authorized merge → full local qualification on the exact merged integration SHA. The existing implementer coordinator must automatically launch, own and track that full-profile run; no extra owner command, new persistent coordinator or full pre-merge gate. Preserve immutable inputs, real logs/exit/timings, complete failure disposition and cleanup. A busy local harness queues the batch visibly; it must not silently disappear or overlap conflicting resources.
 
-Integration-branch pushes run hosted fast checks; broad hosted qualification is optional/manual, not an automatic post-merge full gate. Preserve separately authorized provider qualification and explicitly configured main/schedule/API triggers. Other Goal/manual/acceptance gates remain. A ready successor may implement in isolation from the frozen reviewed predecessor candidate during local qualification, before predecessor merge; preserve its unmerged dependency, immutable test inputs and shared-resource locks. Predecessor final ACCEPT gates successor integration/final acceptance, and its own owner retains repairs. Existing owner/phase holds override overlap.
-
-Generic policy first, then the configurable options, then a concrete GitLab/glab adapter. Other providers are
-adaptation points: replace the adapter commands with the provider's equivalents; nothing else here is claimed for
-them. The instantiated runbook is `templates/docs/agents/BRANCH-WORKFLOW.md.tmpl`.
+Integration-branch full hosted qualification is optional/manual, while fast checks and separately configured main/provider/explicit triggers remain. Merge is conditional until local full coverage and other Goal gates clear. Ready authorized successor implementation may overlap the local run after predecessor merge, in isolation with shared locks respected. Predecessor final ACCEPT gates successor integration/final acceptance; its own owner retains repairs. Preserve explicit phase/owner holds, documentation-only suppression and low-risk exemptions. This replaces the earlier pre-merge/unmerged-successor default.
 
 ## Owner mandate and stop bounds
 
@@ -29,8 +25,8 @@ stack or repeat predecessor validation merely to write the next Plan.
 
 ## Reassessment and execution release
 
-After reviewed predecessor source enters frozen local full qualification, automatically reassess the
-provisional Plan; permit isolated implementation during that run using [the release policy](roles-lifecycle.md#automatic-reassessment-and-execution-release).
+After reviewed predecessor source is merged, automatically reassess the
+provisional Plan; permit isolated implementation during its local full qualification using [the release policy](roles-lifecycle.md#automatic-reassessment-and-execution-release).
 Material Plan changes require bounded implementer updates and review; unchanged
 design requires reconciliation only. Verify every execution gate and record/
 relay the supervisor release before work, without another routine owner prompt.
@@ -189,7 +185,7 @@ rerun.
 
 | Option | Values | Meaning |
 |---|---|---|
-| `FINAL_VALIDATION_PLACEMENT` | `local-after-review` (default) | After current supervisor/Duo and MR fast review, full qualification runs locally on the frozen candidate immediately before merge; integration-branch full job is optional/manual. |
+| `FINAL_VALIDATION_PLACEMENT` | `local-after-merge` (default) | Fast/supervisor/Duo review, then merge; existing coordinator automatically owns full local qualification of the exact integrated SHA. Hosted integration full is optional/manual. |
 | | `mr-hosted` | Explicit adopting-owner alternative: full coverage hosted before merge. |
 | | `local-before-mr` | Legacy explicitly selected alternative; not the current after-review default. |
 | `CANCELED_PIPELINE_SATISFIES` | `false` (default) | Final validation needs `success`. |

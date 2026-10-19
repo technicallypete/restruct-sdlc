@@ -192,14 +192,14 @@ No new artifact, watcher, scheduler, transport or permission override is added.
 
 ## Automatic reassessment and execution release
 
-Default: once a predecessor's exact candidate has passed supervisor/Duo review
-and entered frozen local full qualification, reassess the next authorized task's
-approved provisional Plan against that candidate and current Goal/Spec. Isolated
-implementation may overlap that run even before predecessor integration. Record
-the source revision, unmerged dependency and pending qualification in the existing
-binding/Result and PROGRESS. Protect the predecessor checkout, immutable inputs
-and shared harness lock; source work may proceed while conflicting resources wait.
-A merge or Plan existing alone is not release.
+Default: once a predecessor's reviewed source is merged, its existing coordinator
+must automatically launch and own full local qualification of that exact merged
+revision. Reassess the next authorized task's approved provisional Plan against
+that integration and current Goal/Spec. Isolated implementation may overlap the
+local run and closeout; do not require another owner prompt or wait for final
+predecessor ACCEPT solely to start it. Record merged revision and pending local
+qualification in existing bindings/Result/PROGRESS. Protect frozen test inputs
+and shared locks. A merge or existing Plan alone is not successor release.
 
 Before release, verify Plan ACCEPT (or explicit direct-tier authority), current
 input/scope binding, owner decisions, budget, isolated task branch/checkout and

@@ -1,14 +1,10 @@
 # {{PROJECT_NAME}} branch integration and cleanup
 
-## Local full qualification after review
+## Post-merge qualification runs locally
 
-Default order for implementation MRs: focused checks → current hosted fast checks and supervisor/Duo review → freeze/reconcile the candidate → local full-profile qualification → merge. Use the complete local full profile, not an integration-only subset or hosted remainder. Preserve exact candidate/target/evidence attribution, honest failures, resource cleanup and explicit low-risk/documentation exemptions. Never arm auto-merge before local proof; a material candidate/target change requires reconciliation, not blind reuse or an unchanged rerun for prose.
+Default sequence for implementation MRs: focused checks and current hosted fast/supervisor/Duo review → authorized merge → full local qualification on the exact merged integration SHA. The existing implementer coordinator must automatically launch, own and track that full-profile run; no extra owner command, new persistent coordinator or full pre-merge gate. Preserve immutable inputs, real logs/exit/timings, complete failure disposition and cleanup. A busy local harness queues the batch visibly; it must not silently disappear or overlap conflicting resources.
 
-Integration-branch pushes run hosted fast checks; broad hosted qualification is optional/manual, not an automatic post-merge full gate. Preserve separately authorized provider qualification and explicitly configured main/schedule/API triggers. Other Goal/manual/acceptance gates remain. A ready successor may implement in isolation from the frozen reviewed predecessor candidate during local qualification, before predecessor merge; preserve its unmerged dependency, immutable test inputs and shared-resource locks. Predecessor final ACCEPT gates successor integration/final acceptance, and its own owner retains repairs. Existing owner/phase holds override overlap.
-
-Integration branch: `{{INTEGRATION_BRANCH}}`. Release branch: `{{RELEASE_BRANCH}}`. Protected long-lived branches:
-{{PROTECTED_BRANCHES}}. CI provider: `{{CI_PROVIDER}}`; merge-request tool: `{{MR_TOOL}}`. Generic policy:
-[validation and integration](../../.agents/skills/sdlc-management/references/validation-integration.md).
+Integration-branch full hosted qualification is optional/manual, while fast checks and separately configured main/provider/explicit triggers remain. Merge is conditional until local full coverage and other Goal gates clear. Ready authorized successor implementation may overlap the local run after predecessor merge, in isolation with shared locks respected. Predecessor final ACCEPT gates successor integration/final acceptance; its own owner retains repairs. Preserve explicit phase/owner holds, documentation-only suppression and low-risk exemptions. This replaces the earlier pre-merge/unmerged-successor default.
 
 ## Owner mandate and stop bounds
 
