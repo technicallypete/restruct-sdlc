@@ -81,7 +81,7 @@ overlapping lifecycle/management process. Preserve the foundation's renderer
 safety and technical checks and the repository's canonical invariants/decisions.
 Neither skill grants a supervisor role merely by being loaded.
 
-Apply the current local-after-merge policy: supervisor/Duo and MR fast review, then merge, then the existing implementer coordinator automatically owns full local qualification of the exact merged SHA. A ready authorized successor may implement in isolation during that run after merge; predecessor final ACCEPT still gates successor integration. Staging full hosted qualification is optional/manual; preserve other explicit triggers and owner holds.
+Apply the current local-after-merge policy: supervisor/Duo and MR fast review, then merge, then the existing implementer coordinator automatically owns full local qualification of the exact merged SHA. A ready authorized successor may implement in isolation during that run after merge; predecessor final ACCEPT still gates successor integration. No automatic post-merge integration/release-branch or tag-push pipeline, including lightweight checks; preserve feature MR fast, owner-selected full RC-promotion MR qualification, explicit diagnostic/provider triggers and owner holds.
 
 ## Supervise the next authorized action
 

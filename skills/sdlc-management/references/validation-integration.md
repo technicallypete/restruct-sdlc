@@ -4,7 +4,7 @@
 
 Default sequence for implementation MRs: focused checks and current hosted fast/supervisor/Duo review → authorized merge → full local qualification on the exact merged integration SHA. The existing implementer coordinator must automatically launch, own and track that full-profile run; no extra owner command, new persistent coordinator or full pre-merge gate. Preserve immutable inputs, real logs/exit/timings, complete failure disposition and cleanup. A busy local harness queues the batch visibly; it must not silently disappear or overlap conflicting resources.
 
-Integration-branch full hosted qualification is optional/manual, while fast checks and separately configured main/provider/explicit triggers remain. Merge is conditional until local full coverage and other Goal gates clear. Ready authorized successor implementation may overlap the local run after predecessor merge, in isolation with shared locks respected. Predecessor final ACCEPT gates successor integration/final acceptance; its own owner retains repairs. Preserve explicit phase/owner holds, documentation-only suppression and low-risk exemptions. This replaces the earlier pre-merge/unmerged-successor default.
+Automatic integration/release-branch post-merge and tag-push pipelines are disabled, including lightweight checks. Feature MRs retain hosted fast checks; owner-selected RC promotion MRs require complete hosted release qualification. Preserve separately authorized diagnostic/provider schedule/web/API runs. Merge is conditional until local full coverage and other Goal gates clear. Ready authorized successor implementation may overlap the local run after predecessor merge, in isolation with shared locks respected. Predecessor final ACCEPT gates successor integration/final acceptance; its own owner retains repairs. Preserve explicit phase/owner holds, documentation-only suppression and low-risk exemptions. This replaces the earlier pre-merge/unmerged-successor default.
 
 ## Owner mandate and stop bounds
 
@@ -185,7 +185,7 @@ rerun.
 
 | Option | Values | Meaning |
 |---|---|---|
-| `FINAL_VALIDATION_PLACEMENT` | `local-after-merge` (default) | Fast/supervisor/Duo review, then merge; existing coordinator automatically owns full local qualification of the exact integrated SHA. Hosted integration full is optional/manual. |
+| `FINAL_VALIDATION_PLACEMENT` | `local-after-merge` (default) | Fast/supervisor/Duo review, then merge; existing coordinator automatically owns full local qualification of the exact integrated SHA. No automatic post-merge cloud pipeline; feature MR checks and explicitly configured release/diagnostic qualification remain. |
 | | `mr-hosted` | Explicit adopting-owner alternative: full coverage hosted before merge. |
 | | `local-before-mr` | Legacy explicitly selected alternative; not the current post-merge default. |
 | `CANCELED_PIPELINE_SATISFIES` | `false` (default) | Final validation needs `success`. |
@@ -202,7 +202,7 @@ glab mr create --source-branch TEMP_BRANCH --target-branch INTEGRATION_BRANCH \
   --title "TITLE" --description "Evidence: see the Goal Result." --remove-source-branch --yes
 glab mr view MR_IID --comments                                    # automated review findings before merge
 glab mr merge MR_IID                                              # only with owner authorization
-glab ci status --branch INTEGRATION_BRANCH                        # post-merge disposition
+git fetch origin INTEGRATION_BRANCH                              # freeze the merged SHA for coordinator-owned local full qualification
 glab mr create --source-branch INTEGRATION_BRANCH --target-branch RELEASE_BRANCH --title "Promote"
 ```
 
