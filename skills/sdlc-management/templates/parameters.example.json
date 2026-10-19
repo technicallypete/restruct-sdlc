@@ -18,7 +18,7 @@
     "FAST_CHECK_COMMAND": {"description": "Fast local check command.", "default": "make check"},
     "FULL_CHECK_COMMAND": {"description": "Full local qualification command.", "default": "make validate"},
     "PRE_BATCH_ENV_CHECK": {"description": "Optional environment safeguard run before every batch; empty when none.", "default": ""},
-    "FINAL_VALIDATION_PLACEMENT": {"description": "mr-hosted (default) or local-before-mr.", "default": "mr-hosted"},
+    "FINAL_VALIDATION_PLACEMENT": {"description": "local-after-review (default): full local qualification after review, before merge; mr-hosted/local-before-mr require explicit adoption.", "default": "local-after-review"},
     "CANCELED_PIPELINE_SATISFIES": {"description": "Whether an owner-canceled post-merge pipeline satisfies the gate.", "default": false},
     "DEFAULT_BUDGET": {"description": "Default Goal budget class: B3, B5, B7 or B15.", "default": "B5"},
     "COORDINATOR_EFFORT": {"description": "Recommended coordinator effort for orchestration, status and handoffs (planning uses PLANNING_EFFORT).", "default": "high"},

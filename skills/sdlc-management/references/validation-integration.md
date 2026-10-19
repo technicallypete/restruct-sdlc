@@ -1,5 +1,11 @@
 # Validation and integration
 
+## Local full qualification after review
+
+Default order for implementation MRs: focused checks → current hosted fast checks and supervisor/Duo review → freeze/reconcile the candidate → local full-profile qualification → merge. Use the complete local full profile, not an integration-only subset or hosted remainder. Preserve exact candidate/target/evidence attribution, honest failures, resource cleanup and explicit low-risk/documentation exemptions. Never arm auto-merge before local proof; a material candidate/target change requires reconciliation, not blind reuse or an unchanged rerun for prose.
+
+Integration-branch pushes run hosted fast checks; broad hosted qualification is optional/manual, not an automatic post-merge full gate. Preserve separately authorized provider qualification and explicitly configured main/schedule/API triggers. Other Goal/manual/acceptance gates remain. A ready successor may implement in isolation from the frozen reviewed predecessor candidate during local qualification, before predecessor merge; preserve its unmerged dependency, immutable test inputs and shared-resource locks. Predecessor final ACCEPT gates successor integration/final acceptance, and its own owner retains repairs. Existing owner/phase holds override overlap.
+
 Generic policy first, then the configurable options, then a concrete GitLab/glab adapter. Other providers are
 adaptation points: replace the adapter commands with the provider's equivalents; nothing else here is claimed for
 them. The instantiated runbook is `templates/docs/agents/BRANCH-WORKFLOW.md.tmpl`.
@@ -23,8 +29,8 @@ stack or repeat predecessor validation merely to write the next Plan.
 
 ## Reassessment and execution release
 
-After reviewed predecessor source integration, automatically reassess the
-provisional Plan; permit isolated implementation during predecessor staging CI using [the release policy](roles-lifecycle.md#automatic-reassessment-and-execution-release).
+After reviewed predecessor source enters frozen local full qualification, automatically reassess the
+provisional Plan; permit isolated implementation during that run using [the release policy](roles-lifecycle.md#automatic-reassessment-and-execution-release).
 Material Plan changes require bounded implementer updates and review; unchanged
 design requires reconciliation only. Verify every execution gate and record/
 relay the supervisor release before work, without another routine owner prompt.
@@ -183,8 +189,9 @@ rerun.
 
 | Option | Values | Meaning |
 |---|---|---|
-| `FINAL_VALIDATION_PLACEMENT` | `mr-hosted` (default) | Required full coverage runs in the hosted merge-request pipeline before merge. |
-| | `local-before-mr` | A solo-operator placement: required affected/full coverage runs locally before the merge request; the merge-request fast job runs automatically; the integration branch's post-merge pipeline supplies hosted evidence after a conditional integration. |
+| `FINAL_VALIDATION_PLACEMENT` | `local-after-review` (default) | After current supervisor/Duo and MR fast review, full qualification runs locally on the frozen candidate immediately before merge; integration-branch full job is optional/manual. |
+| | `mr-hosted` | Explicit adopting-owner alternative: full coverage hosted before merge. |
+| | `local-before-mr` | Legacy explicitly selected alternative; not the current after-review default. |
 | `CANCELED_PIPELINE_SATISFIES` | `false` (default) | Final validation needs `success`. |
 | | `true` | An owner-canceled post-merge pipeline also satisfies the gate. It is recorded as canceled, never as passing, and any failed job or known failing check still fails. Pending or running never qualifies. |
 

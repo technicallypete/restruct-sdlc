@@ -1,5 +1,11 @@
 # {{PROJECT_NAME}} branch integration and cleanup
 
+## Local full qualification after review
+
+Default order for implementation MRs: focused checks → current hosted fast checks and supervisor/Duo review → freeze/reconcile the candidate → local full-profile qualification → merge. Use the complete local full profile, not an integration-only subset or hosted remainder. Preserve exact candidate/target/evidence attribution, honest failures, resource cleanup and explicit low-risk/documentation exemptions. Never arm auto-merge before local proof; a material candidate/target change requires reconciliation, not blind reuse or an unchanged rerun for prose.
+
+Integration-branch pushes run hosted fast checks; broad hosted qualification is optional/manual, not an automatic post-merge full gate. Preserve separately authorized provider qualification and explicitly configured main/schedule/API triggers. Other Goal/manual/acceptance gates remain. A ready successor may implement in isolation from the frozen reviewed predecessor candidate during local qualification, before predecessor merge; preserve its unmerged dependency, immutable test inputs and shared-resource locks. Predecessor final ACCEPT gates successor integration/final acceptance, and its own owner retains repairs. Existing owner/phase holds override overlap.
+
 Integration branch: `{{INTEGRATION_BRANCH}}`. Release branch: `{{RELEASE_BRANCH}}`. Protected long-lived branches:
 {{PROTECTED_BRANCHES}}. CI provider: `{{CI_PROVIDER}}`; merge-request tool: `{{MR_TOOL}}`. Generic policy:
 [validation and integration](../../.agents/skills/sdlc-management/references/validation-integration.md).

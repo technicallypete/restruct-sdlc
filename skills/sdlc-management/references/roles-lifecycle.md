@@ -192,13 +192,14 @@ No new artifact, watcher, scheduler, transport or permission override is added.
 
 ## Automatic reassessment and execution release
 
-Default: once a predecessor's source has passed required pre-integration review
-and is merged into the integration branch, reassess the next authorized task's
-approved provisional Plan against that exact integration and current Goal/Spec.
-Implementation may overlap the predecessor's running staging/integration checks
-and closeout; do not wait for final predecessor ACCEPT solely to start it.
-Record the merged revision, pending qualification and affected dependency in the
-existing binding/Result and PROGRESS. A merge or Plan existing alone is not release.
+Default: once a predecessor's exact candidate has passed supervisor/Duo review
+and entered frozen local full qualification, reassess the next authorized task's
+approved provisional Plan against that candidate and current Goal/Spec. Isolated
+implementation may overlap that run even before predecessor integration. Record
+the source revision, unmerged dependency and pending qualification in the existing
+binding/Result and PROGRESS. Protect the predecessor checkout, immutable inputs
+and shared harness lock; source work may proceed while conflicting resources wait.
+A merge or Plan existing alone is not release.
 
 Before release, verify Plan ACCEPT (or explicit direct-tier authority), current
 input/scope binding, owner decisions, budget, isolated task branch/checkout and
@@ -209,7 +210,7 @@ or repeating unchanged validation. Record and relay supervisor execution release
 no additional routine owner proceed prompt is needed. Reuse the task owner and
 current model-aware effort, with no budget reset.
 
-Predecessor final ACCEPT and its required staging disposition still gate the next
+Predecessor final ACCEPT and its required qualification disposition still gate the next
 task's integration and final ACCEPT. Pending or failed checks remain pending or
 failed. Unresolved security, architecture or contract changes that affect the next
 task block its affected implementation. Explicit task/owner holds, manual gates,
