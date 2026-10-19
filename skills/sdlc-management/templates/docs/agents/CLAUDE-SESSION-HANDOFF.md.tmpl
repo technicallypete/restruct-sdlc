@@ -88,7 +88,7 @@ cutover stays a reported native action; policy text does not launch a replacemen
 ## Mandatory short coordinator reports — 2026-10-18
 
 Routine owner-facing updates MUST be at most 80 words and three short bullets
-(or one short paragraph), plus the existing final-status marker. Report only the
+(or one short paragraph), plus a status marker only when required for a supervisor handoff. Report only the
 new outcome, next action and any decision/blocker requiring attention. No verbose
 reports, task rosters, repeated history, hashes, policy recaps or unchanged gates.
 Routine acknowledgments, dispatch receipts and unchanged waiting states get no
@@ -99,3 +99,8 @@ clear within the limit; do not hide it in a link. Preserve truthful uncertainty,
 source/final-ACCEPT distinctions and the exact status-marker syntax. This hard
 default supersedes earlier guidance to preserve detailed status prose or avoid
 fixed-length reports; it changes no technical, native-permission or review gate.
+
+
+## Direct owner replies — 2026-10-19
+
+For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.

@@ -363,7 +363,7 @@ task authority or waive native gates. Preserve existing configuration on adoptio
 Keep useful owner-readable detail using short labeled bullets, fragments and
 record references. Trim filler/repetition, not evidence, uncertainty, decisions or
 gates. See [operational messages](.agents/skills/sdlc-management/references/coordination.md#concise-operational-messages).
-Preserve the final-status marker; this is not a dashboard-only or fixed-length rule.
+Preserve the final-status marker for supervisor handoffs; direct owner replies omit it unless the owner asks for supervisor relay.
 
 
 ## Permission failures and focused validation
@@ -388,3 +388,6 @@ proves success. Keep the chosen roles explicit without requiring another supervi
 ## Optional Claude supervisor
 
 The owner may choose Claude Code as supervisor. ChatGPT/Codex then contributes only Work Spec writing and architecture reviews; Claude owns the remaining supervision responsibilities through the existing workflow. This overrides default role assignments only when selected and recorded by the owner; it creates no second supervisor, routine ChatGPT approval gate, session restart or active-task rebind. Major decisions remain owner-owned.
+
+
+For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.

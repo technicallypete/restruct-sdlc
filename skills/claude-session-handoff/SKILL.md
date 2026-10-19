@@ -387,7 +387,9 @@ If the inbox is incompatible or unavailable, use the supported attach/input inte
 
 ## Coordinator milestone observer (opt-in here; an adopting repository may default-enable it after verified bindings)
 
-**Coordinator response contract:** finish each turn with one plain final line:
+For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.
+
+**Coordinator response contract:** finish autonomous supervisor handoffs with one plain final line:
 `COORDINATOR_STATUS: review-ready | G008 | Plan ready for supervisor review.`
 Classes are `working`, `review-ready`, `blocked`, `question`, `failed`, `completed`.
 Use the actual nonsecret task ID and a nonempty summary of at most 240 characters
@@ -570,7 +572,7 @@ Follow the adopting repository's permission placement/adoption procedure.
 ## Mandatory short owner reports
 
 Routine owner-facing updates MUST be at most 80 words and three short bullets
-(or one short paragraph), plus the existing final-status marker. Report only the
+(or one short paragraph), plus a status marker only when required for a supervisor handoff. Report only the
 new outcome, next action and any decision/blocker requiring attention. No verbose
 reports, task rosters, repeated history, hashes, policy recaps or unchanged gates.
 Routine acknowledgments, dispatch receipts and unchanged waiting states get no

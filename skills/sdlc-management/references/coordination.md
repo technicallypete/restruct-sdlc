@@ -112,7 +112,9 @@ standard `/proc`/`lsof` inspection and the helper's existing `status`.
 
 ### Coordinator final status line
 
-Finish each coordinator turn with one plain final line (outside Markdown/code blocks):
+For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.
+
+Finish autonomous coordinator-to-supervisor handoffs with one plain final line (outside Markdown/code blocks):
 
 ```text
 COORDINATOR_STATUS: review-ready | G008 | Plan ready for supervisor review.
@@ -170,7 +172,7 @@ No new JSON manifest, packet file, worker role or workflow stage is required.
 ### Mandatory short reports — owner direction, 2026-10-18
 
 Routine owner-facing updates MUST be at most 80 words and three short bullets
-(or one short paragraph), plus the existing final-status marker. Report only the
+(or one short paragraph), plus a status marker only when required for a supervisor handoff. Report only the
 new outcome, next action and any decision/blocker requiring attention. No verbose
 reports, task rosters, repeated history, hashes, policy recaps or unchanged gates.
 Routine acknowledgments, dispatch receipts and unchanged waiting states get no

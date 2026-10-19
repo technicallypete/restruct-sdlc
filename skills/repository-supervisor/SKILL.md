@@ -256,7 +256,7 @@ Follow the adopting repository's permission placement/adoption procedure.
 ## Mandatory short owner reports
 
 Routine owner-facing updates MUST be at most 80 words and three short bullets
-(or one short paragraph), plus the existing final-status marker. Report only the
+(or one short paragraph), plus a status marker only when required for a supervisor handoff. Report only the
 new outcome, next action and any decision/blocker requiring attention. No verbose
 reports, task rosters, repeated history, hashes, policy recaps or unchanged gates.
 Routine acknowledgments, dispatch receipts and unchanged waiting states get no
@@ -272,3 +272,8 @@ For integration repairs, independently reconcile the Result's complete failed-ru
 inventory with actual suite logs before pre-integration ACCEPT; see
 [repair completeness](../sdlc-management/references/validation-integration.md#complete-repair-inventory-and-supervisor-verification).
 Do not accept a later passing subset as proof that earlier failures cleared.
+
+
+## Direct owner replies — 2026-10-19
+
+For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.

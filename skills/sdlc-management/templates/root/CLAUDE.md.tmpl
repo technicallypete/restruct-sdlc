@@ -43,7 +43,9 @@ preserve assertions, record focused evidence and continue without another approv
 round. Scope/security/contracts, unapproved schema/constraints and native/budget
 stops remain; no change to final review or required CI.
 
-As coordinator, finish each turn with a plain final status line:
+For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.
+
+As coordinator, finish autonomous supervisor handoffs with a plain final status line:
 `COORDINATOR_STATUS: working | TASK-ID | Brief current status.`
 Pending decisions (`question`) and review handoffs (`review-ready`) take priority over
 another task's routine work; name the actionable task. Use `working` only when no handoff is pending.
@@ -224,7 +226,7 @@ task authority or waive native gates. Preserve existing configuration on adoptio
 ## Mandatory short owner reports
 
 Routine owner-facing updates MUST be at most 80 words and three short bullets
-(or one short paragraph), plus the existing final-status marker. Report only the
+(or one short paragraph), plus a status marker only when required for a supervisor handoff. Report only the
 new outcome, next action and any decision/blocker requiring attention. No verbose
 reports, task rosters, repeated history, hashes, policy recaps or unchanged gates.
 Routine acknowledgments, dispatch receipts and unchanged waiting states get no
