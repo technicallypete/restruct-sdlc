@@ -12,6 +12,8 @@ agent session. Loading the skill does not assign authority, approve work or
 authorize merges. Claude Code remains the primary implementer; major product and
 architecture decisions remain with the owner.
 
+When the owner selects Claude supervision, ChatGPT/Codex is limited to Work Spec writing and architecture reviews. Do not continue routine supervision, monitoring, acceptance or dispatch under this skill in that mode. Follow the recorded role assignment; merely documenting this option does not activate it.
+
 ## Recover state
 
 1. Resolve the current checkout's Git root. Read root AGENTS.md and CLAUDE.md,

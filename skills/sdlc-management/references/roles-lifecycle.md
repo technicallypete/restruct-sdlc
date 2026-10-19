@@ -26,6 +26,10 @@ authorizing actor truthfully; nobody widens their own authority by editing a pol
 Workers, reviewers and subagents never hold owner or supervisor authority. A delegated opinion does not replace
 supervisor acceptance or an owner decision.
 
+## Owner-selected supervisor
+
+The owner may select Claude Code as supervisor. In this mode, Claude owns orchestration, Plan review, implementation acceptance, progress and closeout through the existing workflow; ChatGPT/Codex contributes only Work Spec writing and architecture reviews. Do not retain a second ChatGPT/Codex supervisor, routine approval gate or monitoring/dispatch duty. This explicitly overrides the default supervisor-owned Spec row above. Major product/architecture decisions stay with the owner. Record the selected assignment in existing repository governance/handoff; documenting the option alone does not activate it or restart/rebind active work.
+
 ## Artifacts
 
 All Goal artifacts live under `management/<release>/` with a stable Goal ID (default form `G###`) and a
