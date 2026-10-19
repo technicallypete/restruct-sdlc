@@ -290,3 +290,15 @@ source-SHA binding, applicable findings disposition and separate RC owner
 authority remain. Read-only follow-up/authorized closeout is not a merge. Native
 exceptions require owner authorization and supported configuration; installed,
 loaded and operation-succeeded remain distinct. No blanket disabled-guard default.
+
+
+## Private database test concurrency
+
+Qualifying private per-run database tests do not take the shared harness lock:
+private database/network/credentials/disposable storage, no host ports, read-only
+source/prepared caches, no shared writable fixtures, recorded ownership/cleanup.
+Default concurrency is two runs across the repository; a third requires explicit
+owner approval. Reuse the coordinator/run inventory, queue on uncertain ownership.
+Shared builds/cache preparation/Compose/browser/shared-resource operations remain
+locked. Use native plain commands; no permission bypass or validation waiver.
+See the skill's validation reference for detailed conditions and owner overrides.

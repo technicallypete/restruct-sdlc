@@ -467,3 +467,28 @@ move the tag to chase it. The promotion branch/MR and required full qualificatio
 use that exact tagged source. This source-selection rule does not accept pending
 Goals, waive findings/CI, authorize an unrequested RC/main merge/final tag or
 change the selected promotion mode. Existing tags and pipelines stay unchanged.
+
+
+### Private per-run database test scheduling
+
+Focused database tests may omit the shared harness lock when every run owns its
+database, private network, credentials and disposable storage; publishes no host
+ports; mounts source and prepared dependency caches read-only; and shares no
+writable fixtures/cache or existing stack. Use plain supported native commands,
+unique resource names/labels, exact run ownership and verified bounded cleanup.
+Network access is limited to that run's test services. No alternate executor or
+hidden wrapper may evade a native refusal.
+
+Default to at most **two concurrent private database runs per adopted repository**,
+across its coordinator and workers. A third needs explicit owner approval when
+asked; do not infer higher concurrency. Reuse the existing coordinator/run
+inventory for slot ownership; verify live runs before dispatch, release slots
+after cleanup and queue on uncertain ownership. No extra scheduler is required.
+The adopting owner may explicitly choose a different recorded limit.
+
+This exception applies across tasks and supersedes blanket database-stack locking
+only for qualifying private runs. Shared image builds, mutable cache preparation,
+Compose/browser stacks, shared ports/data/fixtures and other shared mutations
+retain their locks. Unavailable pinned images remain a separate preparation
+blocker; do not substitute unpinned images or claim unexecuted tests passed.
+Task scope, validation coverage, source binding, budgets and native guards remain.
