@@ -1,5 +1,9 @@
 # Coordinator, workers and messages
 
+## Local qualification after merge
+
+Under the local-after-merge default, the existing implementer coordinator automatically launches and owns full local qualification of the exact merged integration SHA. A merge handoff identifies that SHA and required run; no extra owner prompt or persistent coordinator is needed. Track its actual state and evidence in the existing Result, with one resource-blocker report if queued. Preserve immutable inputs, shared locks and cleanup. Ready successor source work may overlap after merge; predecessor final ACCEPT still gates successor integration.
+
 Transport is not here. Session discovery, routing, pinning, receipts and creation gates belong to the companion
 [claude-session-handoff](../../claude-session-handoff/SKILL.md) skill; supervision belongs to
 [repository-supervisor](../../repository-supervisor/SKILL.md). This reference states the management rules those

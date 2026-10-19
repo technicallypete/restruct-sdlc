@@ -581,3 +581,7 @@ clear within the limit; do not hide it in a link. Preserve truthful uncertainty,
 source/final-ACCEPT distinctions and the exact status-marker syntax. This hard
 default supersedes earlier guidance to preserve detailed status prose or avoid
 fixed-length reports; it changes no technical, native-permission or review gate.
+
+## Post-merge qualification handoff
+
+When the adopting workflow uses local-after-merge qualification, an authorized merge handoff names the exact merged SHA and the full local run owned automatically by the existing implementer coordinator. Verify actual queued/running/terminal state and Result evidence; receipt alone is not execution or PASS. Do not require another owner launch prompt, create a second persistent coordinator or use hosted fast success as full qualification. Preserve resource locks, final acceptance holds and the adopting repository's current policy.

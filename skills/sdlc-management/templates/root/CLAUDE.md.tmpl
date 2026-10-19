@@ -1,5 +1,11 @@
 # {{IMPLEMENTER_AGENT}} repository role
 
+## Coordinator-owned local staging qualification
+
+After focused checks, current hosted fast checks and supervisor/Duo review, merge under existing authority; the existing implementer coordinator must then automatically launch and track the full local qualification command on the exact merged integration SHA. Do not wait for an owner-run command or treat hosted fast PASS as full qualification. Integration-branch full hosted coverage is optional/manual, while other configured main/provider/explicit triggers remain. Final acceptance still needs actual local full proof and the Goal's other gates.
+
+A ready authorized successor may implement in isolation during that post-merge local run. Respect shared locks, exact inputs and predecessor-owned repairs; predecessor final ACCEPT still gates successor integration/final acceptance. Merged-SHA qualification uses its frozen checkout and is not rebased by development-branch fetch/rebase rules. Preserve explicitly exempt documentation-only work.
+
 {{IMPLEMENTER_AGENT}} owns implementation planning, implementation, tests and validation, and Result reporting.
 {{SUPERVISOR_AGENT}} owns the roadmap, Goals, Specs, Plan review, acceptance and progress. [AGENTS.md](AGENTS.md)
 is the shared governance; follow it in full. This file adds no separate governance model.
@@ -27,7 +33,7 @@ This does not release implementation. Follow
 
 After [supervisor reassessment/release](.agents/skills/sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release)
 closes start gates, begin/resume isolated scoped implementation during predecessor
-staging CI without another routine owner prompt. Final predecessor ACCEPT gates
+post-merge local full qualification without another routine owner prompt. Final predecessor ACCEPT gates
 successor integration/final acceptance. A Plan/merge/green pipeline alone is not
 release; material Plan updates require review and explicit holds remain.
 

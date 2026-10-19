@@ -238,3 +238,7 @@ explicit verified rebind; attempted/uncertain sends retain dedup protection.
 The separate coordinator-creation check remains version-restricted and authorized
 independently. Restart a running observer at a safe point with `stop`, then
 `start --resume` to load this code without resetting the pair/cursor/dedup.
+
+## Post-merge local qualification handoff
+
+Under the adopting local-after-merge policy, the existing implementer coordinator automatically launches and owns full local qualification of the exact merged integration SHA. Include that SHA in an authorized merge handoff; verify actual queued/running/terminal state and Result evidence, not just inbox receipt. Preserve resource locks, immutable inputs, logs and cleanup; a busy harness queues the run visibly. No extra owner launch prompt or second persistent coordinator is required. Successor implementation may overlap after merge, while predecessor final ACCEPT gates its integration.

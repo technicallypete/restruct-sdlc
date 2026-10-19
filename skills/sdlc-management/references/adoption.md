@@ -141,7 +141,7 @@ copy outside the shipped skill (for example in the adoption Plan).
 - Supervisor publication: `SUPERVISOR_AUTO_PUBLISH` (default `true`; see
   [roles](roles-lifecycle.md#supervisor-progress-publication-option-enabled-by-default)), publishing to the explicit
   `INTEGRATION_BRANCH`.
-- Validation options: `FINAL_VALIDATION_PLACEMENT` (`mr-hosted` default, or `local-before-mr`),
+- Validation options: `FINAL_VALIDATION_PLACEMENT` (`local-after-merge` default: coordinator-owned full local qualification of the merged SHA; other placements require explicit adoption),
   `CANCELED_PIPELINE_SATISFIES` (default `false`).
 - Budget and effort: `DEFAULT_BUDGET` (`B5`), `COORDINATOR_EFFORT` (`high`), `PLANNING_EFFORT` (`xhigh`),
   `IMPLEMENTATION_EFFORT` (`high`).

@@ -187,7 +187,7 @@ rerun.
 |---|---|---|
 | `FINAL_VALIDATION_PLACEMENT` | `local-after-merge` (default) | Fast/supervisor/Duo review, then merge; existing coordinator automatically owns full local qualification of the exact integrated SHA. Hosted integration full is optional/manual. |
 | | `mr-hosted` | Explicit adopting-owner alternative: full coverage hosted before merge. |
-| | `local-before-mr` | Legacy explicitly selected alternative; not the current after-review default. |
+| | `local-before-mr` | Legacy explicitly selected alternative; not the current post-merge default. |
 | `CANCELED_PIPELINE_SATISFIES` | `false` (default) | Final validation needs `success`. |
 | | `true` | An owner-canceled post-merge pipeline also satisfies the gate. It is recorded as canceled, never as passing, and any failed job or known failing check still fails. Pending or running never qualifies. |
 
@@ -349,8 +349,7 @@ This is smarter selection within the current Plan/Result, not another inventory,
 approval stage, mandatory matrix or broad local suite. Preserve running batches
 and assess remaining active work at its next safe boundary; no full replan or
 rerun of completed unaffected work. Report exactly what passed locally and what
-only hosted qualification covers. Required staging integration remains the final
-combined check; a local pass is not a claim of full integration equivalence.
+any separately authorized provider qualification covers. The required combined staging qualification now runs locally on the exact merged revision; it is not inferred from hosted fast checks. Record its actual local environment and coverage.
 
 ## Targeted reruns and attributable coverage default
 
