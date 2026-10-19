@@ -1,5 +1,9 @@
 # Validation and integration
 
+## Local full qualification default
+
+Required affected/full qualification runs locally on the final candidate. Hosted pipelines run fast checks; do not add a broad hosted job, manual fallback, retry or implicit profile escalation under this default. Separately authorized narrow provider qualification retains its own controls. Preserve exact candidate attribution, logs, failure disposition, security coverage and cleanup; focused selection remains the default for ordinary changes. An adopting owner's stricter placement mandate governs. Historical outcomes remain unchanged.
+
 Generic policy first, then the configurable options, then a concrete GitLab/glab adapter. Other providers are
 adaptation points: replace the adapter commands with the provider's equivalents; nothing else here is claimed for
 them. The instantiated runbook is `templates/docs/agents/BRANCH-WORKFLOW.md.tmpl`.
@@ -140,7 +144,7 @@ of current validation, manual feedback or evidence requirements.
 Committed test/approval inputs use Git commit/path. Unconsumed status documents
 need no duplicate test snapshot; approval/governance changes still require review.
 Size local coverage to changed behavior, required security criteria and the actual
-path/profile selection. Hosted staging is path-selected, docs-only pipelines may
+path/profile selection. Hosted staging is fast-only, docs-only pipelines may
 be omitted, and cancellation is not passing-test evidence. Keep required local
 coverage and honest failed/interrupted records; reuse unchanged attributable evidence.
 The expensive CI meta-tests are distinct from application tests and may be selected
@@ -183,8 +187,8 @@ rerun.
 
 | Option | Values | Meaning |
 |---|---|---|
-| `FINAL_VALIDATION_PLACEMENT` | `mr-hosted` (default) | Required full coverage runs in the hosted merge-request pipeline before merge. |
-| | `local-before-mr` | A solo-operator placement: required affected/full coverage runs locally before the merge request; the merge-request fast job runs automatically; the integration branch's post-merge pipeline supplies hosted evidence after a conditional integration. |
+| `FINAL_VALIDATION_PLACEMENT` | `local-before-mr` (default) | Required affected/full coverage runs locally on the final candidate; hosted MR and integration-branch jobs run fast checks only. No hosted full/manual fallback. |
+| | `mr-hosted` (explicit owner opt-in only) | Historical optional adapter placement; unavailable in repositories with the local-only owner mandate. |
 | `CANCELED_PIPELINE_SATISFIES` | `false` (default) | Final validation needs `success`. |
 | | `true` | An owner-canceled post-merge pipeline also satisfies the gate. It is recorded as canceled, never as passing, and any failed job or known failing check still fails. Pending or running never qualifies. |
 
@@ -346,8 +350,7 @@ This is smarter selection within the current Plan/Result, not another inventory,
 approval stage, mandatory matrix or broad local suite. Preserve running batches
 and assess remaining active work at its next safe boundary; no full replan or
 rerun of completed unaffected work. Report exactly what passed locally and what
-only hosted qualification covers. Required staging integration remains the final
-combined check; a local pass is not a claim of full integration equivalence.
+the separately authorized narrow provider qualification covers. Required full qualification is local; report its actual environment and candidate. Hosted fast checks do not claim full integration coverage.
 
 ## Targeted reruns and attributable coverage default
 
