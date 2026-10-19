@@ -84,6 +84,8 @@ glab mr merge MR_IID
 Promotion from `{{INTEGRATION_BRANCH}}` to `{{RELEASE_BRANCH}}` uses a separate merge request with source-branch
 deletion **off**.
 
+If the owner selects [RC promotion qualification](../../.agents/skills/sdlc-management/references/validation-integration.md#owner-controlled-rc-promotion-option), the coordinator instead creates an internal temporary branch pinned to the requested RC tag and opens its MR to `{{RELEASE_BRANCH}}`. The MR runs required full hosted qualification; RC/final tag and release-branch pushes start no duplicate pipeline. After success, wait for explicit owner promotion instruction, verify actual qualified content, and delete only that temporary source branch. Keep `{{INTEGRATION_BRANCH}}`, `{{RELEASE_BRANCH}}` and RC tags. The owner separately decides when to tag the verified release branch. Any owner waiver of automated review applies only to that promotion, not ordinary feature MRs. Implement and verify the provider adapter before using this option; the owner does not manage the temporary branch.
+
 ## Closeout
 
 Verify integrated content, unique work and live ownership before `git worktree remove`; close disposable merge

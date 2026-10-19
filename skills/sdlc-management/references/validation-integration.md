@@ -214,6 +214,14 @@ A published, owned temporary branch that must be rebased is pushed with an exact
 stop, reported as such.
 
 
+## Owner-controlled RC promotion option
+
+When an adopting owner selects release-candidate qualification, use this release flow: owner requests an annotated SemVer RC at the reviewed integration snapshot → coordinator internally opens a temporary tag-pinned source branch/MR to the release branch → that MR runs mandatory complete hosted qualification → owner explicitly authorizes promotion after success → verify integrated content and remove only the temporary source branch → owner separately decides when to create the final release tag. The temporary branch is provider plumbing, not another owner-managed step; retain long-lived branches and RC tags.
+
+For this option, RC/final tag pushes and release-branch pushes start no automatic pipeline. Admit the promotion MR even for documentation-only candidates and make its full coverage required rather than optional/manual. Verify actual tag object/peeled commit, MR source, complete project/pipeline/job/artifact coverage and prospective/actual integrated content. A branch-name prefix or green partial report is insufficient. Present target-movement checks honestly; do not claim an atomic target guarantee the provider does not support. Never create the final tag automatically from merge success.
+
+The adopting owner may explicitly waive Duo/automated review for this promotion of already integrated content; record the confined waiver and preserve ordinary feature-review, security/manual acceptance and source-proof gates. It grants no general review bypass or project-wide permission change. Keep normal coordinator-owned local-after-merge integration qualification separate. The adopting CI/provider adapter must implement and verify this option before use; these instructions alone do not install tag/MR rules or authorize a concrete release.
+
 ## Autonomous mechanical repair
 
 Apply [mechanical-correction authority](roles-lifecycle.md#autonomous-mechanical-corrections):

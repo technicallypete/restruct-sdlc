@@ -143,6 +143,7 @@ copy outside the shipped skill (for example in the adoption Plan).
   `INTEGRATION_BRANCH`.
 - Validation options: `FINAL_VALIDATION_PLACEMENT` (`local-after-merge` default: coordinator-owned full local qualification of the merged SHA; other placements require explicit adoption),
   `CANCELED_PIPELINE_SATISFIES` (default `false`).
+  An owner may also select [RC promotion qualification](validation-integration.md#owner-controlled-rc-promotion-option): full hosted proof belongs to a tag-pinned promotion MR, main/release and tag pushes have no duplicate automatic pipeline, promotion and final tagging remain distinct owner decisions. Configure/verify the adopting provider adapter explicitly; no portable script or project-wide permission change is implied.
 - Budget and effort: `DEFAULT_BUDGET` (`B5`), `COORDINATOR_EFFORT` (`high`), `PLANNING_EFFORT` (`xhigh`),
   `IMPLEMENTATION_EFFORT` (`high`).
 - Observer activation: `OBSERVER_AUTO_ACTIVATE` (default `true`, independent of supervisor publication).
