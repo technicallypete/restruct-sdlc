@@ -449,3 +449,21 @@ RC promotion MRs may use Duo as optional advisory review; Duo is not a required 
 ## Owner-waived canceled RC qualification — 2026-10-19
 
 The owner may explicitly cancel a named RC promotion MR's pipeline and direct that cancellation to satisfy the current RC promotion gate, treating it as success for the workflow decision only. Record an owner-authorized qualification waiver with the RC/tag/source SHA, MR/pipeline IDs, actual canceled/partial/failed job states, any known findings and the owner's instruction. Never report the canceled pipeline or unexecuted tests as PASS, fabricate green evidence, erase prior failures or claim complete qualification. This exception is specific to the named candidate/pipeline; it is not the default cancellation policy for feature MRs or other RCs. Schedule a follow-up immutable RC tag to run the complete required suite, carrying forward unresolved findings and the qualification debt in the existing release Result/backlog/Plan. The follow-up RC's full suite is required unless the owner separately changes that instruction. The owner may choose this waiver alongside the recorded auto/manual promotion mode; provider auto-merge still depends on the provider's actual cancellation behavior. If existing provider rules prevent merging a canceled pipeline, report that concrete limitation rather than changing project-wide protections, manufacturing a success job or treating a queue as a completed merge. No pipeline is canceled merely because this option is documented, and final release tagging remains separately owner-controlled.
+
+
+## RC source selection at cut time
+
+For an owner-authorized RC cut, fetch the configured integration branch and tag
+its latest remote commit observed at cut time (using the adopting repository’s configured branch). Do not
+require an older acceptance/review SHA or exclude later integrated documentation
+or implementation merely because it arrived after the cut was requested. No
+additional owner confirmation or documentation-only ancestry check is needed
+solely because staging advanced. An explicitly owner-pinned source or release
+content exclusion still takes precedence.
+
+Record the selected full commit SHA/tree and create the immutable annotated RC
+tag there. A concurrent later staging push belongs to a later candidate; never
+move the tag to chase it. The promotion branch/MR and required full qualification
+use that exact tagged source. This source-selection rule does not accept pending
+Goals, waive findings/CI, authorize an unrequested RC/main merge/final tag or
+change the selected promotion mode. Existing tags and pipelines stay unchanged.
