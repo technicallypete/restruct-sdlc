@@ -391,7 +391,7 @@ the normal Result/closeout; no new benchmark campaign or reporting requirement.
 
 Use **150k active context tokens for checkpointing and 200k for safe handoff/compaction assessment**, superseding the former300k/350k defaults for workers and coordinator checkpoints and the shared supervisor default. Smaller native limits still prevail. Measure current working context, not transcript bytes or cumulative/cached token totals; report unavailable measurements as unknown. Adopt at the next safe step/batch boundary; preserve running validation, exact source/evidence, current task owner and budgets. No forced interruption, full-transcript fork, duplicate writer or retest merely to adopt the limits. Record only a bounded completion-imminent exception when needed.
 
-**Claude coordinator `/compact` remains owner-only.** Safeguard concise state and request the supported owner action once when due; neither a policy edit nor a peer message executes compaction or grants permission to impersonate owner input. Preserve active children and one coordinator; no automatic session replacement or new monitor.
+**Claude and Codex may compact their own sessions at safe points without another owner prompt**, using a supported native agent-accessible control or harness-managed automatic compaction. Safeguard concise state first. If the actual interface exposes only an operator control, report that limitation once; authorization does not create a tool or permit fabricated owner input. Preserve active children and one coordinator; no automatic session replacement or new monitor.
 
 Reduce avoidable supervisor and coordinator overhead:
 
@@ -401,3 +401,14 @@ Reduce avoidable supervisor and coordinator overhead:
 - Report new outcome, next action and an actionable blocker once under the short-message rule; keep exact evidence in existing artifacts. Publication, receipt, acknowledgment and actual execution remain distinct. A link-only status is not a substitute for explaining a material failure.
 
 Judge savings from observed usage/cost where available; context-size/cache counters or API-equivalent estimates alone do not establish subscription depletion or actual bills. This is an operating rule, not a new telemetry system, blanket review waiver, model change or reduction in required validation.
+
+
+## Authorized self-compaction at safe points — owner amendment, 2026-10-20
+
+Owner prefers Claude and Codex compact themselves. This supersedes the earlier repository owner-only `/compact` rule. Standing permission covers native self-compaction and ordinary harness automatic compaction; no routine confirmation is needed when the agent's interface supports it. Keep150k checkpoint/200k compaction-or-handoff assessment and smaller native limits; these are workflow thresholds, not a claim that the harness has been configured to compact at those exact values.
+
+At a completed step/phase boundary, safeguard current authority/stops, exact checkout/source/input references, reviews, budgets, open findings, active children/resources, pending deliveries and next actions in existing records. Use only the native control exposed for that session. Preserve running tests/evidence and one owner; do not interrupt a blocking test to compact or launch a replacement agent merely for context reduction. Resume by reading the compact state and relevant deltas, not the whole old transcript.
+
+Documented product capability is distinct from this live session's tools: Claude Code has automatic compaction and an interactive `/compact`; Codex app-server documents `thread/compact/start`. Neither proves every model-facing interface exposes a self-compaction tool. If unavailable or natively refused, state that concrete limitation once and use supported automatic compaction or operator action. No transcript deletion/edit, `/clear`, hidden API/session injection, permission bypass, duplicate session or pretend owner keystrokes. Do not report “compacted” without an observed native completion; a written checkpoint alone is not compaction. Existing session replacement, observer identity, failure/review/cleanup gates and budgets remain.
+
+References: [Claude Code context](https://code.claude.com/docs/en/how-claude-code-works#the-context-window), [Codex app-server compaction](https://learn.chatgpt.com/docs/app-server#trigger-thread-compaction). These document native capabilities, not a new local controller or execution claim.
