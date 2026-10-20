@@ -282,3 +282,8 @@ For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unles
 ## Coordination economy — owner direction, 2026-10-20
 
 Use150k active-context checkpoint/200k safe handoff assessment, respecting smaller native limits. Claude and Codex may initiate supported native self-compaction at safe points under standing owner authority. Apply at safe boundaries without interrupting validation, resetting budgets or copying a full oversized transcript. Handle routine supervisor-authored prose and mechanical changes directly with focused checks; preserve substantive independent architecture/security and required submitted Plan/Result/source reviews. Batch independent reads and related findings, give delegates only necessary bounded context, and do not repeat unchanged polling, receipt acknowledgments or reviews. Preserve prompt failure intervention and truthful evidence; usage estimates are not actual bills.
+
+
+## Codex routine work and Sol delegates — owner direction, 2026-10-20
+
+Routine supervisor status, management publication, handoffs, prose/configuration and mechanical changes run directly in the main session; no subagent by default. Delegated Goal/Spec drafting and substantive independent reviews default to `gpt-6.1-sol` through repository `.codex/config.toml` (`[agents].default_subagent_model`), even when the owner selects a cheaper main model. Explicit approved child overrides win; verify actual loading/dispatch rather than assume a running session refreshed. Use bounded fresh inputs where model inheritance prevents an override; no extra persistent session, test spawn, full-history fork or separate quota is implied. Preserve formal review/authority gates and Claude's separately selected implementation model.

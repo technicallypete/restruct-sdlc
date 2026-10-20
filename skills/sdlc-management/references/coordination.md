@@ -412,3 +412,21 @@ At a completed step/phase boundary, safeguard current authority/stops, exact che
 Documented product capability is distinct from this live session's tools: Claude Code has automatic compaction and an interactive `/compact`; Codex app-server documents `thread/compact/start`. Neither proves every model-facing interface exposes a self-compaction tool. If unavailable or natively refused, state that concrete limitation once and use supported automatic compaction or operator action. No transcript deletion/edit, `/clear`, hidden API/session injection, permission bypass, duplicate session or pretend owner keystrokes. Do not report “compacted” without an observed native completion; a written checkpoint alone is not compaction. Existing session replacement, observer identity, failure/review/cleanup gates and budgets remain.
 
 References: [Claude Code context](https://code.claude.com/docs/en/how-claude-code-works#the-context-window), [Codex app-server compaction](https://learn.chatgpt.com/docs/app-server#trigger-thread-compaction). These document native capabilities, not a new local controller or execution claim.
+
+
+## Codex supervisor model and delegation defaults — owner direction, 2026-10-20
+
+The owner may use a lower-cost model in the main Codex supervisor session while delegated Goal/Spec drafting and substantive architecture/security/Plan/Result reviews default to **gpt-6.1-sol**. Use supported repository-scoped Codex configuration:
+
+```toml
+[agents]
+default_subagent_model = "gpt-6.1-sol"
+```
+
+Keep the main model and reasoning effort owner-controlled; setting a child default does not change them. Explicit approved per-agent model overrides take precedence. In a live harness that does not reload project configuration or whose full-history forks inherit the parent model, explicitly select Sol for a fresh bounded delegate where supported; do not assume or claim an effective model change from a file edit alone. Verify actual dispatched model when available, otherwise report unknown. Native availability/trust/managed constraints remain; no extra persistent Codex session or artificial test spawn is required. Account usage remains shared, not an independent allowance per agent.
+
+**Routine supervisor work uses no subagent by default.** Handle status, progress/handoff publication, receipt inspection, simple policy prose, configuration and mechanical path updates directly in the main session with batched focused checks. Delegate Goal/Spec drafting and substantive independent reviews when they provide the required quality/independence; avoid a second main-session re-review of unchanged work. Preserve supervisor ownership of final dispositions and mandatory security/validation gates. Give delegates only necessary inputs/references and bounded writable scope for drafting; reviewers remain read-only. Reuse useful existing findings, never duplicate writers or fork a huge transcript just to dispatch a small task.
+
+This assigns a model to appropriate delegation, not a requirement to create agents for every task. Portable adopters choose their supported child model explicitly; the model ID above is this owner's selected example. It is not a bundled account credential, permission grant, automatic model migration or authorization to replace a supervisor. Claude implementation models remain independently governed; Claude interim supervision is not activated merely by this setting.
+
+Official configuration: [subagent model default](https://learn.chatgpt.com/docs/config-file/config-sample), [project configuration/trust](https://learn.chatgpt.com/docs/config-file/config-basic).
