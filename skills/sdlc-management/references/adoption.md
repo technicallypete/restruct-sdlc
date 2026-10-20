@@ -127,32 +127,6 @@ handling once. No alternate executor, fabricated owner response, permission-mode
 switch or broad test rerun is implied. Use existing handoff/Result records, not a
 new permission registry or approval framework.
 
-
-### Reviewed merges and classifier false positives
-
-When the owner delegates merge authority to an independent supervisor, an
-auto-mode rule requiring a human review must not silently replace that workflow.
-An owner-authorized settings editor may narrow a false-positive classifier rule
-through supported native configuration, limited to the adopting repository and
-its worktrees. Recognize verified independent supervisor approval of the exact
-source SHA and the workflow's current required CI/review disposition. Preserve
-separate owner authority for release promotion and apply a named waiver only to
-its explicitly waived gate; canceled or unperformed tests never become PASS.
-
-Read-only status/ref/worktree listings and authorized post-merge closeout are not
-merge operations. Missing review or authority, self-approval, unreviewed source,
-unrelated targets and unapproved check/protection bypasses remain blocked. This
-is an opt-in owner configuration, not a distributed disabled-guard default or
-a blanket merge grant. Preserve the original rule outside the selected scope,
-other classifier categories and all unrelated settings. Never bundle personal
-paths or a full pinned native rule list into the reusable package.
-
-Use the existing permission-change handoff: exact refusal and proposed patch,
-authorized editor installation, effective-config comparison, then coordinator
-verification of the next legitimate operation. Distinguish installed, loaded
-and operation-succeeded; no synthetic merge, extra CI run, alternate executor or
-mode switch merely to prove the exception. Reconcile pinned defaults on upgrades.
-
 ## Parameters
 
 Every parameter is explicit. [`templates/parameters.example.json`](../templates/parameters.example.json) lists
@@ -214,7 +188,11 @@ The supervisor states the tier in each Goal's Execution Policy; agents never sel
    name or chosen among several sessions), run the companion's `watch.py bind` and then `watch.py start`, using the
    30-second default, with no further enablement question. If any binding is missing, ambiguous, unverified or
    retired, leave the observer inactive and record the unmet prerequisite. Never create sessions or change
-   permissions to satisfy it. `start` is idempotent for a running observer. `false` opts out.
+   permissions to satisfy it. Fresh `start` begins at the current transcript tail; after stopping, `start --resume`
+   deliberately catches up from the saved cursor. Both preserve deduplication/advisory history; unresolved delivery
+   uncertainty blocks fresh activation. `start` is idempotent for a running observer. Notices include failures and
+   decision/approval requests, without task or approval authority; detection is bounded text matching rather than
+   CI polling. Use the companion's observer procedure for exclusions and recovery. `false` opts out.
 8. Run `python3 -B .agents/skills/sdlc-management/scripts/check_sdlc.py adoption . --release <RELEASE>` and fix
    every finding. Optionally pass `--literals FILE` with project-private strings that must not appear. Private
    worker checkouts under `.claude/worktrees/` and `.codex/worktrees/` are not adopted content and are skipped.
@@ -318,6 +296,32 @@ RC promotion MRs may use Duo as optional advisory review; Duo is not a required 
 ## Owner-waived canceled RC qualification — 2026-10-19
 
 The owner may explicitly cancel a named RC promotion MR's pipeline and direct that cancellation to satisfy the current RC promotion gate, treating it as success for the workflow decision only. Record an owner-authorized qualification waiver with the RC/tag/source SHA, MR/pipeline IDs, actual canceled/partial/failed job states, any known findings and the owner's instruction. Never report the canceled pipeline or unexecuted tests as PASS, fabricate green evidence, erase prior failures or claim complete qualification. This exception is specific to the named candidate/pipeline; it is not the default cancellation policy for feature MRs or other RCs. Schedule a follow-up immutable RC tag to run the complete required suite, carrying forward unresolved findings and the qualification debt in the existing release Result/backlog/Plan. The follow-up RC's full suite is required unless the owner separately changes that instruction. The owner may choose this waiver alongside the recorded auto/manual promotion mode; provider auto-merge still depends on the provider's actual cancellation behavior. If existing provider rules prevent merging a canceled pipeline, report that concrete limitation rather than changing project-wide protections, manufacturing a success job or treating a queue as a completed merge. No pipeline is canceled merely because this option is documented, and final release tagging remains separately owner-controlled.
+
+
+### Reviewed merges and classifier false positives
+
+When the owner delegates merge authority to an independent supervisor, an
+auto-mode rule requiring a human review must not silently replace that workflow.
+An owner-authorized settings editor may narrow a false-positive classifier rule
+through supported native configuration, limited to the adopting repository and
+its worktrees. Recognize verified independent supervisor approval of the exact
+source SHA and the workflow's current required CI/review disposition. Preserve
+separate owner authority for release promotion and apply a named waiver only to
+its explicitly waived gate; canceled or unperformed tests never become PASS.
+
+Read-only status/ref/worktree listings and authorized post-merge closeout are not
+merge operations. Missing review or authority, self-approval, unreviewed source,
+unrelated targets and unapproved check/protection bypasses remain blocked. This
+is an opt-in owner configuration, not a distributed disabled-guard default or
+a blanket merge grant. Preserve the original rule outside the selected scope,
+other classifier categories and all unrelated settings. Never bundle personal
+paths or a full pinned native rule list into the reusable package.
+
+Use the existing permission-change handoff: exact refusal and proposed patch,
+authorized editor installation, effective-config comparison, then coordinator
+verification of the next legitimate operation. Distinguish installed, loaded
+and operation-succeeded; no synthetic merge, extra CI run, alternate executor or
+mode switch merely to prove the exception. Reconcile pinned defaults on upgrades.
 
 
 ### Reusable private-test permission rules
