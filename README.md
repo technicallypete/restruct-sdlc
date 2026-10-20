@@ -1,104 +1,119 @@
-# Restruct SDLC skills
+# Restruct SDLC
 
-Restruct SDLC is a bundle of three agent skills for repositories run by a human owner, a **Supervisor Session**
-and a **Coordinator Session**. These agent sessions orchestrate harness subagent work in isolated worktrees and,
-where supported by the harness, VMs. Together they provide a management workflow (Goals, Specs, Plans, Results,
-budgets, validation, integration and closeout), verified local session handoffs, and supervision recovery from
-repository records.
+An agent-driven software delivery workflow for repositories using Codex and Claude Code. Restruct SDLC bundles
+planning, implementation review, progress tracking and local session coordination so work can continue from
+repository records instead of relying on a long chat history.
 
-**Status: published.** Available on [GitHub](https://github.com/technicallypete/restruct-sdlc).
+The human owner sets product direction and authority. A supervisor maintains Goals and Specs and reviews Plans
+and Results. A coordinator organizes implementation workers, validation and handoffs. Role assignments are
+explicit: the owner can choose Claude as supervisor and use Codex for specifications and architecture reviews.
 
-## Why Restruct?
+## What's included
 
-Restruct™ is an operating methodology for AI-first software organizations that places architectural governance,
-specification and human accountability ahead of implementation.
+One `restruct-sdlc` entrypoint routes to the child skill needed for the current task. The three existing skills
+remain complete children of the bundle, with their own instructions, references, templates and scripts.
 
-Restruct SDLC applies those principles to repository workflows. Goals and Specs define intent and boundaries;
-Plans describe execution; Results and review records preserve evidence. A human owner retains architectural
-authority, supported by the Supervisor Session for specifications and review and the Coordinator Session for
-implementation and delegated work. Budgets, verified handoffs and cleanup keep execution bounded and context
-available across sessions.
-
-This bundle implements the software-delivery workflow within Restruct's broader organizational methodology.
-[Explore Restruct](https://vestive.com/restruct-methodology) or read the
-[AI as Governed Execution chapter](https://vestive.com/restruct-methodology/ai-as-governed-execution).
-
-After a task is integrated, the supervisor automatically starts planning the next eligible roadmap task when a ready Goal/Spec already exists. Planning may overlap predecessor CI and closeout; implementation still requires its dependency acceptances, Plan approval and input binding. Explicit owner holds remain.
-
-After final predecessor acceptance, the supervisor automatically reassesses the provisional Plan against the accepted repository state. Material changes receive bounded Plan updates and review; otherwise it reconciles inputs. Once all approval, dependency, owner-decision, budget and readiness gates close, the supervisor records and dispatches execution without another routine owner-proceed prompt. Explicit holds remain; a Plan or green pipeline alone is not release.
-
-Automatic continuation stops at missing Specs unless the owner explicitly records a specification mandate through a named inclusive endpoint, task range or pinned epic. Owner stop/phase limits independently override continuation even when Specs or approved Plans exist: "stop before G013" excludes it; "finish G013, then stop" includes its closeout but no successor lookahead. Ambiguous boundaries are held for clarification. These are examples, not live task authorizations.
-
-## Skills
-
-| Skill | Responsibility |
+| Skill | Capabilities |
 |---|---|
-| [sdlc-management](skills/sdlc-management/SKILL.md) | Management structure, policy templates, lifecycle rules and the package/adoption checker. |
-| [repository-supervisor](skills/repository-supervisor/SKILL.md) | Resume supervision from management records; review Plans and Results; track dependencies and acceptance. |
-| [claude-session-handoff](skills/claude-session-handoff/SKILL.md) | Discover and check local Claude Code sessions, deliver authorized handoffs, verify receipts, pin a coordinator and archive delivery records. |
+| `sdlc-management` | Adopt the workflow; bootstrap management directories and project guidance; write Goal, Spec, Plan, Result and review artifacts; apply budgets, validation, integration, release and cleanup policies. |
+| `repository-supervisor` | Recover supervision from committed records; review Plans and implementation evidence; manage dependencies, acceptance and progress; relay decisions to the coordinator. |
+| `claude-session-handoff` | Discover and verify existing local Claude sessions; pin the intended coordinator; send authorized handoffs and check receipts; observe milestone notices; archive terminal-task handoff records. |
 
-Each skill is independently useful. Loading a skill assigns no role and grants no authority.
+## Workflow features
 
-## Requirements
+- **Repository-based continuity.** Roadmap, progress, backlog, task artifacts and dated archives keep decisions,
+  failures and acceptance history available across sessions and agents.
+- **Clear ownership and bounded autonomy.** Separate product decisions, specification, planning, implementation
+  and review responsibilities. Goals define scope, budgets, stop conditions and validation requirements.
+- **Risk-based delivery.** Small presentation changes can use an authorized direct tier. Features use concise
+  Plans; architecture, identity, authorization, migrations and public contracts retain stronger review gates.
+- **Evidence-based acceptance.** Reviews examine the actual diff and validation evidence. A merge or passing
+  test alone does not complete a Goal. Repair records preserve the full failure inventory and its disposition.
+- **Integration and releases.** Parameterized branch and validation rules cover focused checks, review, merges,
+  coordinator-owned local full qualification, release candidates and owner-controlled promotion. The concrete
+  hosted adapter documents GitLab; other providers require explicit adaptation.
+- **Efficient coordination.** Milestone observation, concise updates, bounded context and safe handoffs reduce
+  repeated status reads. Supervisors send needed decisions promptly; routine coordinator polling belongs to
+  the observer rather than the supervisor.
+- **Task cleanup.** Track task-owned worktrees, branches, containers, images and evidence; remove accepted-task
+  leftovers while preserving active work and explicitly held proof.
+- **Project-local configuration.** Adoption guidance covers shared and local Claude permissions, optional Codex
+  model defaults, ignored private files under the integration checkout's `.local/`, and supported home-state
+  fallbacks for isolated workers.
+- **Workflow maintenance.** Changes to reusable rules also update the adopting repository's corresponding live
+  guidance, so the current project receives the change as well as future adopters.
 
-- Linux or WSL2, Git, and Python 3 with the standard library.
-- Claude Code 2.1.290, 2.1.291 or 2.1.296 for session messaging (the creation gate is verified on 2.1.296 only).
-  Other versions fail closed in the handoff helper.
+## Distribution layout
 
-## Installation (flat, never overwriting)
-
-Install each skill into the target repository's `.agents/skills/` and commit it. Run from this bundle's root:
-
-```sh
-TARGET=/path/to/target-repo
-for s in sdlc-management claude-session-handoff repository-supervisor; do
-  dest="$TARGET/.agents/skills/$s"
-  if [ -L "$TARGET/.agents" ] || [ -L "$TARGET/.agents/skills" ] || [ -L "$dest" ]; then
-    echo "STOP $s: symlinked destination; nothing copied"
-  elif [ ! -e "$dest" ]; then
-    mkdir -p "$TARGET/.agents/skills" && cp -R "skills/$s" "$dest" && echo "INSTALLED $s"
-  elif [ -z "$(find "$dest" -type l)" ] && diff -r -q "skills/$s" "$dest" > /dev/null; then
-    echo "IDENTICAL $s: left unchanged"
-  else
-    echo "COLLISION $s: existing content kept; record an owner merge or replacement decision"
-  fi
-done
+```text
+sdlc-skill/
+  README.md
+  LICENSE
+  MANIFEST.tsv
+  restruct-sdlc/
+    SKILL.md
+    agents/
+    sdlc-management/
+    repository-supervisor/
+    claude-session-handoff/
 ```
 
-Absent skills are copied and identical ones left unchanged. A differing existing skill (for example an edited helper) stays byte-identical: record the collision, its `diff -r` summary and the owner's merge or replacement decision before changing it. A symlinked `.agents`, `.agents/skills` or skill destination stops the install. Details: [installing the skills](skills/sdlc-management/references/adoption.md#installing-the-skills).
+`MANIFEST.tsv` records packaged file hashes and origins. The bundle's parent skill is the discovery entrypoint;
+the children are loaded through it rather than installed separately.
 
-`.agents/skills/<skill>/` is the supported layout: Codex discovers repository skills there, and Claude sessions read
-each `SKILL.md` explicitly as the adopted `AGENTS.md` instructs. This bundle's `skills/` directory is storage, not a
-discovery location. The handoff helper's closeout command verifies the committed helper at
-`.agents/skills/claude-session-handoff/scripts/handoff.py`, so other locations are refused.
+## Install and adopt
 
-## Verify
+1. Copy the entire `restruct-sdlc/` directory into your repository at `.agents/skills/restruct-sdlc/` and commit
+   it. Keep its contained files together. If an installation already exists, compare it and agree on an update
+   before replacing anything; do not copy through a symlinked destination.
+2. For Claude discovery, optionally create the relative alias
+   `.claude/skills/restruct-sdlc -> ../../.agents/skills/restruct-sdlc` where no conflicting entry exists.
+3. Ask your agent to use `restruct-sdlc` to adopt the workflow. Start with the bundled
+   `sdlc-management/references/adoption.md` and `sdlc-management/templates/parameters.example.json`.
+   Choose your roles, canonical documents, release directory, branches, validation commands and budgets.
+4. Review the adoption changes and run the supplied checker. Adoption creates missing files and proposes
+   changes for existing files instead of silently overwriting project governance.
 
-```sh
-python3 -B skills/sdlc-management/scripts/check_sdlc.py package .
-python3 -B -m unittest discover -s skills/sdlc-management/scripts -p 'test_check_sdlc.py'
-python3 -B -m unittest discover -s skills/claude-session-handoff/scripts -p 'test_handoff.py'
+Adoption can establish:
+
+```text
+AGENTS.md
+CLAUDE.md
+docs/agents/
+management/
+  SUPERVISOR-HANDOFF.md
+  BUDGET_POLICY.md
+  <release>/
+    ROADMAP.md
+    PROGRESS.md
+    BACKLOG.md
+    goals/
+    specs/
+    plans/
+    results/
+    archive/
 ```
 
-`MANIFEST.tsv` lists every other file as `sha256<TAB>origin<TAB>path`, where origin is `new`, `verbatim` or
-`adapted`. The package check verifies it.
+The templates also cover ignore rules and an optional `.codex/config.toml`. Existing project documents and
+settings are reconciled explicitly. Installation alone does not bootstrap a project, assign an agent role,
+start sessions or enable an observer.
 
-## Adopt
+## Requirements and limits
 
-Follow [the adoption reference](skills/sdlc-management/references/adoption.md): record parameters copied from
-[parameters.example.json](skills/sdlc-management/templates/parameters.example.json), render the templates (creating
-only missing files and proposing changes to existing ones as `<path>.sdlc-proposed`), then run
-`check_sdlc.py adoption . --release <release>` in the target repository.
+The supplied helpers use Python 3 and its standard library. Git and an agent environment that can read local
+skills are required for the repository workflow. Configure your project's own build, test and CI commands;
+the bundle does not provide an application test suite or install application dependencies.
 
-## Limits and unsupported cases
+The Claude session helper additionally requires Linux process visibility and a compatible local Claude Code
+interface. Its transport uses a version-sensitive local interface; consult its bundled compatibility and
+handoff documentation before enabling it. macOS and native Windows session transport are not supported by
+this package. Session creation, permission changes, merges and publication still require their applicable
+owner authority and native tool permissions.
 
-Not supported: install paths other than `.agents/skills/`, native `.claude/skills/` discovery, discovery after `cd`,
-personal installation, macOS or native Windows, and unverified Claude Code versions. Helper conventions are fixed:
-`G` plus three-digit task labels, documents under `management/`, review records named
-`management/<release>/results/<ID>-implementation-codex-review*.md`, and Linux `/proc`. Coordinator relocation stays
-deferred until a same-session restart from a moved path is verified locally. The GitLab/glab adapter is concrete;
-other providers are adaptation points.
+Earlier installations with three separate top-level skill directories should migrate to the whole bundle,
+retarget project references, and retire old copies under an explicit adoption decision. Personal skill
+installation is not the supported default; the committed repository copy keeps the team on the same version.
 
 ## License
 
-MIT; see [LICENSE](LICENSE). Copyright (c) 2026 Vitruvian Technology, Corp.
+MIT. See the distribution's `LICENSE` and the notices retained in the bundled skills.
