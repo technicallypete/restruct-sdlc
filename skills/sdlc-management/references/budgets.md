@@ -68,8 +68,9 @@ work.
 Model choice is independent of effort and budget. The owner-approved Claude
 default is **Fable 5.1 high for planning and test corrections**, including failure
 diagnosis and corrective test/fix work. Default to **Opus 5.5 high for
-implementation, ordinary test execution/reporting and coordination**. The owner
-may choose Opus for planning/test corrections; then use **xhigh**. Fable xhigh is
+implementation and ordinary test execution/reporting**. Default Claude
+coordinator model is **Sonnet 5.5 high**, with **Opus 5.5 high owner-selectable**.
+The owner may choose Opus for planning/test corrections; then use **xhigh**. Fable xhigh is
 selective for especially difficult work. Other providers may use equivalent
 owner-selected tiers; verify availability before adopting examples elsewhere.
 
@@ -123,8 +124,8 @@ does not reset attempts or expand scope.
 
 When Fable's weekly allowance is confirmed exhausted, automatically use Opus 5.5
 **xhigh for planning and test-failure diagnosis/corrections** until Fable resets.
-Opus implementation, ordinary test execution/reporting and coordination remain
-**high**. This standing fallback needs no repeat owner approval; honor an explicit
+Opus implementation and ordinary test execution/reporting remain **high**.
+Coordinator default is Sonnet 5.5 high; the owner may choose Opus 5.5 high. This standing fallback needs no repeat owner approval; honor an explicit
 owner override. Record the limit, fallback model/effort and actual setting (or
 unknown) in the existing Result/dispatch record. A generic tool error is not
 proof of a model limit.

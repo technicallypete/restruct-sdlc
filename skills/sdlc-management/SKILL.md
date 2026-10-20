@@ -174,8 +174,9 @@ fields, ignore lines and forbidden content. Tests: [scripts/test_check_sdlc.py](
 
 Default to Fable 5.1 high for planning and test corrections, including failure
 diagnosis and corrective test/fix work; use xhigh selectively for especially
-hard work. Default to Opus 5.5 high for implementation, routine test execution
-and coordination. If the owner selects Opus 5.5 for planning or test
+hard work. Default to Opus 5.5 high for implementation and routine test execution.
+Default the Claude coordinator to Sonnet 5.5 high; the owner may choose Opus 5.5
+high for coordinator work. If the owner selects Opus 5.5 for planning or test
 corrections/diagnosis, use xhigh; routine implementation, test execution and
 coordination stay high. This overrides generic role-effort defaults for those
 models/phases. Honor owner choices, verify actual settings or report unknown,
