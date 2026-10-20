@@ -162,8 +162,8 @@ At handoffs/closeout or when old conversation history dominates context, follow
 [coordinator context compaction](.agents/skills/sdlc-management/references/coordination.md#coordinator-context-compaction-at-safe-boundaries).
 Preserve durable state, session/observer identity and running batches; no per-turn compaction or new monitor.
 Use [bounded worker handoffs](.agents/skills/sdlc-management/references/coordination.md#worker-context-and-phase-handoffs)
-when obsolete context warrants them; default checkpoint target **300,000 active context tokens**,
-upper handoff threshold **350,000**. Prepare concise transfer state around 300k at a safe boundary;
+when obsolete context warrants them; default checkpoint target **150,000 active context tokens**,
+upper handoff threshold **200,000**. Prepare concise transfer state around 150k at a safe boundary;
 checkpointing alone does not force immediate rotation or review. Preserve budgets/evidence;
 no full-transcript fork, mandatory per-phase rotation or test restart.
 
@@ -182,7 +182,7 @@ inside existing planning/review: changed trust boundaries, risky slice, caller/p
 inventory and consolidated corrections. No extra stage, framework or active-work restart.
 
 For [coordinator checkpoints and retirement](.agents/skills/sdlc-management/references/coordination.md#coordinator-checkpoints-and-retirement),
-use 300k active context for checkpointing and 350k for compaction-or-handoff
+use 150k active context for checkpointing and 200k for compaction-or-handoff
 assessment, not a hard kill. Prefer supported compaction. Replace only with
 recorded creation authority, verified native cutover and explicit observer rebind;
 preserve active agents, budgets and evidence. Documentation alone does not
@@ -330,3 +330,8 @@ companion adoption reference's reviewed example and owner-selected prefix. Prese
 all existing rules, native guards and actual command/resource ownership checks.
 Verify effective loading and operation; installation is not proof of either.
 Permanent rules survive task cleanup; remove only recorded temporary bridge rules.
+
+
+## Context and coordination economy — owner direction, 2026-10-20
+
+Current checkpoint/handoff defaults are150k/200k active context, superseding300k/350k at the next safe boundary for workers and coordinator/supervisor assessment. Claude coordinator `/compact` stays owner-only. Preserve running batches, exact bindings, children, budgets and smaller native limits. Follow [coordination economy]({{SKILL_ROOT}}/references/coordination.md#lower-context-thresholds-and-coordination-economy--owner-direction-2026-10-20): directly review routine prose/mechanical changes, reserve delegation for meaningful independent work and required substantive reviews, batch searches/edits/handoffs, read deltas and suppress unchanged polls/acknowledgments. No full-history fork, duplicate worker, test rerun or automatic replacement merely for a checkpoint; no weakening of security/source/validation gates.

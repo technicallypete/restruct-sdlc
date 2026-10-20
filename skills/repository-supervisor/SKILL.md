@@ -277,3 +277,8 @@ Do not accept a later passing subset as proof that earlier failures cleared.
 ## Direct owner replies — 2026-10-19
 
 For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.
+
+
+## Coordination economy — owner direction, 2026-10-20
+
+Use150k active-context checkpoint/200k safe handoff assessment, respecting smaller native limits. Claude coordinator `/compact` stays owner-only. Apply at safe boundaries without interrupting validation, resetting budgets or copying a full oversized transcript. Handle routine supervisor-authored prose and mechanical changes directly with focused checks; preserve substantive independent architecture/security and required submitted Plan/Result/source reviews. Batch independent reads and related findings, give delegates only necessary bounded context, and do not repeat unchanged polling, receipt acknowledgments or reviews. Preserve prompt failure intervention and truthful evidence; usage estimates are not actual bills.

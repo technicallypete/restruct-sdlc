@@ -80,7 +80,7 @@ repeatedly probing the allowance. This is model selection only, not scope,
 execution-release or budget-extension authority.
 
 Coordinator context uses the [checkpoint/retirement policy](../../.agents/skills/sdlc-management/references/coordination.md#coordinator-checkpoints-and-retirement):
-300k checkpoint, 350k compaction-or-handoff assessment; preserve one coordinator,
+150k checkpoint, 200k compaction-or-handoff assessment; preserve one coordinator,
 active work, recorded creation authority and explicit observer rebind. Unsupported
 cutover stays a reported native action; policy text does not launch a replacement.
 
@@ -104,3 +104,6 @@ fixed-length reports; it changes no technical, native-permission or review gate.
 ## Direct owner replies — 2026-10-19
 
 For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.
+
+
+Owner context amendment,2026-10-20:150k checkpoint/200k safe handoff or compaction assessment at existing boundaries. Coordinator `/compact` is owner-only; ask once via supported controls, preserve active children/run and never impersonate owner input. Batch handoffs and inspect only changed state; no unchanged polling/duplicate receipt recaps or full-history transfer. Native gates and required failure/review reporting remain.
