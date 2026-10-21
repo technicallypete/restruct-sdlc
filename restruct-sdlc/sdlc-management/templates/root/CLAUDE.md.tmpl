@@ -286,6 +286,26 @@ The owner may choose Claude Code as supervisor. ChatGPT/Codex then contributes o
 
 The owner may explicitly enable auto-merge for a named RC promotion MR or a clearly recorded scope of RC MRs. Manual promotion remains the default when no such instruction exists. This owner instruction authorizes queuing promotion before CI finishes; once every required full-qualification job succeeds, the provider may merge without another owner prompt. Record the owner instruction, MR, immutable source SHA and selected mode. Before arming, verify the tag/source identity, required complete pipeline, non-squash merge, and conflict-free prospective target tree equal to the RC tree; source-pin the request. Preserve target-movement monitoring and post-merge parent/tree verification without claiming an atomic target lock. Retain and independently verify full project/pipeline/job/artifact proof before claiming qualified release. No failed, skipped, optional or partial coverage counts as qualification. Do not fabricate manual-mode proof or change API snapshots to satisfy a verifier. A manual-only helper's refusal of queued/merged MRs is a mode limitation, not a passing auto-mode proof; use truthful independent verification or a separately reviewed mode-aware adapter. Final release tagging remains a separate owner decision. Feature-MR auto-merge defaults alone never authorize an RC-to-release merge.
 
+### Standing authority within an owner-authorized RC series
+
+When an owner authorizes a named RC series, or directly requests its next
+candidate, that authorization covers bounded coordinator work for the series
+without per-step or per-candidate reconfirmation: diagnose and repair
+qualification failures within already approved scope, integrate repairs through
+normal staging review and merge gates, create the next sequential immutable RC
+tag from the configured integration branch's latest commit observed at cut
+time, open the tag-pinned promotion MR, and run required full qualification.
+Preserve every failed run and its evidence. A failed qualification is never
+waived or represented as passing; after an in-scope repair, the coordinator may
+continue with the next candidate under the same series authority. An owner
+instruction given to the supervisor remains authoritative when faithfully
+relayed to the coordinator; do not require the owner to repeat it in another
+session. Existing scope, budget, security, architecture, and escalation stops
+remain binding. This standing series authority does not authorize merging the
+promotion MR to the release branch, arming auto-merge without its separate
+owner selection, creating a stable release tag, or deploying/publishing a
+release. Those remain separate owner decisions.
+
 Make new annotated tag messages and GitLab Release entries descriptive: list
 included Goal/task IDs and short titles, material changes since the prior
 candidate/release, and the exact source commit. Keep canonical SemVer tag names;

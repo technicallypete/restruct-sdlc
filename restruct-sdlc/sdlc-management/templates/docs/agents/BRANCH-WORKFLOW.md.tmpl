@@ -110,6 +110,19 @@ deletion **off**.
 
 If the owner selects [RC promotion qualification](../../.agents/skills/restruct-sdlc/sdlc-management/references/validation-integration.md#owner-controlled-rc-promotion-option), the coordinator instead creates an internal temporary branch pinned to the requested RC tag and opens its MR to `{{RELEASE_BRANCH}}`. The MR runs required full hosted qualification; RC/final tag and release-branch pushes start no duplicate pipeline. After success, wait for explicit owner promotion instruction, verify actual qualified content, and delete only that temporary source branch. Keep `{{INTEGRATION_BRANCH}}`, `{{RELEASE_BRANCH}}` and RC tags. The owner separately decides when to tag the verified release branch. Any owner waiver of automated review applies only to that promotion, not ordinary feature MRs. Implement and verify the provider adapter before using this option; the owner does not manage the temporary branch.
 
+When the owner authorizes a named RC series or directly requests its next
+candidate, that authority covers the coordinator's bounded series work without
+per-step or per-candidate reconfirmation: in-scope qualification repairs,
+normal staging integration, the next sequential immutable RC tag from the
+integration branch tip observed at cut time, its tag-pinned promotion MR, and
+required full qualification. Preserve failed-run evidence; never waive or call
+a failed check passing. The supervisor's owner instruction remains valid when
+faithfully relayed to the coordinator, so do not ask the owner to repeat it in
+another session. Existing scope, budget and escalation stops still apply. This
+does not authorize promotion-MR merge, auto-merge without its separate owner
+selection, stable release tagging, or deployment; those remain separate owner
+decisions.
+
 ## Closeout
 
 Verify integrated content, unique work and live ownership before `git worktree remove`; close disposable merge

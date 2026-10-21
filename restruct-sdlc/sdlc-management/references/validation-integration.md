@@ -241,6 +241,26 @@ For this option, RC/final tag pushes and release-branch pushes start no automati
 
 The adopting owner may explicitly waive Duo/automated review for this promotion of already integrated content; record the confined waiver and preserve ordinary feature-review, security/manual acceptance and source-proof gates. It grants no general review bypass or project-wide permission change. Keep normal coordinator-owned local-after-merge integration qualification separate. The adopting CI/provider adapter must implement and verify this option before use; these instructions alone do not install tag/MR rules or authorize a concrete release.
 
+### Standing authority within an owner-authorized RC series
+
+When an owner authorizes a named RC series, or directly requests its next
+candidate, that authorization covers bounded coordinator work for the series
+without per-step or per-candidate reconfirmation: diagnose and repair
+qualification failures within already approved scope, integrate repairs through
+normal staging review and merge gates, create the next sequential immutable RC
+tag from the configured integration branch's latest commit observed at cut
+time, open the tag-pinned promotion MR, and run required full qualification.
+Preserve every failed run and its evidence. A failed qualification is never
+waived or represented as passing; after an in-scope repair, the coordinator may
+continue with the next candidate under the same series authority. An owner
+instruction given to the supervisor remains authoritative when faithfully
+relayed to the coordinator; do not require the owner to repeat it in another
+session. Existing scope, budget, security, architecture, and escalation stops
+remain binding. This standing series authority does not authorize merging the
+promotion MR to the release branch, arming auto-merge without its separate
+owner selection, creating a stable release tag, or deploying/publishing a
+release. Those remain separate owner decisions.
+
 ## Autonomous mechanical repair
 
 Apply [mechanical-correction authority](roles-lifecycle.md#autonomous-mechanical-corrections):
