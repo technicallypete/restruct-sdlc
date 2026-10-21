@@ -66,6 +66,19 @@ or polling the coordinator transcript; the watcher delivers responses asynchrono
 Receipt is not acknowledgment or execution. This changes observation cadence only;
 it does not suppress required reviews, failure reports, owner decisions or gates.
 
+The Claude session-handoff watcher observes Claude session output and milestone
+notices; it does not inspect GitLab MRs, pipelines or jobs. Do not treat a watcher
+notice, general task ownership, an auto-merge setting or a review request as
+proof that a GitLab pipeline is being monitored. Each required MR pipeline has
+one explicitly named monitoring owner (normally the coordinator), recorded with
+the MR/pipeline ID and immutable source SHA when the MR is opened or the pipeline
+is created. That owner verifies the expected pipeline started, tracks it to a
+terminal state, reports the outcome, and routes the first failure for diagnosis.
+If ownership changes, record a direct handoff and acknowledgment so there is no
+unowned interval. Monitoring is event-driven and concise: report meaningful state
+changes, terminal outcome and actionable failures, not repetitive unchanged
+polls. Auto-merge does not replace monitoring or change review and merge authority.
+
 ## Apply workflow updates to live repository guidance
 
 When the supervisor updates Restruct SDLC workflow rules, it also updates the

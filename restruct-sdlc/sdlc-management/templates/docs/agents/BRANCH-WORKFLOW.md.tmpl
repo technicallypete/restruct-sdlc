@@ -1,5 +1,19 @@
 # {{PROJECT_NAME}} branch integration and cleanup
 
+## Required MR pipeline monitoring owner
+
+Every required GitLab MR pipeline has one explicitly named monitoring owner,
+normally the coordinator. Record the owner with the MR/pipeline ID and immutable
+source SHA when the MR is opened or the pipeline is created. The owner verifies
+the expected pipeline actually started, tracks it to a terminal outcome, reports
+the result and routes the first failure for diagnosis. The Claude session-handoff
+watcher observes Claude sessions; it does not inspect GitLab MRs, pipelines or
+jobs. Auto-merge, a review request or a watcher notice does not prove active
+monitoring. If ownership changes, record a direct handoff and acknowledgment;
+never leave a required pipeline implicitly owned. Keep updates event-driven and
+concise, with no repetitive unchanged status reports. This adds no review, CI,
+merge or release authority.
+
 ## Post-merge qualification runs locally
 
 Default sequence for implementation MRs: focused checks and current hosted fast/supervisor/Duo review → authorized merge → full local qualification on the exact merged integration SHA. The existing implementer coordinator must automatically launch, own and track that full-profile run; no extra owner command, new persistent coordinator or full pre-merge gate. Preserve immutable inputs, real logs/exit/timings, complete failure disposition and cleanup. A busy local harness queues the batch visibly; it must not silently disappear or overlap conflicting resources.

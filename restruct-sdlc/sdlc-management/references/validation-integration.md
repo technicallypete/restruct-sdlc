@@ -4,7 +4,7 @@
 
 Default sequence for implementation MRs: focused checks and current hosted fast/supervisor/Duo review → authorized merge → full local qualification on the exact merged integration SHA. The existing implementer coordinator must automatically launch, own and track that full-profile run; no extra owner command, new persistent coordinator or full pre-merge gate. Preserve immutable inputs, real logs/exit/timings, complete failure disposition and cleanup. A busy local harness queues the batch visibly; it must not silently disappear or overlap conflicting resources.
 
-Automatic integration/release-branch post-merge and tag-push pipelines are disabled, including lightweight checks. Feature MRs retain hosted fast checks; owner-selected RC promotion MRs require complete hosted release qualification. Preserve separately authorized diagnostic/provider schedule/web/API runs. Final Goal ACCEPT remains pending until local full coverage and other Goal gates clear. Ready authorized successor implementation may overlap the local run after predecessor merge, in isolation with shared locks respected. Predecessor final ACCEPT gates successor integration/final acceptance; its own owner retains repairs. Preserve explicit phase/owner holds, documentation-only suppression and low-risk exemptions. This replaces the earlier pre-merge/unmerged-successor default.
+Automatic integration/release-branch post-merge and tag-push pipelines are disabled, including lightweight checks. Staging MRs retain hosted fast checks; owner-selected RC promotion MRs require complete hosted release qualification. Preserve separately authorized diagnostic/provider schedule/web/API runs. Final Goal ACCEPT remains pending until local full coverage and other Goal gates clear. Ready authorized successor implementation may overlap the local run after predecessor merge, in isolation with shared locks respected. Predecessor final ACCEPT gates successor integration/final acceptance; its own owner retains repairs. Preserve explicit phase/owner holds, documentation-only suppression and low-risk exemptions. This replaces the earlier pre-merge/unmerged-successor default.
 
 ## Owner mandate and stop bounds
 
@@ -176,7 +176,8 @@ unchanged full rerun.
 - **Reviewed integration.** After the supervisor's pre-integration review, check the target again; if it advanced,
   rebase and rerun only affected checks. Push and open the merge request to `INTEGRATION_BRANCH` with source-branch
   deletion enabled. Before merging, inspect outstanding automated review findings and unresolved threads; passing
-  CI does not dispose of them. Merge only with owner authorization.
+  CI does not dispose of them. Follow the adopting owner's recorded integration mode; see
+  [staging auto-merge](#owner-selected-staging-auto-merge).
 - **Promotion** from `INTEGRATION_BRANCH` to `RELEASE_BRANCH` uses a separate merge request that **retains** the
   source branch. Long-lived branches (`PROTECTED_BRANCHES`) are never deleted or rewritten.
 - **Cleanup.** Delete only verified merged temporary branches, after checking the exact remote tip.
@@ -188,7 +189,7 @@ unchanged full rerun.
 
 | Option | Values | Meaning |
 |---|---|---|
-| `FINAL_VALIDATION_PLACEMENT` | `local-after-merge` (default) | Fast/supervisor/Duo review, then merge; existing coordinator automatically owns full local qualification of the exact integrated SHA. No automatic post-merge cloud pipeline; feature MR checks and explicitly configured release/diagnostic qualification remain. |
+| `FINAL_VALIDATION_PLACEMENT` | `local-after-merge` (default) | Fast/supervisor/Duo review, then merge; existing coordinator automatically owns full local qualification of the exact integrated SHA. No automatic post-merge cloud pipeline; staging MR checks and explicitly configured release/diagnostic qualification remain. |
 | | `mr-hosted` | Explicit adopting-owner alternative: full coverage hosted before merge. |
 | | `local-before-mr` | Legacy explicitly selected alternative; not the current post-merge default. |
 | `CANCELED_PIPELINE_SATISFIES` | `false` (default) | Final validation needs `success`. |
@@ -204,7 +205,7 @@ glab mr list --source-branch TEMP_BRANCH --target-branch INTEGRATION_BRANCH   # 
 glab mr create --source-branch TEMP_BRANCH --target-branch INTEGRATION_BRANCH \
   --title "TITLE" --description "Evidence: see the Goal Result." --remove-source-branch --yes
 glab mr view MR_IID --comments                                    # automated review findings before merge
-glab mr merge MR_IID                                              # only with owner authorization
+glab mr merge MR_IID --auto-merge --sha REVIEWED_SHA --remove-source-branch --yes # when owner policy authorizes
 git fetch origin INTEGRATION_BRANCH                              # freeze the merged SHA for coordinator-owned local full qualification
 glab mr create --source-branch INTEGRATION_BRANCH --target-branch RELEASE_BRANCH --title "Promote"
 ```
@@ -215,6 +216,21 @@ applies to that target, so check the setting rather than assuming the target cha
 A published, owned temporary branch that must be rebased is pushed with an exact expected-tip
 `--force-with-lease=TEMP_BRANCH:<old-sha>`, never an unconditional force. Hosted quota exhaustion is a resource
 stop, reported as such.
+
+## Owner-selected staging auto-merge
+
+An adopting owner may set all non-promotion MRs targeting the integration branch
+to auto-merge once required supervisor review, applicable Duo review/findings
+disposition, target/input reconciliation, required pre-merge evidence and
+manual/owner holds are clear. Record the policy in the repository's live
+governance and branch runbook. When enabled, this is standing integration
+authority; do not request another routine merge prompt. Early/draft MRs may
+record the intent but cannot arm it until every gate clears. A specific owner
+hold or opt-out takes precedence. Reassess on any new source commit or blocking
+finding. This policy does not apply to integration-to-release/RC promotion MRs,
+release tags, final Goal ACCEPT or post-merge qualification. GitLab may merge
+immediately when native checks are already green, so verify every repository
+review/evidence gate before enabling auto-merge.
 
 
 ## Owner-controlled RC promotion option
@@ -400,9 +416,19 @@ record the bounded exception. This policy adds no script, test stage or monitor.
 
 ## First failure requires intervention — 2026-10-18
 
-The coordinator owns each task MR pipeline from push through terminal outcome.
-Check the previous outcome before the next CI-triggering push; record the pipeline,
-SHA, failed job/test and responsible correction owner in the existing Result.
+Each required GitLab MR pipeline has one explicitly named monitoring owner,
+normally the coordinator, recorded with the MR/pipeline ID and immutable source
+SHA when the MR is opened or the pipeline is created. The owner verifies the
+expected pipeline started, tracks it to a terminal outcome, reports the outcome,
+and routes the first failure for diagnosis. The Claude session watcher observes
+coordinator-session notices; it does not monitor GitLab MRs, pipelines or jobs.
+A general task assignment, watcher notice, review request or auto-merge setting
+is not evidence that a pipeline has an active monitor. If ownership changes,
+record a direct handoff and acknowledgment so monitoring has no gap. Keep updates
+event-driven and concise; do not send repeated unchanged status polls. Auto-merge
+does not replace monitoring or alter review/merge authority. Before another
+CI-triggering push, the owner checks the previous outcome and records the
+pipeline, SHA, failed job/test and correction owner in the existing Result.
 The supervisor acts on a reported blocker/failure promptly instead of waiting for
 a final handback. A failed CI run is executed-and-failed evidence even when local
 execution was blocked; never summarize that state as tests not executed.

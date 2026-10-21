@@ -4,6 +4,16 @@
 
 After focused checks, current hosted fast checks and supervisor/Duo review, merge under existing authority; the existing implementer coordinator must then automatically launch and track the full local qualification command on the exact merged integration SHA. Do not wait for an owner-run command or treat hosted fast PASS as full qualification. Automatic post-merge integration/release-branch and tag-push pipelines are disabled, including lightweight checks. Feature MRs retain hosted fast checks; owner-selected RC promotion MRs carry required full hosted release qualification. Separately authorized diagnostic/provider runs remain distinct. Final acceptance still needs actual local full proof and the Goal's other gates.
 
+For every required GitLab MR pipeline, name one monitoring owner and record the
+MR/pipeline ID and immutable source SHA when the MR is opened or the pipeline is
+created. The owner verifies the expected pipeline started, tracks it to a
+terminal outcome, reports the result and routes the first failure for diagnosis.
+The Claude session watcher observes coordinator-session notices; it does not
+monitor GitLab MRs, pipelines or jobs. A task assignment, watcher notice, review
+request or auto-merge setting does not prove active pipeline monitoring. Record
+an acknowledged handoff if ownership changes; keep updates event-driven and
+concise. Auto-merge does not replace monitoring or change review/merge authority.
+
 A ready authorized successor may implement in isolation during that post-merge local run. Respect shared locks, exact inputs and predecessor-owned repairs; predecessor final ACCEPT still gates successor integration/final acceptance. Merged-SHA qualification uses its frozen checkout and is not rebased by development-branch fetch/rebase rules. Preserve explicitly exempt documentation-only work.
 
 {{IMPLEMENTER_AGENT}} owns implementation planning, implementation, tests and validation, and Result reporting.

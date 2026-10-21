@@ -404,6 +404,16 @@ native operation before continuing. Use recorded standing authority for routine
 approved-scope changes; do not require repeated owner approval or assume installation
 proves success. Keep the chosen roles explicit without requiring another supervisor.
 
+For every required GitLab MR pipeline, name one monitoring owner and record the
+MR/pipeline ID and immutable source SHA when the MR is opened or the pipeline is
+created. The owner verifies the expected pipeline started, tracks it to a
+terminal outcome, reports the result and routes the first failure for diagnosis.
+The Claude session watcher observes coordinator-session notices; it does not
+monitor GitLab MRs, pipelines or jobs. A task assignment, watcher notice, review
+request or auto-merge setting does not prove active pipeline monitoring. Record
+an acknowledged handoff if ownership changes; keep updates event-driven and
+concise. Auto-merge does not replace monitoring or change review/merge authority.
+
 ## Optional Claude supervisor
 
 The owner may choose Claude Code as supervisor. ChatGPT/Codex then contributes only Work Spec writing and architecture reviews; Claude owns the remaining supervision responsibilities through the existing workflow. This overrides default role assignments only when selected and recorded by the owner; it creates no second supervisor, routine ChatGPT approval gate, session restart or active-task rebind. Major decisions remain owner-owned.
