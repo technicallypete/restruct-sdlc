@@ -66,46 +66,10 @@ Full procedure, destination rule, risk tiers, installation limits and foundation
 
 ## Lifecycle summary
 
-Goal and Spec (supervisor) → Plan (implementer; omitted only when the Goal explicitly authorizes the direct
-tier) → Plan review (ACCEPT, CORRECTION LOOP or ARCHITECTURE DECISION
-REQUIRED) → implementation and validation → Result → pre-integration review → conditional integration (owner
-merge) → final ACCEPT → closeout. Only final ACCEPT completes a Goal. Review-ready submissions trigger delegated
-review and automatic decision relay without another owner prompt; the supervisor keeps the review turn open with the
-harness's asynchronous wait/notification interface and relays before its final reply (no repeated polling; an ended
-turn may not wake automatically). An interruption alone is not stop-all: inspect child status and preserve completed
-or authorized running work unless an explicit stop-all or conflicting direction applies. Owner interruption and
-mandatory gates remain.
-By default (`SUPERVISOR_AUTO_PUBLISH=true`, owner may disable) the supervisor pushes each completed PROGRESS update and
-its management records to the explicit integration branch; the implementer keeps its task branch and merge requests.
-Relayed owner authorizations are attributed truthfully and never override native permission gates.
-By default (`OBSERVER_AUTO_ACTIVATE=true`, separate option) the companion milestone observer starts only after the
-coordinator and supervisor bindings are explicitly verified; otherwise it stays inactive and reported. Effort by
-role: coordinator high (xhigh when planning), planning workers xhigh, implementation workers high.
-Released implementers fix [mechanical inconsistencies](references/roles-lifecycle.md#autonomous-mechanical-corrections) within scope/budget; preserve assertions, evidence, substantive escalation and final review.
-Automatic continuation stops at missing Specs unless the owner records bounded specification authority (named
-endpoint/range or pinned epic). Independent owner stop/phase limits override continuation even with an existing
-Spec or accepted Plan; no lookahead beyond the stop. See [mandates and stops](references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).
-At the first eligible implementation MR (drafts included), verify it and begin provisional next-task planning
-with an existing Goal/Spec; owner stops remain. Planning alone grants no implementation authority.
-See [planning](references/roles-lifecycle.md#automatic-planning-after-integration).
-After reviewed predecessor integration, release isolated implementation once start gates close, overlapping CI.
-Final predecessor ACCEPT gates successor integration/final acceptance; security/contracts and explicit holds remain.
-See [execution release](references/roles-lifecycle.md#automatic-reassessment-and-execution-release).
-After verified terminal closeout, retain compact attributable evidence and purge redundant task-owned local
-validation output by default; protect active inputs and session archives. See [evidence cleanup](references/closeout-risks.md#local-validation-evidence-retain-a-compact-record-purge-bulk-output).
-Default durable proof to Git records and CI artifacts; local raw evidence is temporary.
-Purge duplicate downloads and closed-task bulk; explicit necessary-proof holds name a release condition.
-Record resource ownership at creation and use [bounded routine cleanup](references/closeout-risks.md#bounded-routine-cleanup):
-one scoped pass, a compact receipt, and individual holds instead of another verification campaign.
-
-Validation follows [Git-first provenance and proportionate coverage](references/validation-integration.md):
-assess target deltas before batches, reconcile relevant/unknown changes and always reconcile before final/MR.
-Use [focused executable selections](references/validation-integration.md#focused-selection-before-the-first-run); broad local exceptions need a technical reason before launch. Retain required application/security/hosted checks.
-Existing approved bindings remain in force until explicitly amended.
-
-Every epic closeout requires a supervisor-owned [PROGRESS compaction checkpoint](references/closeout-risks.md#progress-compaction):
-archive superseded updates, record none needed, or document an active-binding hold and next safe checkpoint.
-Preserve current status and linked history; this housekeeping alone requires no test rerun.
+Goal-to-closeout flow, role boundaries, automatic planning/execution transitions,
+validation, evidence retention and cleanup defaults are summarized in the
+[workflow overview](references/workflow-overview.md). The linked policy references
+below define the enforceable procedures.
 
 ## References
 
@@ -117,6 +81,7 @@ Preserve current status and linked history; this housekeeping alone requires no 
 | [coordination.md](references/coordination.md) | One coordinator, one owner per task, recovery, compact repair handoffs, receipts versus acknowledgment, the naming, dispatch and relocation gate. |
 | [validation-integration.md](references/validation-integration.md) | Pre-batch reconciliation, finish-fix-rerun-advance, manual feedback order, merge requests, options, GitLab/glab adapter. |
 | [closeout-risks.md](references/closeout-risks.md) | Verified cleanup, archive-before-prune, PROGRESS compaction, risk and performance reporting. |
+| [workflow-overview.md](references/workflow-overview.md) | Goal lifecycle, routine transitions, validation and closeout defaults. |
 
 ## Templates
 

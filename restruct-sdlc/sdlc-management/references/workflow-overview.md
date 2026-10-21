@@ -1,0 +1,29 @@
+# Workflow overview
+
+## Goal lifecycle
+
+Goal and Spec (supervisor) → Plan (implementer; omitted only when the Goal explicitly authorizes the direct tier) → Plan review (ACCEPT, CORRECTION LOOP or ARCHITECTURE DECISION REQUIRED) → implementation and validation → Result → pre-integration review → conditional integration (owner merge) → final ACCEPT → closeout. Only final ACCEPT completes a Goal.
+
+Review-ready submissions trigger delegated review and automatic decision relay without another owner prompt. The supervisor keeps the review turn open with the harness's asynchronous wait/notification interface and relays before its final reply; do not repeatedly poll. An ended turn may not wake automatically. An interruption alone is not stop-all: inspect child status and preserve completed or authorized running work unless an explicit stop-all or conflicting direction applies. Owner interruption and mandatory gates remain.
+
+By default (`SUPERVISOR_AUTO_PUBLISH=true`, owner may disable), the supervisor pushes each completed PROGRESS update and its management records to the explicit integration branch; the implementer keeps its task branch and merge requests. Attribute relayed owner authorizations truthfully; they never override native permission gates.
+
+By default (`OBSERVER_AUTO_ACTIVATE=true`, a separate option), the companion milestone observer starts only after coordinator and supervisor bindings are explicitly verified; otherwise it stays inactive and reported. Effort defaults by role: coordinator high (xhigh when planning), planning workers xhigh, implementation workers high.
+
+## Routine transitions
+
+Released implementers fix [mechanical inconsistencies](roles-lifecycle.md#autonomous-mechanical-corrections) within scope and budget; preserve assertions, evidence, substantive escalation and final review.
+
+Automatic continuation stops at missing Specs unless the owner records bounded specification authority (named endpoint/range or pinned epic). Independent owner stop/phase limits override continuation even with an existing Spec or accepted Plan; do not look ahead beyond the stop. See [mandates and stops](roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).
+
+At the first eligible implementation MR (drafts included), verify it and begin provisional next-task planning with an existing Goal/Spec; owner stops remain. Planning alone grants no implementation authority. See [planning](roles-lifecycle.md#automatic-planning-after-integration).
+
+After reviewed predecessor integration, release isolated implementation once start gates close, overlapping CI. Final predecessor ACCEPT gates successor integration/final acceptance; security/contracts and explicit holds remain. See [execution release](roles-lifecycle.md#automatic-reassessment-and-execution-release).
+
+## Validation and closeout defaults
+
+Validation follows [Git-first provenance and proportionate coverage](validation-integration.md): assess target deltas before batches, reconcile relevant/unknown changes and always reconcile before final/MR. Use [focused executable selections](validation-integration.md#focused-selection-before-the-first-run); broad local exceptions need a technical reason before launch. Retain required application/security/hosted checks. Existing approved bindings remain in force until explicitly amended.
+
+After verified terminal closeout, retain compact attributable evidence and purge redundant task-owned local validation output by default; protect active inputs and session archives. Default durable proof to Git records and CI artifacts; local raw evidence is temporary. Purge duplicate downloads and closed-task bulk; explicit necessary-proof holds name a release condition. Record resource ownership at creation and use [bounded routine cleanup](closeout-risks.md#bounded-routine-cleanup): one scoped pass, a compact receipt and individual holds instead of another verification campaign.
+
+Every epic closeout requires a supervisor-owned [PROGRESS compaction checkpoint](closeout-risks.md#progress-compaction): archive superseded updates, record none needed, or document an active-binding hold and next safe checkpoint. Preserve current status and linked history; this housekeeping alone requires no test rerun.
