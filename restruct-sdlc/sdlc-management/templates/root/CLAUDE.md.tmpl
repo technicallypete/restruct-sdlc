@@ -386,3 +386,11 @@ Owner amendment,2026-10-20: [safe self-compaction](.agents/skills/restruct-sdlc/
 ## Codex routine work and Sol delegates — owner direction, 2026-10-20
 
 Routine supervisor status, management publication, handoffs, prose/configuration and mechanical changes run directly in the main session; no subagent by default. Delegated Goal/Spec drafting and substantive independent reviews default to `gpt-6.1-sol` through repository `.codex/config.toml` (`[agents].default_subagent_model`), even when the owner selects a cheaper main model. Explicit approved child overrides win; verify actual loading/dispatch rather than assume a running session refreshed. Use bounded fresh inputs where model inheritance prevents an override; no extra persistent session, test spawn, full-history fork or separate quota is implied. Preserve formal review/authority gates and Claude's separately selected implementation model.
+
+## Retain local validation diagnostics
+
+Before retrying or handing back a failed local run, verify its scanned check ledger,
+underlying failure logs and supplemental JUnit survive temporary cleanup in the
+explicit private evidence directory. Record any withheld/missing detail and keep
+failed and later outcomes distinct; wrapper/phase failures are not underlying test
+IDs. Follow [local evidence retention](.agents/skills/restruct-sdlc/sdlc-management/references/validation-integration.md#preserve-local-validation-evidence-before-cleanup).

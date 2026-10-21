@@ -303,6 +303,22 @@ and no independent qualification depends on it. Record both pipeline IDs and the
 cancellation; preserve failed-run evidence and the still-required qualification.
 
 
+## Preserve local validation evidence before cleanup
+
+Use an explicit private evidence directory for every local qualification or repair run.
+Before temporary cleanup, retain the scanned report: check ledger, detailed failing
+suite/control logs, supplemental JUnit and relevant diagnostics, bound to the tested
+commit and command. Verify those files remain readable after finalization before
+retrying, handing back or closing the run. Preserve both failed and later outcomes;
+raw logs and generated secrets still follow existing scans and secret cleanup.
+If scanning withholds detail, retain only the safe marker/summary and record the
+specific evidence gap; never copy unsafe raw files to defeat withholding. Distinguish
+JUnit wrapper/aggregate/phase failures from underlying failing test IDs. If a wrapper
+cannot retain diagnostics, report and repair that gap before another diagnostic run;
+do not solve it with repeated full suites. Regress retention with a failed local run
+and prove unsafe or unscanned evidence is still withheld. Purge retained reports only
+under the existing terminal-task evidence cleanup policy.
+
 ## Complete repair inventory and supervisor verification
 
 Before opening a staging/integration repair MR, reconcile every non-passing

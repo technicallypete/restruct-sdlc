@@ -21,6 +21,9 @@ None, or the change.
 |---|---|---|---|---|
 
 Failed, skipped and interrupted checks are listed here with their evidence; none is omitted.
+For local runs, record the retained scanned-report path and verify the check ledger, detailed failure logs
+and supplemental JUnit remain readable after cleanup before any rerun or handback. Distinguish wrapper/phase
+failures from underlying test IDs; record withholding or missing diagnostics explicitly.
 Record relevant tool/image versions and non-secret runtime configuration/extra-input references. Keep compact
 outcomes, CI links and necessary proof; no duplicate per-file hashes of committed source or full checkout archives.
 
