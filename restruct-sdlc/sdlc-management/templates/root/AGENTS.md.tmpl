@@ -220,6 +220,19 @@ opts out. Notices, including the transcript-size advisory, carry no authority.
 
 ## Validation and integration
 
+### Default parallel scheduling
+
+At planning and dispatch boundaries, identify independent work lanes and start
+dependency-ready lanes in parallel by default with named ownership,
+nonconflicting writable scope, bound inputs and attributable evidence. Keep one
+task owner and one writer per artifact; use approved delegation and isolation.
+A failure holds that lane and its dependents; unrelated
+safe lanes may continue. Serialize shared files, dependent changes, mutable fixtures
+and resources where locks or configured limits require it. Private database/browser
+runs share the configured pool; image builds remain sequential. Parallel scheduling
+preserves task-specific sequencing, frozen sources and all acceptance, review,
+qualification and owner gates. No extra scheduler or mandatory agent split.
+
 Before each batch, fetch and assess the exact delta for validation and execution-authority impact. If irrelevant
 to both, record the target range/candidate/reason and defer rebase/input reconstruction. Otherwise reconcile;
 unknown impact follows reconciliation. Always reconcile before final qualification and MR opening; keep resource
@@ -234,7 +247,8 @@ handling. Do not create parallel source inventories or retain whole checkout cop
 
 Follow the [branch workflow](docs/agents/BRANCH-WORKFLOW.md). Before every local batch: fetch, assess the delta,
 reconcile unless the documented irrelevant-delta exception applies, and run the environment check
-({{PRE_BATCH_ENV_CHECK}}). Batches finish, fix, rerun, then advance. Manual feedback precedes final qualification.
+({{PRE_BATCH_ENV_CHECK}}). Batches finish, fix, rerun, then advance within each dependency chain; independent safe
+batches may proceed in parallel. Manual feedback precedes final qualification.
 With the default `local-after-merge` placement, the full local suite runs on the exact merged integration SHA; it is
 not a full pre-MR gate. Final validation placement: `{{FINAL_VALIDATION_PLACEMENT}}`; canceled post-merge pipeline satisfies the gate:
 `{{CANCELED_PIPELINE_SATISFIES}}`. Integrate through reviewed merge requests to `{{INTEGRATION_BRANCH}}` with

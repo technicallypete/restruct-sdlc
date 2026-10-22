@@ -23,6 +23,27 @@ tools serve.
 - Service work explicitly reads the service root's scoped instructions and skills. A shell `cd` does not refresh
   skill discovery.
 
+## Default to safe parallel work lanes
+
+At planning and each dispatch boundary, the coordinator/supervisor should identify
+independent work that can proceed in parallel and start the earliest ready lanes
+without waiting on unrelated work. A Plan should make meaningful lane dependencies,
+owners, writable paths, input SHAs, expected evidence and shared-resource reservations
+visible; do not split work merely to create more agents or duplicate one artifact's
+writer. Keep one accountable task owner and one writer per artifact; use approved
+delegation and separate owned checkouts or read-only review for concurrent work.
+
+Parallelize only when dependencies are closed, edits do not conflict, each lane has
+an attributable baseline/result, and locks, resource limits, budgets and owner stops
+permit it. Preserve task-specific sequencing and immutable validation sources;
+reconcile any material change with the supervisor without rewriting approved Plan
+history. Serialize shared-file edits, dependent migrations, mutable fixtures,
+shared stacks/ports/caches and image builds where policy requires. Private DB and
+browser runs share the configured test pool; image builds remain sequential. A
+failure blocks its lane and dependent work, not unrelated safe lanes. The lane's
+finish → diagnose/fix → rerun → advance gates still apply; parallel work never waives
+coverage, review, integration, acceptance or a failed required gate.
+
 ## Receipt, acknowledgment and authority
 
 - **Receipt is not acknowledgment, and acknowledgment is not execution.** A socket write proves bytes left; a

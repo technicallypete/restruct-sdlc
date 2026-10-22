@@ -12,6 +12,11 @@ By default (`OBSERVER_AUTO_ACTIVATE=true`, a separate option), the companion mil
 
 ## Routine transitions
 
+Schedule dependency-ready, independently owned work in parallel by default when
+source ownership and shared-resource limits allow. Keep one task owner and one writer per artifact;
+each validation lane retains its own finish/fix/rerun gate, and a failure holds only
+that lane and its dependents. See [parallel work lanes](coordination.md#default-to-safe-parallel-work-lanes).
+
 Released implementers fix [mechanical inconsistencies](roles-lifecycle.md#autonomous-mechanical-corrections) within scope and budget; preserve assertions, evidence, substantive escalation and final review.
 
 Automatic continuation stops at missing Specs unless the owner records bounded specification authority (named endpoint/range or pinned epic). Independent owner stop/phase limits override continuation even with an existing Spec or accepted Plan; do not look ahead beyond the stop. See [mandates and stops](roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries).

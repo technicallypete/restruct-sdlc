@@ -16,6 +16,13 @@ authority; an epic mandate neither expands membership nor resets Goal budgets.
 
 ## Planning overlap
 
+At planning and dispatch boundaries, default to [safe parallel batches](coordination.md#default-to-safe-parallel-work-lanes)
+when their dependencies, ownership, bound inputs and resource reservations permit.
+Finish → diagnose/fix → rerun → advance applies within each dependency chain;
+unrelated safe batches may proceed while a failed batch and its dependents are held.
+Do not parallelize an intentionally ordered proof or conflicting shared resources,
+mutate a frozen validation source, or bypass task-specific sequencing/required gates.
+
 At the first predecessor implementation MR (drafts included), apply
 [automatic planning](roles-lifecycle.md#automatic-planning-after-integration)
 for the next eligible existing Goal/Spec; integration is fallback discovery only. Provisional planning may overlap CI,

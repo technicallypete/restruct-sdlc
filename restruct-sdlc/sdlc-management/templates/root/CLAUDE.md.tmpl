@@ -29,6 +29,15 @@ Before planning or implementation, read AGENTS.md, this file, {{CANONICAL_SOURCE
 
 ## Workflow
 
+Schedule independent, dependency-ready batches in parallel by default under
+[parallel scheduling](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#default-to-safe-parallel-work-lanes).
+Record named owners, disjoint writable scopes, bound inputs/evidence and resource
+reservations in existing records. Keep one task owner and one writer per artifact;
+use approved delegation and isolation where needed. A failure holds its batch and
+dependents; unrelated safe batches may proceed. Task-specific sequencing, source
+freezes, resource limits, owner stops and review/qualification gates remain binding.
+No extra scheduler or mandatory agent split is required.
+
 Check [owner mandate/phase/stop bounds](.agents/skills/restruct-sdlc/sdlc-management/references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries)
 before continuation. A ready Spec/approved Plan never overrides a stop or grants
 new specification authority. Do not begin successor lookahead past the endpoint;
@@ -83,7 +92,7 @@ with existing Result/artifact links and focused excerpts rather than full logs.
 3. Implement within scope; create and run tests; diagnose and iterate. Follow
    [validation and integration](.agents/skills/restruct-sdlc/sdlc-management/references/validation-integration.md): reconcile
    fetch and assess before every batch, reconciling relevant or unknown changes; document any permitted
-   irrelevant-delta deferral. Reconcile before final qualification/MR; finish, fix, rerun, advance;
+   irrelevant-delta deferral. Reconcile before final qualification/MR; finish, fix, rerun, advance within each dependency chain;
    manual feedback before final qualification.
 4. Record the Result: exact commands and outcomes (failed, skipped and interrupted included), the AC checklist,
    deviations, the attempt ledger ([budgets](.agents/skills/restruct-sdlc/sdlc-management/references/budgets.md)) and an
