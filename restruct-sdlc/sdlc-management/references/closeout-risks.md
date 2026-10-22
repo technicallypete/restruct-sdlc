@@ -1,7 +1,59 @@
 # Closeout and risk reporting
 
-Acceptance and cleanup are separate. Final ACCEPT completes a Goal; closeout then removes temporary resources
-without losing unique work, live ownership or history.
+Resource tracking and cleanup run throughout execution. Final ACCEPT is an additional cleanup checkpoint,
+not the first one. Closeout removes temporary resources without losing unique work, live ownership or history.
+
+## Continuous resource accountability — mandatory
+
+Owner direction, 2026-10-22: cleanup is non-negotiable and tracked throughout
+execution, including failed, canceled and interrupted work. A task still being
+in flight is not permission to retain abandoned resources. This strengthens the
+older acceptance-only trigger for every adopting repository.
+
+- Record each resource in the existing task/run inventory when it is allocated,
+  before handing off or using it: task/run and responsible owner, exact container
+  and image IDs/tags, named and anonymous volumes, networks, worktree path/branch/
+  HEAD, temporary paths and retention reason. Capture mount/volume ownership before
+  removing its container. Include nested runs, one-off/probe containers, build
+  exports and partially created resources. No untracked scratch creation.
+- Keep the inventory current as resources are created, transferred and removed.
+  Reconcile actual resources before dispatch/startup/resume, at every worker
+  handback and test-batch end, on success/failure/cancellation, and at acceptance.
+  Event-driven accounting and bounded checkpoint audits are continuous tracking;
+  this does not authorize coordinator polling or another watcher/framework.
+- The creator owns cleanup; the coordinator reconciles the task inventory and
+  the supervisor verifies its receipt. Stop and reap resource-creating children
+  before removal, verify absence afterwards and check for late recreation.
+  Cleanup errors are terminal failures, never swallowed by a passing test status.
+- Reclaim finished worker worktrees immediately after their handback is preserved;
+  do not accumulate them until task acceptance. Preserve unique commits with refs
+  or a compact bundle, and dirty/untracked source with a patch/selected files.
+  Remove disposable builds, copied dependencies and scratch; a worker's obsolete
+  Git lock is not a retention reason. Keep only current coordinator, worker or
+  frozen-validation checkouts with recorded live ownership.
+- A batch/handback cannot be declared clean, and new resource-consuming work
+  cannot start, while its abandoned resources remain unresolved. Existing safe
+  source-only work may continue. Track every unresolved item, responsible owner,
+  reason and concrete cleanup action in the same Result/receipt; silence or
+  unknown ownership never counts as complete coverage. Explicit live/required
+  retention is named and time/phase bounded, not an indefinite cleanup exception.
+- On crash, reboot or forced termination, reconcile the previous inventory with
+  real project resources before resuming resource-consuming work. Traps alone do
+  not cover power loss or SIGKILL. Clean abandoned resources first; preserve the
+  interrupted status and minimal failure/recovery evidence. Do not present an
+  unverified guarantee as successful cleanup.
+- Cover containers, unused task images (including untagged IDs), all attached
+  named/anonymous volumes, networks, worktrees and disposable temporary files in
+  the receipt: allocated, removed, legitimately active/retained and unresolved
+  counts, with no unaccounted remainder. Root and worker scratch, external run
+  directories and failure paths are included. Keep credentials, native session
+  state, committed history and unrelated/shared host resources protected.
+
+Use existing inventories, cleanup/finalizers and compact receipts. Repair leaks
+and prove the relevant success/failure/interruption/recovery paths with focused
+checks before reopening the affected workload. A documentation update is not
+proof that a defective executable cleanup path has been fixed. No host-wide
+prune, redundant full suite, new resource database or permission bypass.
 
 ## Verify before removing anything
 

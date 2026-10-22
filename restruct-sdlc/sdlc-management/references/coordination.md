@@ -490,3 +490,13 @@ Keep the main model and reasoning effort owner-controlled; setting a child defau
 This assigns a model to appropriate delegation, not a requirement to create agents for every task. Portable adopters choose their supported child model explicitly; the model ID above is this owner's selected example. It is not a bundled account credential, permission grant, automatic model migration or authorization to replace a supervisor. Claude implementation models remain independently governed; Claude interim supervision is not activated merely by this setting.
 
 Official configuration: [subagent model default](https://learn.chatgpt.com/docs/config-file/config-sample), [project configuration/trust](https://learn.chatgpt.com/docs/config-file/config-basic).
+
+## Continuous cleanup checkpoints — 2026-10-22
+
+Track owned resources at allocation and removal in the existing run/task inventory;
+reconcile before startup/resume/dispatch, at every handback and batch end, and after
+failure/cancellation. Reclaim finished worker trees and scratch immediately after
+preserving their handback. Any unresolved abandoned resources block new resource-
+consuming work until repaired; verify actual absence, including nested resources
+and anonymous volumes. Follow [continuous accountability](closeout-risks.md#continuous-resource-accountability--mandatory).
+This adds no coordinator polling or duplicate inventory framework.

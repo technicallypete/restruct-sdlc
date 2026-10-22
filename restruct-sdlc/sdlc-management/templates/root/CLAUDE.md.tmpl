@@ -220,6 +220,25 @@ recorded transition exceptions, explicit delegate disposition and observer rebin
 never create a second supervisor or retire an active session solely from age.
 
 
+## Continuous resource accountability — owner direction, 2026-10-22
+
+Cleanup is non-negotiable throughout execution, not only at final acceptance.
+Record every container/image/volume/network, worktree and temporary path in the
+existing task/run inventory at allocation, including nested/partial creations;
+update ownership and removal as they happen. Reconcile actual resources before
+startup/resume/dispatch, at each worker handback and batch end, and on failure,
+cancellation and acceptance. Reclaim finished worker trees and disposable scratch
+as soon as the handback and unique source are preserved. Stop/reap creators before
+cleanup and verify absence afterwards. Failed cleanup blocks new resource-consuming
+work until reconciled; legitimate live/required retention must have a named owner,
+reason and release condition. A crash/reboot requires recovery reconciliation;
+traps alone cannot ensure cleanup. Report all resource categories and unresolved
+counts in the existing receipt. Preserve credentials, native session state,
+required minimal failure proof and unrelated/shared resources. This is event-driven
+accounting, not coordinator polling. Repair and focus-test executable leaks before
+resuming the affected workload; prose alone is insufficient. See
+[continuous resource accountability](.agents/skills/restruct-sdlc/sdlc-management/references/closeout-risks.md#continuous-resource-accountability--mandatory).
+
 ## Mandatory task-acceptance cleanup — owner direction, 2026-10-17
 
 At every final task ACCEPT, immediately remove all finished task-owned worktrees
@@ -294,26 +313,6 @@ The owner may choose Claude Code as supervisor. ChatGPT/Codex then contributes o
 ## Owner-selected RC auto-merge — 2026-10-19
 
 The owner may explicitly enable auto-merge for a named RC promotion MR or a clearly recorded scope of RC MRs. Manual promotion remains the default when no such instruction exists. This owner instruction authorizes queuing promotion before CI finishes; once every required full-qualification job succeeds, the provider may merge without another owner prompt. Record the owner instruction, MR, immutable source SHA and selected mode. Before arming, verify the tag/source identity, required complete pipeline, non-squash merge, and conflict-free prospective target tree equal to the RC tree; source-pin the request. Preserve target-movement monitoring and post-merge parent/tree verification without claiming an atomic target lock. Retain and independently verify full project/pipeline/job/artifact proof before claiming qualified release. No failed, skipped, optional or partial coverage counts as qualification. Do not fabricate manual-mode proof or change API snapshots to satisfy a verifier. A manual-only helper's refusal of queued/merged MRs is a mode limitation, not a passing auto-mode proof; use truthful independent verification or a separately reviewed mode-aware adapter. Final release tagging remains a separate owner decision. Feature-MR auto-merge defaults alone never authorize an RC-to-release merge.
-
-### Standing authority within an owner-authorized RC series
-
-When an owner authorizes a named RC series, or directly requests its next
-candidate, that authorization covers bounded coordinator work for the series
-without per-step or per-candidate reconfirmation: diagnose and repair
-qualification failures within already approved scope, integrate repairs through
-normal staging review and merge gates, create the next sequential immutable RC
-tag from the configured integration branch's latest commit observed at cut
-time, open the tag-pinned promotion MR, and run required full qualification.
-Preserve every failed run and its evidence. A failed qualification is never
-waived or represented as passing; after an in-scope repair, the coordinator may
-continue with the next candidate under the same series authority. An owner
-instruction given to the supervisor remains authoritative when faithfully
-relayed to the coordinator; do not require the owner to repeat it in another
-session. Existing scope, budget, security, architecture, and escalation stops
-remain binding. This standing series authority does not authorize merging the
-promotion MR to the release branch, arming auto-merge without its separate
-owner selection, creating a stable release tag, or deploying/publishing a
-release. Those remain separate owner decisions.
 
 Make new annotated tag messages and GitLab Release entries descriptive: list
 included Goal/task IDs and short titles, material changes since the prior

@@ -164,8 +164,8 @@ for failures: relevant revision/diff, focused evidence, tried fixes, hypothesis 
 security, public-contract, irreversible-model and resource conflicts as required;
 do not extend/reset budgets or weaken evidence to finish.
 
-Preserve the adopting repository's canonical invariants, authority semantics and
-any declared delivery barrier. Read service-root instructions/skills for service
+Preserve UUID canonical identities, current tenancy/authority semantics and the
+G021 product-feature barrier. Read service-root instructions/skills for service
 work. The skill contains no substitute permission matrix, CI policy or fixed
 execution baseline; those belong to current approved repository records.
 
@@ -313,3 +313,8 @@ Use150k active-context checkpoint/200k safe handoff assessment, respecting small
 ## Codex routine work and Sol delegates — owner direction, 2026-10-20
 
 Routine supervisor status, management publication, handoffs, prose/configuration and mechanical changes run directly in the main session; no subagent by default. Delegated Goal/Spec drafting and substantive independent reviews default to `gpt-6.1-sol` through repository `.codex/config.toml` (`[agents].default_subagent_model`), even when the owner selects a cheaper main model. Explicit approved child overrides win; verify actual loading/dispatch rather than assume a running session refreshed. Use bounded fresh inputs where model inheritance prevents an override; no extra persistent session, test spawn, full-history fork or separate quota is implied. Preserve formal review/authority gates and Claude's separately selected implementation model.
+
+Cleanup is continuously accounted for at allocation, handback/batch end and
+interruption/restart, under [mandatory resource accountability](../sdlc-management/references/closeout-risks.md#continuous-resource-accountability--mandatory).
+Verify every category; abandoned resources block new resource-consuming work.
+Reclaim finished worker trees at handback, not only at final acceptance.

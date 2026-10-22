@@ -32,3 +32,13 @@ Validation follows [Git-first provenance and proportionate coverage](validation-
 After verified terminal closeout, retain compact attributable evidence and purge redundant task-owned local validation output by default; protect active inputs and session archives. Default durable proof to Git records and CI artifacts; local raw evidence is temporary. Purge duplicate downloads and closed-task bulk; explicit necessary-proof holds name a release condition. Record resource ownership at creation and use [bounded routine cleanup](closeout-risks.md#bounded-routine-cleanup): one scoped pass, a compact receipt and individual holds instead of another verification campaign.
 
 Every epic closeout requires a supervisor-owned [PROGRESS compaction checkpoint](closeout-risks.md#progress-compaction): archive superseded updates, record none needed, or document an active-binding hold and next safe checkpoint. Preserve current status and linked history; this housekeeping alone requires no test rerun.
+
+## Continuous cleanup checkpoints — 2026-10-22
+
+Track owned resources at allocation and removal in the existing run/task inventory;
+reconcile before startup/resume/dispatch, at every handback and batch end, and after
+failure/cancellation. Reclaim finished worker trees and scratch immediately after
+preserving their handback. Any unresolved abandoned resources block new resource-
+consuming work until repaired; verify actual absence, including nested resources
+and anonymous volumes. Follow [continuous accountability](closeout-risks.md#continuous-resource-accountability--mandatory).
+This adds no coordinator polling or duplicate inventory framework.

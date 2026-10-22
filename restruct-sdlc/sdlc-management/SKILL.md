@@ -183,3 +183,8 @@ new task-private files, shared across worker worktrees. Follow the [local storag
 policy](references/adoption.md#repository-local-private-files): task-scoped paths, private permissions, Git/build/upload exclusions
 and separate evidence/secret cleanup. Existing tasks keep current paths through
 acceptance cleanup; do not migrate active bindings or native session state.
+
+Cleanup is continuously accounted for at allocation, handback/batch end and
+interruption/restart, under [mandatory resource accountability](references/closeout-risks.md#continuous-resource-accountability--mandatory).
+Verify every category; abandoned resources block new resource-consuming work.
+Reclaim finished worker trees at handback, not only at final acceptance.

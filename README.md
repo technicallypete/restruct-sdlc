@@ -35,8 +35,10 @@ remain complete children of the bundle, with their own instructions, references,
 - **Efficient coordination.** Milestone observation, concise updates, bounded context and safe handoffs reduce
   repeated status reads. Supervisors send needed decisions promptly; routine coordinator polling belongs to
   the observer rather than the supervisor.
-- **Task cleanup.** Track task-owned worktrees, branches, containers, images and evidence; remove accepted-task
-  leftovers while preserving active work and explicitly held proof.
+- **Continuous resource accountability.** Record containers, images, volumes, networks, worktrees and scratch
+  as they are allocated and removed. Reconcile at every handback/batch end and after interruptions; reclaim
+  finished worker trees immediately. Abandoned resources block new resource-consuming work. Restart recovery
+  and focused cleanup-failure proofs are required; active ownership and minimal required evidence stay explicit.
 - **Project-local configuration.** Adoption guidance covers shared and local Claude permissions, optional Codex
   model defaults, ignored private files under the integration checkout's `.local/`, and supported home-state
   fallbacks for isolated workers.
