@@ -40,6 +40,9 @@ remain complete children of the bundle, with their own instructions, references,
   as they are allocated and removed. Reconcile at every handback/batch end and after interruptions; reclaim
   finished worker trees immediately. Abandoned resources block new resource-consuming work. Restart recovery
   and focused cleanup-failure proofs are required; active ownership and minimal required evidence stay explicit.
+- **Project resource attribution.** Require project/run labels for exclusively owned Docker resources created
+  by Compose or direct commands; use explicit Compose project names and retain compact exact-ID/recovery records
+  for anonymous/shared exceptions. Label discovery adds no separate cleanup manifest or removal authority.
 - **Project-local configuration.** Adoption guidance covers shared and local Claude permissions, optional Codex
   model defaults, ignored private files under the integration checkout's `.local/`, and supported home-state
   fallbacks for isolated workers.

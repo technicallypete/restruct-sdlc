@@ -37,6 +37,8 @@ Every epic closeout requires a supervisor-owned [PROGRESS compaction checkpoint]
 
 ## Continuous cleanup checkpoints — 2026-10-22
 
+Require project/run ownership labels on exclusively owned label-capable Docker resources, whether created through Compose or direct commands. Use `COMPOSE_PROJECT_NAME` per stack and the existing compact registry for exact IDs, anonymous/shared exceptions and recovery; labels improve discovery without adding another cleanup manifest. See [Docker attribution](closeout-risks.md#project-scoped-docker-labels-and-cleanup-discovery).
+
 Track owned resources at allocation and removal in the existing run/task inventory;
 reconcile before startup/resume/dispatch, at every handback and batch end, and after
 failure/cancellation. Reclaim finished worker trees and scratch immediately after

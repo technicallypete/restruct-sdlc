@@ -55,6 +55,53 @@ checks before reopening the affected workload. A documentation update is not
 proof that a defective executable cleanup path has been fixed. No host-wide
 prune, redundant full suite, new resource database or permission bypass.
 
+## Project-scoped Docker labels and cleanup discovery
+
+Require explicit project attribution for resources created by Compose, direct
+Docker commands, nested tests and helper/build containers. Every newly created,
+exclusively project-owned object that supports labels carries a stable repository
+identity in an adopter-selected, nonreserved namespace. Disposable allocations
+also carry run identity and their responsible owner/lifecycle. Keep persistent
+development data, active previews and shared resources distinguishable from
+throwaway tests; a project match alone never authorizes removing all its objects.
+
+- Set `COMPOSE_PROJECT_NAME` explicitly in the task/command environment. Disposable
+  test/preview stacks use a collision-resistant name scoped to project and run;
+  a persistent development workspace keeps its documented stable stack name.
+  Account for higher-priority `docker compose -p` and reject conflicting identity
+  rather than silently selecting a different stack. Keep the same identity for
+  creation, discovery, recovery and teardown; avoid a global shell setting that
+  redirects concurrent work.
+- Compose's automatic project labels group its managed objects. Put common custom
+  labels on each applicable service, network and named-volume declaration and on
+  project-built images where supported; container labels do not propagate to
+  attached volumes/networks. Do not forge the reserved `com.docker.compose.*`
+  namespace. Direct `docker run/create`, network/volume creation and image builds
+  pass equivalent labels explicitly; `COMPOSE_PROJECT_NAME` does not label them.
+- Label genuinely project-built images with stable project identity; add run
+  identity only when their lifetime is run-specific. Do not rebuild, copy or
+  relabel shared/pulled images merely for bookkeeping, nor label shared images or
+  external volumes as exclusively owned. Record their actual IDs and shared-use
+  disposition. Anonymous volumes and other objects not labelable at creation
+  require positive exact-ID/parent attribution captured before the parent goes.
+- Use label queries for ordinary discovery and reconcile them with the existing
+  run inventory/registry and creation receipts. Keep only the existing compact
+  exact-ID, ownership, retention and recovery records needed to verify cleanup;
+  do not add a second manifest/database/framework or hash the whole host. Labels
+  simplify finding resources but do not replace crash/reboot recovery state,
+  cleanup outcomes, anonymous-volume bindings or worktree/tmp accounting.
+- Never infer removal authority from a label/name alone. Confirm responsible owner,
+  lifecycle, exact identity and current use before removal; stop creators first
+  and verify absence. Missing/conflicting ownership or a failed query is a hold.
+  Preserve legacy readers until their reviewed retirement condition is satisfied.
+
+Apply the rule to new/adapted creator paths. Existing bound tasks retain their
+reviewed label/proof contracts until a safe, explicitly reviewed adoption; do not
+recreate active resources or restart tests merely to relabel them. Label changes
+need focused discovery, foreign/live/persistent protection, failure/interruption
+and cleanup proofs through the existing workflow. Documentation alone is not an
+implementation or cleanup guarantee.
+
 ## Verify before removing anything
 
 Before removing a worktree, branch or in-flight marker, or closing a disposable merge request, verify:

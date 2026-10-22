@@ -222,6 +222,13 @@ never create a second supervisor or retire an active session solely from age.
 
 ## Continuous resource accountability — owner direction, 2026-10-22
 
+Use explicit project/run ownership labels for every newly created exclusively
+owned Docker object that supports them, through Compose and direct commands.
+Set `COMPOSE_PROJECT_NAME` per stack/run; direct creators need equivalent explicit
+labels. Discover by labels, then verify exact identity/lifecycle using the existing
+compact run registry. Preserve anonymous/shared exceptions and reboot recovery;
+no extra cleanup manifest, label-only deletion or relabeling of active bound work.
+
 Cleanup is non-negotiable throughout execution, not only at final acceptance.
 Record every container/image/volume/network, worktree and temporary path in the
 existing task/run inventory at allocation, including nested/partial creations;
