@@ -107,7 +107,7 @@ overlapping lifecycle/management process. Preserve the foundation's renderer
 safety and technical checks and the repository's canonical invariants/decisions.
 Neither skill grants a supervisor role merely by being loaded.
 
-Apply the current local-after-merge policy: supervisor/Duo and MR fast review, then merge, then the existing implementer coordinator automatically owns full local qualification of the exact merged SHA. A ready authorized successor may implement in isolation during that run after merge; predecessor final ACCEPT still gates successor integration. No automatic post-merge integration/release-branch or tag-push pipeline, including lightweight checks; preserve feature MR fast, owner-selected full RC-promotion MR qualification, explicit diagnostic/provider triggers and owner holds.
+Apply the current local-after-merge policy: supervisor/Duo and MR fast review, then merge, then the existing implementer coordinator automatically owns affected local qualification of the exact merged SHA. Full local runs on the integration tip are owner-requested or supervisor-recommended; record the reason and freeze the observed tip. Explicit technically justified full-run requirements remain. A ready authorized successor may implement in isolation during that run after merge; predecessor final ACCEPT still gates successor integration. No automatic post-merge integration/release-branch or tag-push pipeline, including lightweight checks; preserve feature MR fast, owner-selected full RC-promotion MR qualification, explicit diagnostic/provider triggers and owner holds.
 
 ## Supervise the next authorized action
 
@@ -128,7 +128,7 @@ repository's rule or [portable policy](../sdlc-management/references/roles-lifec
 
 After reviewed predecessor source is merged, reassess the provisional Plan against that exact integration.
 Record/relay release for isolated implementation once Plan/input/scope, owner-decision, budget and resource gates
-close; it may overlap predecessor post-merge local full qualification/closeout without another routine owner prompt. Final predecessor
+close; it may overlap predecessor post-merge affected local qualification/closeout without another routine owner prompt. Final predecessor
 ACCEPT still gates successor integration/final acceptance. Material changes need bounded updates/review; pause
 affected work for unresolved security/architecture/contracts or failed qualification, preserving unaffected work.
 The predecessor implementation owner keeps its staging repairs/ledger in parallel with successor work; do not

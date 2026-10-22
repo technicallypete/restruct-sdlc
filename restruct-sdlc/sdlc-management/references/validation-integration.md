@@ -2,9 +2,11 @@
 
 ## Post-merge qualification runs locally
 
-Default sequence for implementation MRs: focused checks and current hosted fast/supervisor/Duo review → authorized merge → full local qualification on the exact merged integration SHA. The existing implementer coordinator must automatically launch, own and track that full-profile run; no extra owner command, new persistent coordinator or full pre-merge gate. Preserve immutable inputs, real logs/exit/timings, complete failure disposition and cleanup. A busy local harness queues the batch visibly; it must not silently disappear or overlap conflicting resources.
+Default sequence for implementation MRs: focused pre-merge checks and current hosted fast/supervisor/Duo review → authorized merge → affected local batches/suites on the exact merged integration SHA. The existing implementer coordinator automatically launches, owns and tracks those selected checks; no extra owner command or full pre-merge gate. Select from the actual change and integration delta, including affected dependencies, shared fixtures, migrations, disabled variants and security boundaries. Record executable selectors and coverage rationale in the existing Plan/Result; preserve immutable inputs, actual outcomes and cleanup. Final Goal ACCEPT requires that attributable affected coverage and the other Goal gates, rather than a blanket full run per feature.
 
-Automatic integration/release-branch post-merge and tag-push pipelines are disabled, including lightweight checks. Staging MRs retain hosted fast checks; owner-selected RC promotion MRs require complete hosted release qualification. Preserve separately authorized diagnostic/provider schedule/web/API runs. Final Goal ACCEPT remains pending until local full coverage and other Goal gates clear. Ready authorized successor implementation may overlap the local run after predecessor merge, in isolation with shared locks respected. Predecessor final ACCEPT gates successor integration/final acceptance; its own owner retains repairs. Preserve explicit phase/owner holds, documentation-only suppression and low-risk exemptions. This replaces the earlier pre-merge/unmerged-successor default.
+Run full local qualification on the integration branch tip when the owner requests it **or the supervisor recommends it**, recording the reason and freezing the exact observed tip for the run. Full staging runs and full hosted RC-promotion runs provide broader opportunities to find gaps in feature selection; unexecuted checks are never reported as passing. Ordinary feature MRs retain hosted fast checks; RC promotion MRs retain required full hosted qualification. Automatic integration/release-branch post-merge and tag-push pipelines remain disabled, including lightweight checks; separately authorized diagnostic/provider runs remain distinct.
+
+After a failure, rerun the failed checks and checks affected by the fix, reusing attributable unchanged passes. A broad local selection needs a concrete coverage reason; explicit technically justified full-run requirements remain binding. Reconcile active work at a safe boundary without restarting running batches or rewriting approved snapshots. Ready authorized successor implementation may overlap post-merge checks in isolation, respecting resource reservations; predecessor final ACCEPT still gates successor integration/final acceptance. Preserve owner holds, manual/security gates, documentation-only exemptions and failure history. This supersedes the blanket full-local-run-after-every-feature default.
 
 ## Owner mandate and stop bounds
 
@@ -33,7 +35,7 @@ stack or repeat predecessor validation merely to write the next Plan.
 ## Reassessment and execution release
 
 After reviewed predecessor source is merged, automatically reassess the
-provisional Plan; permit isolated implementation during its local full qualification using [the release policy](roles-lifecycle.md#automatic-reassessment-and-execution-release).
+provisional Plan; permit isolated implementation during its affected local qualification using [the release policy](roles-lifecycle.md#automatic-reassessment-and-execution-release).
 Material Plan changes require bounded implementer updates and review; unchanged
 design requires reconciliation only. Verify every execution gate and record/
 relay the supervisor release before work, without another routine owner prompt.
@@ -170,7 +172,7 @@ blocked or skipped, never passing.
 implementation → reconcile → focused checks → **required manual tests and operator feedback** → resolve findings
 and repeat affected checks → reconcile again → push and open the merge request → hosted fast checks and required
 supervisor/Duo review → authorized merge → final qualification at the configured placement. Under the default
-`local-after-merge` placement, the coordinator runs full local qualification on the exact merged integration SHA;
+`local-after-merge` placement, the coordinator runs affected local batches/suites on the exact merged integration SHA;
 it is not a full pre-MR gate. An adopting owner may explicitly select another placement in the repository's
 parameters. Final qualification never starts while required feedback is pending. Evidence is reused only for
 unchanged relevant content and inputs, with recorded provenance; a changed commit SHA alone does not demand an
@@ -196,7 +198,7 @@ unchanged full rerun.
 
 | Option | Values | Meaning |
 |---|---|---|
-| `FINAL_VALIDATION_PLACEMENT` | `local-after-merge` (default) | Fast/supervisor/Duo review, then merge; existing coordinator automatically owns full local qualification of the exact integrated SHA. No automatic post-merge cloud pipeline; staging MR checks and explicitly configured release/diagnostic qualification remain. |
+| `FINAL_VALIDATION_PLACEMENT` | `local-after-merge` (default) | Fast/supervisor/Duo review, then merge; existing coordinator automatically owns affected local qualification of the exact integrated SHA. Full local runs on the integration tip are owner-requested or supervisor-recommended. No automatic post-merge cloud pipeline; staging MR checks and explicitly configured release/diagnostic qualification remain. |
 | | `mr-hosted` | Explicit adopting-owner alternative: full coverage hosted before merge. |
 | | `local-before-mr` | Legacy explicitly selected alternative; not the current post-merge default. |
 | `CANCELED_PIPELINE_SATISFIES` | `false` (default) | Final validation needs `success`. |
@@ -213,7 +215,7 @@ glab mr create --source-branch TEMP_BRANCH --target-branch INTEGRATION_BRANCH \
   --title "TITLE" --description "Evidence: see the Goal Result." --remove-source-branch --yes
 glab mr view MR_IID --comments                                    # automated review findings before merge
 glab mr merge MR_IID --auto-merge --sha REVIEWED_SHA --remove-source-branch --yes # when owner policy authorizes
-git fetch origin INTEGRATION_BRANCH                              # freeze the merged SHA for coordinator-owned local full qualification
+git fetch origin INTEGRATION_BRANCH                              # freeze the merged SHA for coordinator-owned affected local qualification
 glab mr create --source-branch INTEGRATION_BRANCH --target-branch RELEASE_BRANCH --title "Promote"
 ```
 

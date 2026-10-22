@@ -27,6 +27,8 @@ After reviewed predecessor integration, release isolated implementation once sta
 
 ## Validation and closeout defaults
 
+Feature MRs retain hosted fast checks and review; after merge the coordinator runs affected local batches/suites on the exact merged SHA. Full local integration-tip runs are owner-requested or supervisor-recommended, with their source frozen and reason recorded. Full hosted RC promotion runs remain required. These two broader checkpoints can reveal gaps in feature selection; they do not turn unexecuted checks into passes. Preserve explicit technically justified full-run requirements and all acceptance/cleanup gates.
+
 Validation follows [Git-first provenance and proportionate coverage](validation-integration.md): assess target deltas before batches, reconcile relevant/unknown changes and always reconcile before final/MR. Use [focused executable selections](validation-integration.md#focused-selection-before-the-first-run); broad local exceptions need a technical reason before launch. Retain required application/security/hosted checks. Existing approved bindings remain in force until explicitly amended.
 
 After verified terminal closeout, retain compact attributable evidence and purge redundant task-owned local validation output by default; protect active inputs and session archives. Default durable proof to Git records and CI artifacts; local raw evidence is temporary. Purge duplicate downloads and closed-task bulk; explicit necessary-proof holds name a release condition. Record resource ownership at creation and use [bounded routine cleanup](closeout-risks.md#bounded-routine-cleanup): one scoped pass, a compact receipt and individual holds instead of another verification campaign.

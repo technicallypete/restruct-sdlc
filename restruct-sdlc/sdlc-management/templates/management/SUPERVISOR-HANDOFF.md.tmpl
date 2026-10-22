@@ -10,7 +10,7 @@ supervisor role, and loading a skill grants nothing.
 - Active release: [`{{RELEASE}}` PROGRESS]({{RELEASE}}/PROGRESS.md).
 - Verified coordinator: `<session name>`, pin status `<status>`, checkout `.claude/worktrees/0-agent-<id>`.
 - Active tasks: `<ID> / <role>` — checkout, branch, phase, attempt usage, next gate.
-- Required post-merge local full qualification: exact merge SHA, owning existing coordinator/runner, queued/running/terminal state, command/evidence/cleanup and resource blocker. Hosted fast PASS is not its completion; successor merge still waits for predecessor final ACCEPT.
+- Required post-merge affected local qualification (or an explicitly justified full run): exact merge SHA, owning existing coordinator/runner, queued/running/terminal state, command/evidence/cleanup and resource blocker. Hosted fast PASS is not its completion; successor merge still waits for predecessor final ACCEPT.
 - Owner mandate/stop record: instruction/reference, roadmap commit and exact
   task membership, start/endpoint (before/after), allowed phases and resume authority.
   Missing mandate does not authorize auto-specification; stops override ready Specs/Plans.

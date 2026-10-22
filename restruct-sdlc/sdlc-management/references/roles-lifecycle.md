@@ -65,7 +65,7 @@ with evidence; deviations (or none); blockers, attempted approaches and the atte
 |---|---|---|
 | Plan approval | The Plan may be implemented within its scope and budget. | Supervisor (ACCEPT on the Plan) |
 | Readiness | The candidate passed its required local evidence and review; it may be integrated. | Supervisor pre-integration review |
-| Conditional integration | Merged to the integration branch with required hosted evidence still pending. | Owner authorizes the merge |
+| Conditional integration | Merged to the integration branch with required post-merge evidence still pending. | Supervisor executes under the adopting owner's recorded merge policy |
 | Final ACCEPT | The Goal is complete; dependents may proceed. | Supervisor, after the required integration disposition |
 
 Only final ACCEPT completes a Goal. A merge, a passing pipeline or a delivered message is never acceptance.
@@ -193,7 +193,7 @@ No new artifact, watcher, scheduler, transport or permission override is added.
 ## Automatic reassessment and execution release
 
 Default: once a predecessor's reviewed source is merged, its existing coordinator
-must automatically launch and own full local qualification of that exact merged
+must automatically launch and own affected local qualification of that exact merged
 revision. Reassess the next authorized task's approved provisional Plan against
 that integration and current Goal/Spec. Isolated implementation may overlap the
 local run and closeout; do not require another owner prompt or wait for final

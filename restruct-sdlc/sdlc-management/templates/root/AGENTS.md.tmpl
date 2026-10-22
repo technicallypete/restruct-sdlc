@@ -2,7 +2,7 @@
 
 ## Coordinator-owned local staging qualification
 
-After focused checks, current hosted fast checks and supervisor/Duo review, merge under existing authority; the existing implementer coordinator must then automatically launch and track the full local qualification command on the exact merged integration SHA. Do not wait for an owner-run command or treat hosted fast PASS as full qualification. Automatic post-merge integration/release-branch and tag-push pipelines are disabled, including lightweight checks. Feature MRs retain hosted fast checks; owner-selected RC promotion MRs carry required full hosted release qualification. Separately authorized diagnostic/provider runs remain distinct. Final acceptance still needs actual local full proof and the Goal's other gates.
+After focused pre-merge checks, hosted fast checks and supervisor/Duo review, merge under existing authority. The existing coordinator automatically runs affected local batches/suites on the exact merged SHA, covering the change and its dependencies; record selectors, results, attribution and cleanup in the existing Plan/Result. Final acceptance requires that coverage and the other Goal gates. Run full local qualification on the integration branch tip when the owner requests it **or the supervisor recommends it**, freezing the observed tip and recording the reason. These staging runs and full hosted RC-promotion runs provide broader regression coverage; unexecuted checks are not passes. Feature MRs retain hosted fast checks. Automatic post-merge and tag-push pipelines remain disabled. Preserve explicit technically justified full-run requirements, resource limits and owner/security/manual gates; apply changed defaults at a safe boundary.
 
 A ready authorized successor may implement in isolation during that post-merge local run. Respect shared locks, exact inputs and predecessor-owned repairs; predecessor final ACCEPT still gates successor integration/final acceptance. Merged-SHA qualification uses its frozen checkout and is not rebased by development-branch fetch/rebase rules. Preserve explicitly exempt documentation-only work.
 
@@ -101,7 +101,7 @@ gates remain; implementation overlap follows the release policy below. See [plan
 
 After reviewed predecessor source is integrated, {{SUPERVISOR_AGENT}} reassesses
 and may release isolated implementation of the next approved task while predecessor
-post-merge local full qualification/closeout runs. Verify Plan/input/scope, owner decisions, other dependencies,
+post-merge affected local qualification/closeout runs. Verify Plan/input/scope, owner decisions, other dependencies,
 budget and resources; record the exact predecessor revision and pending qualification.
 No extra owner prompt. Predecessor final ACCEPT still gates successor integration
 and final acceptance. Material changes require bounded Plan updates/review;
@@ -249,8 +249,8 @@ Follow the [branch workflow](docs/agents/BRANCH-WORKFLOW.md). Before every local
 reconcile unless the documented irrelevant-delta exception applies, and run the environment check
 ({{PRE_BATCH_ENV_CHECK}}). Batches finish, fix, rerun, then advance within each dependency chain; independent safe
 batches may proceed in parallel. Manual feedback precedes final qualification.
-With the default `local-after-merge` placement, the full local suite runs on the exact merged integration SHA; it is
-not a full pre-MR gate. Final validation placement: `{{FINAL_VALIDATION_PLACEMENT}}`; canceled post-merge pipeline satisfies the gate:
+With the default `local-after-merge` placement, affected local suites run on the exact merged integration SHA; full
+local runs on the integration tip are owner-requested or supervisor-recommended, not a routine feature gate. Final validation placement: `{{FINAL_VALIDATION_PLACEMENT}}`; canceled post-merge pipeline satisfies the gate:
 `{{CANCELED_PIPELINE_SATISFIES}}`. Integrate through reviewed merge requests to `{{INTEGRATION_BRANCH}}` with
 `{{MR_TOOL}}`; merge only with owner authorization. Protected branches: {{PROTECTED_BRANCHES}}.
 

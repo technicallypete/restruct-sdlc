@@ -30,7 +30,8 @@ remain complete children of the bundle, with their own instructions, references,
 - **Evidence-based acceptance.** Reviews examine the actual diff and validation evidence. A merge or passing
   test alone does not complete a Goal. Repair records preserve the full failure inventory and its disposition.
 - **Integration and releases.** Parameterized branch and validation rules cover focused checks, review, merges,
-  coordinator-owned local full qualification, release candidates and owner-controlled promotion. The concrete
+  coordinator-owned affected post-merge suites, owner-requested or supervisor-recommended full local staging runs,
+  full hosted RC qualification and owner-controlled promotion. The concrete
   hosted adapter documents GitLab; other providers require explicit adaptation.
 - **Efficient coordination.** Milestone observation, concise updates, bounded context and safe handoffs reduce
   repeated status reads. Supervisors send needed decisions promptly; routine coordinator polling belongs to

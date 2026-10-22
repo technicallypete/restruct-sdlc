@@ -2,7 +2,7 @@
 
 ## Coordinator-owned local staging qualification
 
-After focused checks, current hosted fast checks and supervisor/Duo review, merge under existing authority; the existing implementer coordinator must then automatically launch and track the full local qualification command on the exact merged integration SHA. Do not wait for an owner-run command or treat hosted fast PASS as full qualification. Automatic post-merge integration/release-branch and tag-push pipelines are disabled, including lightweight checks. Feature MRs retain hosted fast checks; owner-selected RC promotion MRs carry required full hosted release qualification. Separately authorized diagnostic/provider runs remain distinct. Final acceptance still needs actual local full proof and the Goal's other gates.
+After focused pre-merge checks, hosted fast checks and supervisor/Duo review, merge under existing authority. The existing coordinator automatically runs affected local batches/suites on the exact merged SHA, covering the change and its dependencies; record selectors, results, attribution and cleanup in the existing Plan/Result. Final acceptance requires that coverage and the other Goal gates. Run full local qualification on the integration branch tip when the owner requests it **or the supervisor recommends it**, freezing the observed tip and recording the reason. These staging runs and full hosted RC-promotion runs provide broader regression coverage; unexecuted checks are not passes. Feature MRs retain hosted fast checks. Automatic post-merge and tag-push pipelines remain disabled. Preserve explicit technically justified full-run requirements, resource limits and owner/security/manual gates; apply changed defaults at a safe boundary.
 
 For every required GitLab MR pipeline, name one monitoring owner and record the
 MR/pipeline ID and immutable source SHA when the MR is opened or the pipeline is
@@ -52,7 +52,7 @@ This does not release implementation. Follow
 
 After [supervisor reassessment/release](.agents/skills/restruct-sdlc/sdlc-management/references/roles-lifecycle.md#automatic-reassessment-and-execution-release)
 closes start gates, begin/resume isolated scoped implementation during predecessor
-post-merge local full qualification without another routine owner prompt. Final predecessor ACCEPT gates
+post-merge affected local qualification without another routine owner prompt. Final predecessor ACCEPT gates
 successor integration/final acceptance. A Plan/merge/green pipeline alone is not
 release; material Plan updates require review and explicit holds remain.
 
