@@ -108,6 +108,27 @@ Use the existing Plan and review, rather than another checklist artifact:
 - Order approved implementation to prove the riskiest end-to-end path and its
   principal denial early, before surrounding features. Use existing fixtures and
   a thin functional slice; no planning-time build/probe or extra test campaign.
+- For nontrivial changes, distinguish settled design decisions from unproven
+  assumptions in the existing Plan. Name the highest-risk assumption, the smallest
+  executable proof and its success/failure criteria; reuse existing evidence when
+  sufficient. Run that proof early in approved implementation before building the
+  surrounding solution. Planning remains inspection-only unless execution was
+  separately authorized; routine changes need no artificial spike or extra gate.
+- Give executable validation selectors, dependency order and independent parallel
+  batches. Estimate implementation effort separately from elapsed build/test time
+  and review/queue waits. Cite available timings or mark estimates/unknowns honestly;
+  identify required resource slots, serial builds and safe overlap. These are compact
+  planning estimates, not guarantees or a new measurement/benchmark campaign.
+- Keep execution inside the approved scope. A material addition needs a bounded
+  delta stating its design, timing, resource, validation and budget effects, with
+  the applicable approval before affected implementation. Defer unrelated extras;
+  do not absorb them silently into an active task or reset its attempt ledger.
+- If an early proof fails or execution materially exceeds the estimate, checkpoint
+  the cause and remaining work in the existing Result. Distinguish coding/rework,
+  validation elapsed time and coordination/waiting using available evidence; mark
+  unavailable timings unknown. Review a bounded correction or justified split
+  rather than repeating the whole Plan or adding more process. Implementation
+  need not take less time than planning; repeated surprises require reassessment.
 - Inventory affected callers, schema/version/count pins and actual executable
   selectors during planning using bounded searches. Include necessary paths in
   the approved touch-list; discovered design/scope gaps still stop affected work
@@ -124,7 +145,7 @@ Use the existing Plan and review, rather than another checklist artifact:
   or delay an urgent security hold waiting for unrelated review completion.
 
 Apply these as improvements to existing execution, not a new approval stage,
-mandatory phase-agent scheme, monitoring system, metric/reporting requirement or
+mandatory phase-agent scheme, monitoring system, separate timing report or
 framework. For active work, assess only the remaining delta at a safe boundary;
 do not restart completed planning or running validation to satisfy this guidance.
 

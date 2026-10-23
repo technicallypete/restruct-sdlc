@@ -349,6 +349,15 @@ Apply [early risk review and short correction loops](.agents/skills/restruct-sdl
 inside existing planning/review: changed trust boundaries, risky slice, caller/pin
 inventory and consolidated corrections. No extra stage, framework or active-work restart.
 
+Use the existing Plan to separate settled decisions from unproven assumptions and
+schedule the smallest proof of the highest-risk assumption early in approved
+implementation. Estimate coding effort separately from build/test elapsed time
+and review/queue waits; give executable selectors, dependencies and resource
+reservations, using available timings or honest estimates/unknowns. Material scope
+additions need a bounded impact delta and applicable approval. A failed proof or
+material overrun needs a compact Result checkpoint and bounded correction; apply
+only to remaining work at a safe boundary, without a new reporting framework.
+
 For [coordinator checkpoints and retirement](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#coordinator-checkpoints-and-retirement),
 use 150k active context for checkpointing and 200k for compaction-or-handoff
 assessment, not a hard kill. Prefer supported compaction. Replace only with

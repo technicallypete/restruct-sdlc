@@ -7,6 +7,10 @@ Revision r1, YYYY-MM-DD. Author: {{IMPLEMENTER_AGENT}}. Status: proposed for {{S
 
 ## 1. Approach
 
+State settled decisions and remaining assumptions. For a nontrivial change, identify the highest-risk unproven
+assumption, the smallest executable proof and its success/failure criteria; cite sufficient existing proof when
+available. Schedule it early in approved implementation. Planning authorizes no runtime probe by itself.
+
 ## 2. Source binding and extra inputs
 
 Committed inputs are bound by Git commit and path. List only relevant non-Git inputs or dirty reviewed changes
@@ -37,6 +41,10 @@ changes; record any permitted irrelevant-delta deferral under the validation pol
 | Batch | Runs | Evidence |
 |---|---|---|
 
+Give executable selectors, dependency order, safe parallel batches and resource reservations/serial builds.
+Estimate implementation effort separately from elapsed build/test time and review/queue waits, citing known
+timings or labeling estimates/unknowns. Use existing evidence; no extra timing campaign or separate report.
+
 ## 7. Delegation
 
 Decision, file ownership, worker names (`<task-id>-agent-<id>-<role>`), integration responsibility.
@@ -49,5 +57,9 @@ Decision, file ownership, worker names (`<task-id>-agent-<id>-<role>`), integrat
 |---|---|---|
 
 ## 10. Risks and escalations
+
+For material scope additions, record a bounded delta with design, timing, resource, validation and budget effects
+and obtain the applicable approval before affected implementation. Defer unrelated additions. A failed early
+proof or material estimate overrun triggers a compact checkpoint/correction, not an automatic Plan rewrite.
 
 ## 11. Revision history
