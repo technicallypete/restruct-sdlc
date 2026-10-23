@@ -62,11 +62,11 @@ preserve assertions, record focused evidence and continue without another approv
 round. Scope/security/contracts, unapproved schema/constraints and native/budget
 stops remain; no change to final review or required CI.
 
-For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.
+For ordinary replies to direct owner prompts, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks for supervisor relay. Exception: an owner decision that changes active work must immediately emit a `decision` footer, including when the same message answers the owner. Do not wait for another turn, worker handback or review-ready commit. Autonomous handoffs and required reviews, failure records and blockers still notify; existing legacy-prose/native-question detection is unchanged.
 
 As coordinator, finish autonomous supervisor handoffs with a plain final status line:
 `COORDINATOR_STATUS: working | TASK-ID | Brief current status.`
-Pending decisions (`question`) and review handoffs (`review-ready`) take priority over
+Owner-decision updates (`decision`), pending questions (`question`) and review handoffs (`review-ready`) take priority over
 another task's routine work; name the actionable task. Use `working` only when no handoff is pending.
 Choose the truthful class and follow the complete
 [response convention](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#coordinator-final-status-line).

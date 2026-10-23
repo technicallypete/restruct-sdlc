@@ -387,11 +387,14 @@ If the inbox is incompatible or unavailable, use the supported attach/input inte
 
 ## Coordinator milestone observer (opt-in here; an adopting repository may default-enable it after verified bindings)
 
-For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.
+For ordinary replies to direct owner prompts, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks for supervisor relay. Exception: an owner decision that changes active work must immediately emit a `decision` footer, including when the same message answers the owner. Do not wait for another turn, worker handback or review-ready commit. Autonomous handoffs and required reviews, failure records and blockers still notify; existing legacy-prose/native-question detection is unchanged.
 
 **Coordinator response contract:** finish autonomous supervisor handoffs with one plain final line:
 `COORDINATOR_STATUS: review-ready | G008 | Plan ready for supervisor review.`
-Classes are `working`, `review-ready`, `blocked`, `question`, `failed`, `completed`.
+Classes are `working`, `decision`, `review-ready`, `blocked`, `question`, `failed`, `completed`.
+Use `decision` immediately for direct owner changes to active work, with a source
+reference and the supervisor reconciliation needed; keep ongoing work in the body.
+The receiver verifies the source; this report adds no acknowledgment gate or authority.
 Use the actual nonsecret task ID and a nonempty summary of at most 240 characters
 without `|`. Routine acknowledgments/progress and recovery use `working`, which
 queues no milestone. Plans/Results/bindings awaiting review use `review-ready`;
@@ -407,7 +410,7 @@ other legacy prose remains detectable when no valid final marker exists.
 Existing source/echo exclusions, deduplication and authority boundaries remain.
 
 [scripts/watch.py](scripts/watch.py) notifies one existing Codex supervisor thread of the verified Claude
-coordinator's milestones: failure, review-ready, blocked or question, waiting, completed. Explicit decision/approval
+coordinator's milestones: decision, failure, review-ready, blocked or question, waiting, completed. Explicit decision/approval
 requests qualify as questions; absent, expected or explicitly resolved failures do not qualify as failure alerts.
 Detection uses bounded text patterns, not AI inference or direct CI polling. It is a stdlib polling loop (default
 30 seconds) with no model inference. It belongs to the repository's coordinator–supervisor pair, not to one task:

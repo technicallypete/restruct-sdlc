@@ -172,7 +172,7 @@ standard `/proc`/`lsof` inspection and the helper's existing `status`.
 
 ### Coordinator final status line
 
-For a reply to a direct owner prompt, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks to relay that reply to the supervisor. This exception applies to the owner-facing reply only: autonomous supervisor handoffs still use the status marker, and required review submissions, failure records and blocker escalation remain due. Omitting a footer does not guarantee observer silence; existing legacy-prose/native-question detection is unchanged.
+For ordinary replies to direct owner prompts, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks for supervisor relay. Exception: an owner decision that changes active work must immediately emit a `decision` footer, including when the same message answers the owner. Do not wait for another turn, worker handback or review-ready commit. Autonomous handoffs and required reviews, failure records and blockers still notify; existing legacy-prose/native-question detection is unchanged.
 
 Finish autonomous coordinator-to-supervisor handoffs with one plain final line (outside Markdown/code blocks):
 
@@ -185,6 +185,7 @@ This is an authoring limit, not a notification rejection rule: the observer clas
 its existing transcript-row limit, then truncates the delivered excerpt to 240 characters. Oversized summaries
 must not silently lose their notification or hide pending handoffs beyond the excerpt cutoff.
 Classes: `working` for routine progress, acknowledgment or recovery (no milestone notice);
+`decision` for a new direct owner decision affecting active scope, priority, inputs, validation, gates or authority;
 `review-ready` for a Plan, Result or execution binding needing review; `blocked` for an unavailable
 prerequisite or native refusal; `question` for a specific supervisor/owner decision; `failed` for a
 new validation failure needing attention; `completed` for verified terminal closeout, never self-acceptance.
@@ -195,6 +196,24 @@ The observer also catches explicit pending decision/review wording in a `working
 it does not scan historical body prose through a valid `working` marker. This fallback prevents a mixed-task
 summary from hiding a handoff; it does not replace truthful classification.
 Report failed history honestly in the body without labelling a recovery instruction as a new failure.
+
+Emit `decision` as soon as a direct owner instruction changes active work; do not
+hide it under `working` or wait for a review-ready commit. In the existing task
+record/body, include the instruction, source message ID/time or committed decision
+reference, what prior assumption/acceptance it supersedes and the supervisor's
+needed reconciliation. Use a compact final marker, for example:
+
+```text
+COORDINATOR_STATUS: decision | TASK-ID | Owner changed validation; ref owner-message-id; supervisor reconcile the current gate.
+```
+
+This event reports a decision already made; `question` still requests a decision,
+and `review-ready` submits an actual artifact. Record the current working state
+in the body. Send the decision nonblocking and continue within actual authority;
+acknowledgment is not a new gate. The supervisor verifies the source, reconciles
+Goal/Spec/Plan/progress and stale assumptions, then sends any needed action without
+polling. The notice itself grants no authority and bypasses no native gate.
+
 The companion observer otherwise prefers a valid final marker; missing/invalid markers retain legacy prose detection.
 Native question detection and source/echo exclusions remain. Markers are reports, not authority or proof;
 the supervisor verifies records before acting. Keep parsing/tests in `claude-session-handoff`.

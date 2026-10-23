@@ -209,7 +209,7 @@ class NotificationSources(Base):
                   "(outside 43-pattern list); request exact path for one guarded UpdateBranding call; "
                   "WIP 66594af6 (Result deb9bc08); fresh successor after disposition")
         self.assertEqual(len(missed), 241)
-        for category in ("question", "review-ready", "blocked", "failed", "completed"):
+        for category in ("decision", "question", "review-ready", "blocked", "failed", "completed"):
             for summary in ("x" * 240, missed, "x" * 8192):
                 with self.subTest(category=category, length=len(summary)):
                     row = self.row("assistant", f"COORDINATOR_STATUS: {category} | G017 | {summary}")
@@ -221,6 +221,29 @@ class NotificationSources(Base):
                     self.assertEqual(self.poll()["queue_calls"], 1)
                     self.assertIn(f"milestone ({category}", self.codex.queues()[-1][4])
                     self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_owner_decision_notifies_while_work_continues(self):
+        self.bind()
+        self.poll()
+        marker = ("COORDINATOR_STATUS: decision | G066 | Owner requires N<=TOTAL; "
+                  "ref owner-message-1; source acceptance must follow the fixed head.")
+        row = self.row("assistant", "The existing writer is still working.\n" + marker)
+        self.append(row)
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        notice = self.codex.queues()[-1][4]
+        self.assertIn("milestone (decision", notice)
+        self.assertIn("owner-message-1", notice)
+        self.assertIn("no approval or task authority", notice)
+        self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_decision_marker_keeps_source_and_echo_boundaries(self):
+        marker = "COORDINATOR_STATUS: decision | G066 | Owner changed scope; ref owner-message-1."
+        for row in (self.row("user", marker), self.row("assistant", marker, sidechain=True),
+                    self.row("assistant", "[handoff-id: echo]\n" + marker),
+                    self.row("assistant", "> " + marker),
+                    self.row("assistant", "```text\n" + marker + "\n```")):
+            with self.subTest(row=row):
+                self.assertIsNone(watch.milestone(json.loads(row)))
 
     def test_oversized_working_summary_classifies_tail_before_truncation(self):
         self.bind()

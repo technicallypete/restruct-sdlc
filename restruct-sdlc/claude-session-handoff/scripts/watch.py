@@ -50,7 +50,7 @@ MAX_KEYS = 2000
 NOTICE_MARK = "[observer-notice:"
 ECHO_MARKS = (NOTICE_MARK, "[handoff-id:")
 STATUS_MARKER = re.compile(
-    r"COORDINATOR_STATUS: (working|review-ready|blocked|question|failed|completed)"
+    r"COORDINATOR_STATUS: (working|decision|review-ready|blocked|question|failed|completed)"
     r" \| ([A-Za-z0-9][A-Za-z0-9_.-]{0,63}) \| ([^\r\n|]+)")
 # A mixed-task working summary can itself report an actionable handoff. Inspect only that bounded summary,
 # not historical body prose; keep the existing source/echo and native-question checks ahead of this fallback.
