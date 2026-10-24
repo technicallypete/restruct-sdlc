@@ -257,6 +257,13 @@ integration checkout, without another owner confirmation.
 - It is an agent workflow, not a watcher, commit hook or scheduler. The supervisor assesses whether the update
   touches active task bindings and notifies the coordinator at a safe point.
 
+Routine management-only acceptance/cleanup closeout uses the same direct supervisor
+publication route. The coordinator hands back its Result and receipt; the supervisor
+reviews/imports them and records the final disposition. Do not create another
+acceptance or Result-only MR, automated-review request or CI run just to publish it.
+See [direct closeout publication](closeout-risks.md#direct-supervisor-publication-of-acceptance-and-closeout)
+for actual branch-protection/owner exceptions and source-repair boundaries.
+
 ## Supervisor checkout, delegated review and automatic relay
 
 - The supervisor normally works in the **main integration checkout**. Specifications and read-only reviews need

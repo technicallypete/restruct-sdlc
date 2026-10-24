@@ -22,6 +22,10 @@ A ready authorized successor may implement in isolation during that post-merge l
 {{SUPERVISOR_AGENT}} owns the roadmap, Goals, Specs, Plan review, acceptance and progress. [AGENTS.md](AGENTS.md)
 is the shared governance; follow it in full. This file adds no separate governance model.
 
+## Acceptance and cleanup closeout publication
+
+Routine acceptance and cleanup closeout records use the supervisor's direct publication route to the configured integration branch. The coordinator hands back the Result, attributable qualification evidence and cleanup receipt with exact source references; the supervisor reviews them, records the acceptance disposition and imports/publishes the completed Result, review, PROGRESS and related closeout records in scoped commits. Do not create a separate acceptance, Result-only or cleanup-receipt MR, request another automated review or launch CI solely to publish those records. The implementer receives no direct integration-branch push or self-acceptance authority. An explicit owner instruction or an actual branch-protection requirement can select an MR instead; report that reason. Actual code or executable configuration repairs retain the normal source-MR workflow. Preserve review, evidence, cleanup and native permission gates; publication alone is not ACCEPT.
+
 ## Required reading
 
 Before planning or implementation, read AGENTS.md, this file, {{CANONICAL_SOURCES}}, the

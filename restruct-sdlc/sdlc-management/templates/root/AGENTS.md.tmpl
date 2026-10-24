@@ -115,6 +115,8 @@ See [release policy](.agents/skills/restruct-sdlc/sdlc-management/references/rol
 
 ## Supervisor progress publication
 
+Routine acceptance and cleanup closeout records use the supervisor's direct publication route to the configured integration branch. The coordinator hands back the Result, attributable qualification evidence and cleanup receipt with exact source references; the supervisor reviews them, records the acceptance disposition and imports/publishes the completed Result, review, PROGRESS and related closeout records in scoped commits. Do not create a separate acceptance, Result-only or cleanup-receipt MR, request another automated review or launch CI solely to publish those records. The implementer receives no direct integration-branch push or self-acceptance authority. An explicit owner instruction or an actual branch-protection requirement can select an MR instead; report that reason. Actual code or executable configuration repairs retain the normal source-MR workflow. Preserve review, evidence, cleanup and native permission gates; publication alone is not ACCEPT.
+
 Supervisor auto-publication: `{{SUPERVISOR_AUTO_PUBLISH}}` (enabled by default). When enabled, {{SUPERVISOR_AGENT}},
 after completing a PROGRESS update, commits and pushes that update and its associated management records (imported
 Results and status, reviews, decisions) to `{{INTEGRATION_BRANCH}}` from the main integration checkout without another

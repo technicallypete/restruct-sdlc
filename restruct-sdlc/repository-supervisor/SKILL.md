@@ -114,6 +114,10 @@ review only affected product checks and control cases. A shared harness pathname
 or aggregate PASS row is not a broad-coverage reason. Apply
 [feature control selection](../sdlc-management/references/validation-integration.md#ordinary-feature-registration-does-not-require-full-ci-controls).
 
+Publish reviewed management-only acceptance/cleanup handbacks directly under the
+integration-branch publication authority; do not require another Result-only MR,
+automated review or CI run. Follow [closeout publication](../sdlc-management/references/closeout-risks.md#direct-supervisor-publication-of-acceptance-and-closeout).
+
 ## Supervise the next authorized action
 
 Before any automatic transition, check recorded owner specification/work/phase/stop bounds. Missing Specs stop

@@ -3,6 +3,36 @@
 Resource tracking and cleanup run throughout execution. Final ACCEPT is an additional cleanup checkpoint,
 not the first one. Closeout removes temporary resources without losing unique work, live ownership or history.
 
+## Direct supervisor publication of acceptance and closeout
+
+The default route for management-only acceptance, post-merge evidence and cleanup
+closeout records is supervisor review followed by direct publication to the
+configured integration branch under its publication authority. Do not open a new
+acceptance, Result-only or cleanup-receipt MR as another routine delivery gate.
+
+The coordinator prepares an append-only Result and cleanup receipt on its existing
+task branch/checkpoint or through the existing handback mechanism. Provide exact
+commit/path or content binding, attributable evidence, and actual removed/held/
+unresolved resource outcomes. The supervisor verifies the submitted bytes and
+evidence, requests any bounded corrections through the same handback, and imports
+the reviewed Result with history preserved. It records the final disposition only
+when required gates are satisfied, updates PROGRESS and related closeout records,
+and commits/pushes the completed owned paths from the integration checkout.
+
+This route adds no Result-only MR, automated-review request, CI or local validation
+run solely for recording acceptance/cleanup. Documentation checks and review still
+apply; the coordinator cannot self-accept or push directly to the integration
+branch. Continue authorized cleanup while reporting its true state; an incomplete
+receipt is not a completed cleanup or an acceptance waiver. Keep private logs,
+credentials, raw secret-bearing evidence and unrelated changes out of publication.
+
+An explicit owner instruction or actual protected-branch requirement may require
+an MR for these records; state that exception instead of assuming it. Report native
+refusals without bypassing them. Actual source/executable configuration repairs
+found during closeout follow the ordinary source-MR review and validation route;
+management publication never grants direct application integration authority.
+Existing completed closeout MRs and their history remain intact.
+
 ## Continuous resource accountability — mandatory
 
 Owner direction, 2026-10-22: cleanup is non-negotiable and tracked throughout

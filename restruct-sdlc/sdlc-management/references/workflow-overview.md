@@ -36,6 +36,11 @@ a shared harness pathname or aggregate PASS row does not justify every control.
 
 Validation follows [Git-first provenance and proportionate coverage](validation-integration.md): assess target deltas before batches, reconcile relevant/unknown changes and always reconcile before final/MR. Use [focused executable selections](validation-integration.md#focused-selection-before-the-first-run); broad local exceptions need a technical reason before launch. Retain required application/security/hosted checks. Existing approved bindings remain in force until explicitly amended.
 
+For management-only acceptance/cleanup records, use [direct supervisor publication](closeout-risks.md#direct-supervisor-publication-of-acceptance-and-closeout):
+coordinator handback → supervisor review/import → scoped integration-branch commit.
+Do not add a Result-only MR, automated review or test run solely for closeout.
+Actual source repairs and explicit owner/protected-branch exceptions retain their gates.
+
 After verified terminal closeout, retain compact attributable evidence and purge redundant task-owned local validation output by default; protect active inputs and session archives. Default durable proof to Git records and CI artifacts; local raw evidence is temporary. Purge duplicate downloads and closed-task bulk; explicit necessary-proof holds name a release condition. Record resource ownership at creation and use [bounded routine cleanup](closeout-risks.md#bounded-routine-cleanup): one scoped pass, a compact receipt and individual holds instead of another verification campaign.
 
 Every epic closeout requires a supervisor-owned [PROGRESS compaction checkpoint](closeout-risks.md#progress-compaction): archive superseded updates, record none needed, or document an active-binding hold and next safe checkpoint. Preserve current status and linked history; this housekeeping alone requires no test rerun.
