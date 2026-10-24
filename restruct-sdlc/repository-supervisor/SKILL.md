@@ -109,6 +109,11 @@ Neither skill grants a supervisor role merely by being loaded.
 
 Apply the current local-after-merge policy: supervisor/Duo and MR fast review, then merge, then the existing implementer coordinator automatically owns affected local qualification of the exact merged SHA. Full local runs on the integration tip are owner-requested or supervisor-recommended; record the reason and freeze the observed tip. Explicit technically justified full-run requirements remain. A ready authorized successor may implement in isolation during that run after merge; predecessor final ACCEPT still gates successor integration. No automatic post-merge integration/release-branch or tag-push pipeline, including lightweight checks; preserve feature MR fast, owner-selected full RC-promotion MR qualification, explicit diagnostic/provider triggers and owner holds.
 
+For ordinary feature registration/schema/count-pin edits, exclude full CI controls;
+review only affected product checks and control cases. A shared harness pathname
+or aggregate PASS row is not a broad-coverage reason. Apply
+[feature control selection](../sdlc-management/references/validation-integration.md#ordinary-feature-registration-does-not-require-full-ci-controls).
+
 ## Supervise the next authorized action
 
 Before any automatic transition, check recorded owner specification/work/phase/stop bounds. Missing Specs stop

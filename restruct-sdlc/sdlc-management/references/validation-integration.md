@@ -8,6 +8,39 @@ Run full local qualification on the integration branch tip when the owner reques
 
 After a failure, rerun the failed checks and checks affected by the fix, reusing attributable unchanged passes. A broad local selection needs a concrete coverage reason; explicit technically justified full-run requirements remain binding. Reconcile active work at a safe boundary without restarting running batches or rewriting approved snapshots. Ready authorized successor implementation may overlap post-merge checks in isolation, respecting resource reservations; predecessor final ACCEPT still gates successor integration/final acceptance. Preserve owner holds, manual/security gates, documentation-only exemptions and failure history. This supersedes the blanket full-local-run-after-every-feature default.
 
+## Ordinary feature registration does not require full CI controls
+
+Routine product work may update product-specific assertions and test registration
+inside shared validation scripts: permitted routes/imports, migration versions,
+schema/catalog inventories, browser scenario matrices, test invocations, required
+check IDs and expected totals in control fixtures. These edits do not by themselves
+change the generic runner's execution behavior or invalidate every control.
+
+For such changes, exclude the full `ci-controls` suite from ordinary feature
+qualification. Run the affected application/security/migration checks and the
+specific control cases whose inputs, assertions or expected totals changed, using
+the existing focused selector. Record the changed guarantee and exact selector in
+the existing Plan/Result. Reuse attributable unaffected passes. A harness pathname,
+a copied fixture, mechanical registration/count-pin changes, or a missing full-suite
+PASS row is not justification for selecting every control.
+
+Changes to shared execution semantics (dispatch/profile selection, gate enforcement,
+process supervision, isolation, resource accounting/cleanup or evidence handling)
+require their affected control cases. The supervisor may select the whole control
+suite only with a concrete recorded dependency/coverage reason explaining why the
+focused set is insufficient. Do not replace that analysis with "harness changed".
+An explicitly requested/recommended full staging run and required full hosted RC
+qualification retain their complete coverage.
+
+Required-check accounting does not create a new coverage requirement merely to
+obtain an aggregate PASS: select checks from actual impact first. In adapters where
+`B-CI-CONTROLS` represents the entire suite, do not select that umbrella suite just
+to satisfy its own row; preserve focused control evidence in the existing Result.
+Report an unexecuted suite as unexecuted, never as PASS. A genuine adapter limit
+needs a bounded stated remedy/disposition; it must not silently force every feature
+through the entire control suite. Apply this rule before the first qualification
+run and when reviewing remaining selections at a safe boundary.
+
 ## Owner mandate and stop bounds
 
 Check [recorded mandates/stops](roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries)
