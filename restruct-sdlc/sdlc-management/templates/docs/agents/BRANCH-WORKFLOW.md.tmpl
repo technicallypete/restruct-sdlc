@@ -74,7 +74,10 @@ Do not expand production behavior/constraints, skip CI or change merge gates.
 3. Environment check: {{PRE_BATCH_ENV_CHECK}}. If it fails, do not launch.
 4. Record target and candidate SHAs and binding provenance.
 
-Fast checks: `{{FAST_CHECK_COMMAND}}`. Full qualification: `{{FULL_CHECK_COMMAND}}`. Independent, dependency-ready
+Fast checks: `{{FAST_CHECK_COMMAND}}`. Full qualification: `{{FULL_CHECK_COMMAND}}`.
+Implementation is high priority by default; planning allocates the maximum useful independent implementation
+workers and kickoff follows the accepted allocation after readiness checks. Owner-designated lower-priority
+work may use fewer workers. Independent, dependency-ready
 batches run in parallel by default when ownership, inputs and resource reservations permit. Finish, fix, rerun,
 advance within each dependency chain; a failure holds its batch and dependents, not unrelated safe work.
 Preserve task-specific sequencing, frozen sources and resource limits. See [parallel scheduling](../../.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#default-to-safe-parallel-work-lanes).

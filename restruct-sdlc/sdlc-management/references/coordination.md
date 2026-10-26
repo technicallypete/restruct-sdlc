@@ -25,13 +25,35 @@ tools serve.
 
 ## Default to safe parallel work lanes
 
-At planning and each dispatch boundary, the coordinator/supervisor should identify
-independent work that can proceed in parallel and start the earliest ready lanes
-without waiting on unrelated work. A Plan should make meaningful lane dependencies,
-owners, writable paths, input SHAs, expected evidence and shared-resource reservations
-visible; do not split work merely to create more agents or duplicate one artifact's
-writer. Keep one accountable task owner and one writer per artifact; use approved
-delegation and separate owned checkouts or read-only review for concurrent work.
+Implementation tasks are **high priority by default**. The planner must allocate
+as many useful, independent parallel **implementation worker agents** as the
+approved scope, dependencies, exclusive write ownership, native capacity,
+resources and remaining budget permit. This allocation is part of planning;
+the planner itself may be a single agent. Parallel validation alone does not
+replace allocating implementation workers where independent source work exists.
+
+Use the existing Plan's delegation and sequence sections to record worker counts
+by phase, each worker's responsibility and writable paths, input SHAs, dependency
+order, integration owner, evidence and shared-resource reservations. State a
+concrete dependency, ownership or capacity reason for a high-priority task's
+single-worker allocation. Do not manufacture work or duplicate an artifact's
+writer to fill slots. Keep one accountable task owner and one writer per artifact;
+use approved delegation and separate owned checkouts for concurrent writes.
+
+At implementation kickoff, check actual source ownership, dependency readiness,
+native slots and resource reservations, then dispatch all ready workers specified
+in the accepted Plan. Kickoff follows the accepted allocation and sequence;
+it is not a fresh planning phase or a reason to reduce workers for convenience.
+As dependencies clear, dispatch the next planned workers without another routine
+owner prompt. Record an actual allocation change and its concrete reason in the
+existing Result; material scope, design, budget or gate changes retain the normal
+review/escalation procedure.
+
+Owner-designated lower-priority work may use fewer or a single implementation
+worker and yields capacity to the current high-priority implementation. Normally
+concentrate available workers within that task. Concurrent Goals retain existing
+authorization, dependency and isolation gates; supervisor management updates may
+proceed. Priority grants no new task, phase or resource authority.
 
 Parallelize only when dependencies are closed, edits do not conflict, each lane has
 an attributable baseline/result, and locks, resource limits, budgets and owner stops
@@ -43,6 +65,12 @@ browser runs share the configured test pool; image builds remain sequential. A
 failure blocks its lane and dependent work, not unrelated safe lanes. The lane's
 finish → diagnose/fix → rerun → advance gates still apply; parallel work never waives
 coverage, review, integration, acceptance or a failed required gate.
+
+For active tasks, apply the stronger allocation rule at the next safe handoff.
+Preserve accepted Plan/history bytes, running workers and frozen evidence; record
+any needed delegation reconciliation in the existing Plan/Result before affected
+dispatch. Reclaim completed workers at handback so their capacity is available.
+Use existing coordinator facilities and records rather than adding a scheduler.
 
 ## Receipt, acknowledgment and authority
 

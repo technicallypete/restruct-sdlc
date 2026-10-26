@@ -71,6 +71,10 @@ validation, evidence retention and cleanup defaults are summarized in the
 [workflow overview](references/workflow-overview.md). The linked policy references
 below define the enforceable procedures.
 
+Plans allocate the maximum useful independent parallel implementation workers for
+default high-priority tasks; kickoff follows that accepted allocation after readiness
+checks. The planner may remain one agent. See [parallel scheduling](references/coordination.md#default-to-safe-parallel-work-lanes).
+
 ## References
 
 | Reference | Covers |

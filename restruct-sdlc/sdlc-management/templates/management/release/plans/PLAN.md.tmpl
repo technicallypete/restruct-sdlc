@@ -47,7 +47,22 @@ timings or labeling estimates/unknowns. Use existing evidence; no extra timing c
 
 ## 7. Delegation
 
-Decision, file ownership, worker names (`<task-id>-agent-<id>-<role>`), integration responsibility.
+Implementation is high priority by default. Allocate as many useful, independent
+parallel implementation worker agents as dependencies, exclusive write ownership,
+native/resource capacity and budget permit. The planner may remain a single agent.
+For a high-priority single-worker allocation, state the concrete constraint.
+Owner-designated lower-priority tasks may use fewer or one worker and yield
+capacity to the current high-priority implementation.
+
+| Phase / ready condition | Worker role / count | Exclusive writable paths | Bound inputs / dependencies | Integration owner / resource reservation |
+|---|---|---|---|---|
+
+Use worker names `<task-id>-agent-<id>-<role>` where supported. At implementation
+kickoff, verify readiness and dispatch the accepted allocation/sequence; record
+actual allocation changes and their reasons in the Result, applying normal review
+to material changes. Dispatch later workers as their planned dependencies close.
+Reclaim finished workers at handback. See
+[parallel scheduling](../../../.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#default-to-safe-parallel-work-lanes).
 
 ## 8. Sequence
 

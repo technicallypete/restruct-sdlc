@@ -47,9 +47,14 @@ criteria with verification, required tests and validation, and explicit non-goal
 true, not how to code it.
 
 **Plan:** approach; files/modules; schema/migration changes (or none); contracts and public-interface
-implications; tests and validation batches; delegation (including a decision not to delegate); sequence; a
+implications; tests and validation batches; delegation and worker allocation; sequence; a
 mapping of every acceptance criterion to concrete changes and evidence; risks and escalations. Scale detail to
 the change and reference accepted controls by path instead of copying them.
+Implementation is high priority by default: planning specifies the maximum useful
+independent parallel implementation workers, concrete limits and any single-worker
+rationale. Kickoff follows the accepted allocation/sequence after readiness checks.
+Owner-designated lower-priority work may use fewer or one worker. The planner
+itself may remain one agent. See [parallel scheduling](coordination.md#default-to-safe-parallel-work-lanes).
 
 **Result:** status (submission is not acceptance); summary and files changed; schema and contract changes; tests
 added; exact commands with outcomes, including failed, skipped and interrupted checks; the acceptance checklist

@@ -35,14 +35,21 @@ Before planning or implementation, read AGENTS.md, this file, {{CANONICAL_SOURCE
 
 ## Workflow
 
-Schedule independent, dependency-ready batches in parallel by default under
+Implementation tasks are high priority by default. Planning allocates as many
+useful, independent parallel implementation worker agents as dependencies,
+ownership, native/resource capacity and budget permit; explain a single-worker
+allocation. The planner may remain one agent. At kickoff, verify readiness and
+dispatch the accepted Plan's ready workers, following its allocation and sequence.
+Record actual deviations and constraints in the Result; retain normal review for
+material changes. Owner-designated lower-priority tasks may use fewer or one
+worker and yield capacity to the main task. Follow
 [parallel scheduling](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#default-to-safe-parallel-work-lanes).
-Record named owners, disjoint writable scopes, bound inputs/evidence and resource
-reservations in existing records. Keep one task owner and one writer per artifact;
-use approved delegation and isolation where needed. A failure holds its batch and
+Record owners, disjoint writable scopes, inputs/evidence and resource reservations.
+Keep one task owner and one writer per artifact; reclaim finished workers and use
+approved delegation/isolation. A failure holds its batch and
 dependents; unrelated safe batches may proceed. Task-specific sequencing, source
 freezes, resource limits, owner stops and review/qualification gates remain binding.
-No extra scheduler or mandatory agent split is required.
+Use existing coordinator facilities and records; apply changes at safe handoffs.
 
 Check [owner mandate/phase/stop bounds](.agents/skills/restruct-sdlc/sdlc-management/references/roles-lifecycle.md#bounded-specification-authority-and-owner-stop-boundaries)
 before continuation. A ready Spec/approved Plan never overrides a stop or grants

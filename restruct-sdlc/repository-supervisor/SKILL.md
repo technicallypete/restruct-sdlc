@@ -65,12 +65,12 @@ are read-only by default. If a Codex worker needs isolation, use
 `.codex/worktrees/<task-id>-agent-<id>-<role>`, recording checkout/branch/owner;
 Claude workers use `.claude/worktrees/`. Preserve active checkouts.
 
-At scheduling and handoff boundaries, identify dependency-ready independent lanes
-and start safe work in parallel by default. Assign distinct owners, paths, baselines
-and evidence; keep one task owner and one writer per artifact. A failure holds its lane and
-dependents, while unrelated safe lanes continue. Respect shared-resource limits,
-task-specific sequencing, source freezes, owner stops and each lane's validation
-gates; parallelism never waives them or requires extra agents.
+Plans allocate the maximum useful independent parallel implementation workers;
+tasks default high priority, with concrete constraints for a single worker.
+The planner may remain one agent; kickoff checks readiness and follows the Plan.
+Owner-designated lower-priority work may use fewer workers and yield capacity.
+Keep one task owner/writer per artifact, source/resource/stop and acceptance gates;
+see [parallel scheduling](../sdlc-management/references/coordination.md#default-to-safe-parallel-work-lanes).
 
 When a new watcher notice or owner-requested status check reveals a review-ready Claude Plan/Result,
 start a bounded subagent review without another owner prompt. Verify the exact

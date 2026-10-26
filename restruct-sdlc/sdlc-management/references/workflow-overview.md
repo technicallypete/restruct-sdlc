@@ -12,8 +12,12 @@ By default (`OBSERVER_AUTO_ACTIVATE=true`, a separate option), the companion mil
 
 ## Routine transitions
 
-Schedule dependency-ready, independently owned work in parallel by default when
-source ownership and shared-resource limits allow. Keep one task owner and one writer per artifact;
+Implementation tasks are high priority by default. Planning specifies the maximum
+useful independent parallel implementation workers within dependency, ownership,
+native/resource and budget limits; explain a single-worker allocation. The planner
+may remain one agent. Kickoff verifies readiness and follows the accepted worker
+allocation/sequence. Owner-designated lower-priority work may use fewer or one
+worker and yields capacity to the main task. Keep one task owner and one writer per artifact;
 each validation lane retains its own finish/fix/rerun gate, and a failure holds only
 that lane and its dependents. See [parallel work lanes](coordination.md#default-to-safe-parallel-work-lanes).
 
