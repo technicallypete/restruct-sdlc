@@ -36,9 +36,9 @@ remain complete children of the bundle, with their own instructions, references,
 - **Efficient coordination.** Milestone observation, explicit owner-decision notices, bounded context and safe handoffs reduce
   repeated status reads. Supervisors send needed decisions promptly; routine coordinator polling belongs to
   the observer rather than the supervisor.
-- **Planned parallel implementation.** Tasks are high priority by default; Plans allocate the maximum useful
-  independent implementation workers within ownership, dependency, native/resource and budget limits.
-  Kickoff follows the accepted allocation. Owner-designated lower-priority work may use fewer workers.
+- **Planned parallel implementation.** Goals/Specs record priority from owner direction or supervisor judgment,
+  normally high. Plans target 3–5 implementation workers for high or 1–3 for low whenever feasible within
+  ownership, dependency, native/resource and budget limits. Kickoff follows the accepted allocation.
 - **Continuous resource accountability.** Record containers, images, volumes, networks, worktrees and scratch
   as they are allocated and removed. Reconcile at every handback/batch end and after interruptions; reclaim
   finished worker trees immediately. Abandoned resources block new resource-consuming work. Restart recovery

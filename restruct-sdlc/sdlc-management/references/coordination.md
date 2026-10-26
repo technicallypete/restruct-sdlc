@@ -25,18 +25,34 @@ tools serve.
 
 ## Default to safe parallel work lanes
 
-Implementation tasks are **high priority by default**. The planner must allocate
-as many useful, independent parallel **implementation worker agents** as the
-approved scope, dependencies, exclusive write ownership, native capacity,
-resources and remaining budget permit. This allocation is part of planning;
-the planner itself may be a single agent. Parallel validation alone does not
-replace allocating implementation workers where independent source work exists.
+When authoring a Goal/Spec, the supervisor records **high** or **low** priority
+and the owner instruction or supervisor rationale that selected it. The owner
+should identify low-priority work explicitly. If priority is unspecified, the
+supervisor may determine it or ask the owner when the distinction materially
+affects scheduling; normally default to **high** without a routine question or
+specification hold. An explicit owner choice takes precedence. Attribute a
+supervisor determination accurately and reflect later changes at a safe handoff.
+
+The Plan carries that priority into the implementation worker allocation:
+
+| Priority | Target parallel implementation workers, whenever feasible |
+|---|---|
+| High (usual default) | 3–5 |
+| Low | 1–3 |
+
+The counts are concurrent implementation workers during dependency-ready phases;
+the planner, coordinator and reviewers do not count toward them. Use useful
+independent work within approved scope, exclusive write ownership, native/resource
+capacity and budget. Record concrete constraints when fewer workers are feasible;
+the targets do not justify duplicate work, resource-limit changes or idle agents.
+The planner itself may be one agent. Parallel validation alone does not replace
+allocating implementation workers where independent source work exists.
 
 Use the existing Plan's delegation and sequence sections to record worker counts
 by phase, each worker's responsibility and writable paths, input SHAs, dependency
 order, integration owner, evidence and shared-resource reservations. State a
-concrete dependency, ownership or capacity reason for a high-priority task's
-single-worker allocation. Do not manufacture work or duplicate an artifact's
+concrete dependency, ownership or capacity reason when the allocation falls below
+its priority target. Do not manufacture work or duplicate an artifact's
 writer to fill slots. Keep one accountable task owner and one writer per artifact;
 use approved delegation and separate owned checkouts for concurrent writes.
 
@@ -49,8 +65,8 @@ owner prompt. Record an actual allocation change and its concrete reason in the
 existing Result; material scope, design, budget or gate changes retain the normal
 review/escalation procedure.
 
-Owner-designated lower-priority work may use fewer or a single implementation
-worker and yields capacity to the current high-priority implementation. Normally
+Low-priority work may use one implementation worker within its 1–3 target
+and yields capacity to the current high-priority implementation. Normally
 concentrate available workers within that task. Concurrent Goals retain existing
 authorization, dependency and isolation gates; supervisor management updates may
 proceed. Priority grants no new task, phase or resource authority.

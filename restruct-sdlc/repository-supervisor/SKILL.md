@@ -65,10 +65,10 @@ are read-only by default. If a Codex worker needs isolation, use
 `.codex/worktrees/<task-id>-agent-<id>-<role>`, recording checkout/branch/owner;
 Claude workers use `.claude/worktrees/`. Preserve active checkouts.
 
-Plans allocate the maximum useful independent parallel implementation workers;
-tasks default high priority, with concrete constraints for a single worker.
+Record Goal/Spec priority: owner choice first; otherwise determine or ask when needed,
+normally defaulting to high. Plans target 3–5 implementation workers for high or
+1–3 for low when feasible; record constraints and exclude coordinator/reviewers.
 The planner may remain one agent; kickoff checks readiness and follows the Plan.
-Owner-designated lower-priority work may use fewer workers and yield capacity.
 Keep one task owner/writer per artifact, source/resource/stop and acceptance gates;
 see [parallel scheduling](../sdlc-management/references/coordination.md#default-to-safe-parallel-work-lanes).
 

@@ -226,16 +226,20 @@ opts out. Notices, including the transcript-size advisory, carry no authority.
 
 ### Default parallel scheduling
 
-Implementation tasks are high priority by default. During planning, allocate as
-many useful, independent parallel implementation worker agents as dependencies,
-exclusive write ownership, native/resource capacity and budget permit. Record
+Record high/low priority and its source/rationale when authoring the Goal/Spec.
+Honor an explicit owner choice; if unspecified, the supervisor may determine it
+or ask when needed, normally defaulting to high without a routine hold. The owner
+should identify low-priority work. Plans target 3–5 parallel implementation workers
+for high or 1–3 for low whenever independent work, exclusive write ownership,
+native/resource capacity and budget permit; exclude planner/coordinator/reviewers.
+Record
 worker counts by phase, responsibilities, paths, inputs, dependencies, integration
-owner and resource reservations in the existing Plan. Explain a high-priority
-single-worker allocation with a concrete constraint. The planner may remain one
+owner and resource reservations in the existing Plan. Record concrete constraints
+when fewer workers than the priority target are feasible. The planner may remain one
 agent. At implementation kickoff, verify readiness and dispatch the accepted
 Plan's ready workers, following its allocation/sequence; record actual deviations
-and constraints in the Result, with normal review for material changes. Owner-
-designated lower-priority work may use fewer or one worker and yield capacity to
+and constraints in the Result, with normal review for material changes. Low-
+priority work may use one worker within its 1–3 target and yield capacity to
 the current high-priority implementation. Keep one task owner and one writer per
 artifact; use approved delegation and isolation and reclaim finished workers.
 A failure holds that lane and its dependents; unrelated

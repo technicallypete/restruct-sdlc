@@ -75,9 +75,9 @@ Do not expand production behavior/constraints, skip CI or change merge gates.
 4. Record target and candidate SHAs and binding provenance.
 
 Fast checks: `{{FAST_CHECK_COMMAND}}`. Full qualification: `{{FULL_CHECK_COMMAND}}`.
-Implementation is high priority by default; planning allocates the maximum useful independent implementation
-workers and kickoff follows the accepted allocation after readiness checks. Owner-designated lower-priority
-work may use fewer workers. Independent, dependency-ready
+The Goal/Spec records priority, normally high if unspecified. Plans target 3–5 parallel implementation
+workers for high or 1–3 for low whenever feasible, recording constraints; kickoff follows the accepted
+allocation after readiness checks. Independent, dependency-ready
 batches run in parallel by default when ownership, inputs and resource reservations permit. Finish, fix, rerun,
 advance within each dependency chain; a failure holds its batch and dependents, not unrelated safe work.
 Preserve task-specific sequencing, frozen sources and resource limits. See [parallel scheduling](../../.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#default-to-safe-parallel-work-lanes).

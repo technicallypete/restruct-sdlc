@@ -12,12 +12,14 @@ By default (`OBSERVER_AUTO_ACTIVATE=true`, a separate option), the companion mil
 
 ## Routine transitions
 
-Implementation tasks are high priority by default. Planning specifies the maximum
-useful independent parallel implementation workers within dependency, ownership,
-native/resource and budget limits; explain a single-worker allocation. The planner
+The supervisor records Goal/Spec priority from explicit owner direction or its own
+judgment, asking when needed and normally defaulting unspecified work to high.
+Plans target 3–5 parallel implementation workers for high or 1–3 for low whenever
+useful independent work, ownership, native/resource capacity and budget permit;
+record constraints reducing the count and exclude planner/coordinator/reviewers. The planner
 may remain one agent. Kickoff verifies readiness and follows the accepted worker
-allocation/sequence. Owner-designated lower-priority work may use fewer or one
-worker and yields capacity to the main task. Keep one task owner and one writer per artifact;
+allocation/sequence. Low-priority work may use one worker within its 1–3 target
+and yields capacity to the main task. Keep one task owner and one writer per artifact;
 each validation lane retains its own finish/fix/rerun gate, and a failure holds only
 that lane and its dependents. See [parallel work lanes](coordination.md#default-to-safe-parallel-work-lanes).
 

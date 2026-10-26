@@ -35,14 +35,16 @@ Before planning or implementation, read AGENTS.md, this file, {{CANONICAL_SOURCE
 
 ## Workflow
 
-Implementation tasks are high priority by default. Planning allocates as many
-useful, independent parallel implementation worker agents as dependencies,
-ownership, native/resource capacity and budget permit; explain a single-worker
-allocation. The planner may remain one agent. At kickoff, verify readiness and
+The supervisor records Goal/Spec priority from the owner or supervisor judgment,
+asking when needed and normally defaulting unspecified work to high. Plans target
+3–5 parallel implementation workers for high or 1–3 for low whenever independent
+work, ownership, native/resource capacity and budget permit; record constraints
+reducing the count. Exclude planner/coordinator/reviewers from the count. The
+planner may remain one agent. At kickoff, verify readiness and
 dispatch the accepted Plan's ready workers, following its allocation and sequence.
 Record actual deviations and constraints in the Result; retain normal review for
-material changes. Owner-designated lower-priority tasks may use fewer or one
-worker and yield capacity to the main task. Follow
+material changes. Low-priority tasks may use one worker within their 1–3 target
+and yield capacity to the main task. Follow
 [parallel scheduling](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#default-to-safe-parallel-work-lanes).
 Record owners, disjoint writable scopes, inputs/evidence and resource reservations.
 Keep one task owner and one writer per artifact; reclaim finished workers and use

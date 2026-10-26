@@ -46,15 +46,19 @@ IDs are never renumbered or reused. Revisions append dated records or create lin
 criteria with verification, required tests and validation, and explicit non-goals. A Spec states what must be
 true, not how to code it.
 
+Record high/low priority in the Goal/Spec with its source/rationale. Honor an
+explicit owner choice; the owner should identify low-priority work. If unspecified,
+the supervisor determines it or asks when needed, normally defaulting to high.
+
 **Plan:** approach; files/modules; schema/migration changes (or none); contracts and public-interface
 implications; tests and validation batches; delegation and worker allocation; sequence; a
 mapping of every acceptance criterion to concrete changes and evidence; risks and escalations. Scale detail to
 the change and reference accepted controls by path instead of copying them.
-Implementation is high priority by default: planning specifies the maximum useful
-independent parallel implementation workers, concrete limits and any single-worker
-rationale. Kickoff follows the accepted allocation/sequence after readiness checks.
-Owner-designated lower-priority work may use fewer or one worker. The planner
-itself may remain one agent. See [parallel scheduling](coordination.md#default-to-safe-parallel-work-lanes).
+Plans target 3–5 parallel implementation workers for high priority or 1–3 for low
+whenever independent work, ownership, native/resource capacity and budget permit;
+record concrete constraints reducing the count. Exclude planner/coordinator/
+reviewers. Kickoff follows the accepted allocation/sequence after readiness checks.
+The planner may remain one agent. See [parallel scheduling](coordination.md#default-to-safe-parallel-work-lanes).
 
 **Result:** status (submission is not acceptance); summary and files changed; schema and contract changes; tests
 added; exact commands with outcomes, including failed, skipped and interrupted checks; the acceptance checklist

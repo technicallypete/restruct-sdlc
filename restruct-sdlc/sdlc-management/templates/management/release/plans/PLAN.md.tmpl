@@ -4,6 +4,7 @@ Revision r1, YYYY-MM-DD. Author: {{IMPLEMENTER_AGENT}}. Status: proposed for {{S
 
 - Inputs: reviewed Goal/Spec repository, commit and paths; base `origin/{{INTEGRATION_BRANCH}}` `<sha>`.
 - Tier and budget: `<tier>`, `<class>` (checkpoint per class).
+- Priority: high / low, from the Goal/Spec with its owner instruction or supervisor rationale.
 
 ## 1. Approach
 
@@ -47,12 +48,13 @@ timings or labeling estimates/unknowns. Use existing evidence; no extra timing c
 
 ## 7. Delegation
 
-Implementation is high priority by default. Allocate as many useful, independent
-parallel implementation worker agents as dependencies, exclusive write ownership,
-native/resource capacity and budget permit. The planner may remain a single agent.
-For a high-priority single-worker allocation, state the concrete constraint.
-Owner-designated lower-priority tasks may use fewer or one worker and yield
-capacity to the current high-priority implementation.
+Carry forward the Goal/Spec priority, normally high when unspecified. Target 3–5
+parallel implementation workers for high priority or 1–3 for low whenever useful
+independent work, exclusive write ownership, native/resource capacity and budget
+permit. These are concurrent implementation workers in dependency-ready phases,
+excluding planner/coordinator/reviewers. State concrete constraints when fewer
+workers are feasible. The planner may remain a single agent. Low-priority work
+may use one worker within its target and yield capacity to the main implementation.
 
 | Phase / ready condition | Worker role / count | Exclusive writable paths | Bound inputs / dependencies | Integration owner / resource reservation |
 |---|---|---|---|---|
