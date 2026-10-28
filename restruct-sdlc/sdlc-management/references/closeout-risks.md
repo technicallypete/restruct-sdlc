@@ -174,15 +174,19 @@ verified receipt or an explicit live-use, retention or native-permission hold.
   their checkout; never delete the sole reference to unique work. Once reconciled
   or integrated, remove the temporary preservation copy/ref too.
 - Remove all verified task-owned containers and volumes and unused task-built
-  images, including attributable untagged images by exact ID. Remove merged
-  temporary branches after their unique work is reconciled. Protect configured
+  images, including attributable untagged images by exact ID. Remove temporary
+  source branches after their MR merges or closes without merge, once unique
+  work is integrated or durably preserved and no open MR/live task uses the ref.
+  A closed unmerged MR is not acceptance and is not permission to discard unique
+  work. Preserve immutable tags and failure evidence. Protect configured
   long-lived branches. Do not use host-wide prune, tag/age alone as ownership,
   or remove another task's/shared base images, volumes or builder cache.
 - Audit remote branches explicitly at acceptance/closeout. GitLab's source-branch
   deletion setting is only a convenience and does not prove all task refs were
   removed. Compare `git ls-remote --heads origin` with the task/MR inventory;
-  confirm MR state, ownership, live use and unique-content integration or
-  preservation before deleting each accepted task branch. Preserve unresolved
+  confirm whether the MR merged or closed unmerged, ownership, live use and
+  unique-content integration or durable preservation before deleting each
+  disposable task branch. Preserve unresolved
   work in an existing Result/retained ref with a reason and release condition.
   Audit local refs separately (`git branch -vv`, `git worktree list`): remote
   deletion does not remove local branches. Refresh stale local `main` only when
