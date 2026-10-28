@@ -300,14 +300,16 @@ never claim both are current. Tags/releases, breaking migrations, live cutover,
 specific publication holds and native permissions retain their separate gates.
 No nested Git repository, new submodule or synchronization daemon is implied.
 
-At task acceptance, explicitly audit task-owned remote refs with
+At task acceptance/closeout, explicitly audit task-owned remote refs with
 `git ls-remote --heads`; provider source-branch deletion is not proof that all
-task branches were removed. Verify MR state, ownership and unique-content
-integration or preservation before deletion. Audit local branches/worktrees
+task branches were removed. Verify whether each MR merged or closed without
+merge, confirm no other open MR or live task uses the ref, and ensure unique
+content/evidence is integrated or durably preserved before deleting a
+disposable branch. Closure is not acceptance. Audit local branches/worktrees
 separately because remote deletion leaves local refs behind. Keep unclear or
-unique work with a documented hold. Include only exact task-owned Docker image
-IDs in cleanup; shared/reused images stay, and host-wide prune is not part of
-adoption.
+unique work with a documented hold. Preserve immutable tags and failure
+evidence. Include only exact task-owned Docker image IDs in cleanup;
+shared/reused images stay, and host-wide prune is not part of adoption.
 
 ## Composing with a foundation or renderer skill
 

@@ -243,7 +243,7 @@ unchanged full rerun.
   [staging auto-merge](#owner-selected-staging-auto-merge).
 - **Promotion** from `INTEGRATION_BRANCH` to `RELEASE_BRANCH` uses a separate merge request that **retains** the
   source branch. Long-lived branches (`PROTECTED_BRANCHES`) are never deleted or rewritten.
-- **Cleanup.** Delete only verified merged temporary branches, after checking the exact remote tip.
+- **Cleanup after merge or MR closure.** After a merge, verify the accepted target content and exact remote source tip; after an MR closes without merge, verify that it is unmerged, no other open MR or live task uses the branch, and unique commits/evidence are integrated or durably preserved in existing records, a tag, retained ref or bundle. Then delete only the exact task-owned disposable source branch. MR closure is not acceptance and does not justify deleting unique unpreserved work. Preserve long-lived/protected branches, immutable tags and failure evidence.
 - **Target advances.** When the integration branch advances, the supervisor assesses the delta against every active
   task: unaffected work continues; relevant changes reconcile at a safe boundary; conflicts pause immediately.
   Interrupted tests stop, reap owned children, preserve evidence and release locks before any rebase.
@@ -298,7 +298,7 @@ review/evidence gate before enabling auto-merge.
 
 ## Owner-controlled RC promotion option
 
-When an adopting owner selects release-candidate qualification, use this release flow: owner requests an annotated SemVer RC at the reviewed integration snapshot → coordinator internally opens a temporary tag-pinned source branch/MR to the release branch → that MR runs mandatory complete hosted qualification → owner-authorized promotion (manual after success by default, or explicit owner-selected auto-merge) → verify integrated content and remove only the temporary source branch → owner separately decides when to create the final release tag. The temporary branch is provider plumbing, not another owner-managed step; retain long-lived branches and RC tags.
+When an adopting owner selects release-candidate qualification, use this release flow: owner requests an annotated SemVer RC at the reviewed integration snapshot → coordinator internally opens a temporary tag-pinned source branch/MR to the release branch → that MR runs mandatory complete hosted qualification → owner-authorized promotion (manual after success by default, or explicit owner-selected auto-merge) → verify integrated content and remove only the temporary source branch, or remove it after the MR is closed without merge once the RC tag and all pass/failure evidence are preserved → owner separately decides when to create the final release tag. The temporary branch is provider plumbing, not another owner-managed step; retain long-lived branches, immutable RC tags and qualification evidence. Closing an unqualified/failed promotion MR never promotes or qualifies the RC.
 
 For this option, RC/final tag pushes and release-branch pushes start no automatic pipeline. Admit the promotion MR even for documentation-only candidates and make its full coverage required rather than optional/manual. Verify actual tag object/peeled commit, MR source, complete project/pipeline/job/artifact coverage and prospective/actual integrated content. A branch-name prefix or green partial report is insufficient. Present target-movement checks honestly; do not claim an atomic target guarantee the provider does not support. Never create the final tag automatically from merge success.
 

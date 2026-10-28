@@ -99,15 +99,17 @@ pending or running never qualifies).
 3. Open one merge request to `{{INTEGRATION_BRANCH}}` with source-branch deletion enabled, using `{{MR_TOOL}}`.
 4. Inspect automated review findings and unresolved threads before merging.
 5. Merge only with owner authorization; record conditional integration and the post-merge disposition.
-6. Verify the source branch is deleted; delete only verified merged temporary branches.
+6. After merge or MR closure, verify the MR outcome and exact remote source tip. For a merged MR, confirm the target contains the accepted changes. For closure without merge, confirm no other open MR or live task uses the ref and preserve unique work/evidence in existing records, a tag, retained ref or bundle. Then delete only the exact task-owned disposable source branch. Closure is not acceptance; do not discard unique unpreserved work or delete long-lived/protected branches or immutable tags.
 
-At Goal acceptance, audit all task-owned remote refs with `git ls-remote --heads`;
+At Goal acceptance/closeout, audit all task-owned remote refs with `git ls-remote --heads`;
 the provider's source-branch deletion setting is not proof that every task branch
-was cleaned up. Verify MR state, ownership and integration/preservation of unique
-content before deletion. Check local refs and worktrees separately because remote
-deletion leaves local branches behind. Preserve unclear or unique work with a
-recorded reason. Clean only exact task-owned Docker image IDs; retain shared images
-and never use host-wide prune.
+was cleaned up. Verify whether each MR merged or closed without merge, ownership,
+absence of other open MRs/live use and integration or durable preservation of
+unique content before deleting a disposable branch. Closure is not acceptance.
+Check local refs and worktrees separately because remote deletion leaves local
+branches behind. Preserve unclear or unique work with a recorded reason; retain
+immutable tags and failure evidence. Clean only exact task-owned Docker image IDs;
+retain shared images and never use host-wide prune.
 
 ## GitLab/glab commands (when the provider is gitlab)
 
@@ -122,7 +124,7 @@ glab mr merge MR_IID
 Promotion from `{{INTEGRATION_BRANCH}}` to `{{RELEASE_BRANCH}}` uses a separate merge request with source-branch
 deletion **off**.
 
-If the owner selects [RC promotion qualification](../../.agents/skills/restruct-sdlc/sdlc-management/references/validation-integration.md#owner-controlled-rc-promotion-option), the coordinator instead creates an internal temporary branch pinned to the requested RC tag and opens its MR to `{{RELEASE_BRANCH}}`. The MR runs required full hosted qualification; RC/final tag and release-branch pushes start no duplicate pipeline. After success, wait for explicit owner promotion instruction, verify actual qualified content, and delete only that temporary source branch. Keep `{{INTEGRATION_BRANCH}}`, `{{RELEASE_BRANCH}}` and RC tags. The owner separately decides when to tag the verified release branch. Any owner waiver of automated review applies only to that promotion, not ordinary feature MRs. Implement and verify the provider adapter before using this option; the owner does not manage the temporary branch.
+If the owner selects [RC promotion qualification](../../.agents/skills/restruct-sdlc/sdlc-management/references/validation-integration.md#owner-controlled-rc-promotion-option), the coordinator instead creates an internal temporary branch pinned to the requested RC tag and opens its MR to `{{RELEASE_BRANCH}}`. The MR runs required full hosted qualification; RC/final tag and release-branch pushes start no duplicate pipeline. After success, wait for explicit owner promotion instruction, verify actual qualified content, and delete only that temporary source branch. If the MR closes without merge, verify the exact ref and preserve the RC tag plus all pass/failure evidence before deleting the temporary branch; closure does not qualify or promote the RC. Keep `{{INTEGRATION_BRANCH}}`, `{{RELEASE_BRANCH}}` and immutable RC tags. The owner separately decides when to tag the verified release branch. Any owner waiver of automated review applies only to that promotion, not ordinary feature MRs. Implement and verify the provider adapter before using this option; the owner does not manage the temporary branch.
 
 When the owner authorizes a named RC series or directly requests its next
 candidate, that authority covers the coordinator's bounded series work without
