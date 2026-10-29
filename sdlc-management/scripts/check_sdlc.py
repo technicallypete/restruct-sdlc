@@ -34,6 +34,7 @@ MANAGEMENT_SKILL = "sdlc-management"
 MAX_SKILL_LINES = 200
 ORIGINS = ("new", "verbatim", "adapted")
 BUNDLE_ROOT_ENTRIES = {"README.md", "LICENSE", "MANIFEST.tsv", BUNDLE_NAME}
+FLAT_BUNDLE_ROOT_ENTRIES = {"README.md", "LICENSE", "MANIFEST.tsv", "SKILL.md", "agents"} | set(BUNDLE_SKILLS)
 RELEASE_DIRS = ("goals", "specs", "plans", "results", "archive")
 INSTANCE_NAMES = {
     "GOAL.md.tmpl": "G000-example.md",
@@ -164,7 +165,7 @@ def frontmatter(text):
 
 # ---------------------------------------------------------------- package checks
 
-def check_p1(report, skill_dir):
+def check_p1(report, skill_dir, expected_name=None):
     report.ran("P1")
     path = skill_dir / "SKILL.md"
     if not path.is_file():
@@ -175,8 +176,9 @@ def check_p1(report, skill_dir):
         report.fail("P1", path, "frontmatter not delimited by --- lines")
         return
     name = fields.get("name", "")
-    if name != skill_dir.name or not SKILL_NAME_RE.fullmatch(name):
-        report.fail("P1", path, f"name {name!r} must equal the directory name and match ^[a-z0-9-]+$")
+    if name != (expected_name or skill_dir.name) or not SKILL_NAME_RE.fullmatch(name):
+        target = f"bundle name {expected_name!r}" if expected_name else "directory name"
+        report.fail("P1", path, f"name {name!r} must equal the {target} and match ^[a-z0-9-]+$")
     if not fields.get("description"):
         report.fail("P1", path, "description is empty")
 
@@ -425,9 +427,13 @@ def scan_content(report, check, root, literals, skip_dirs=(".git",), skip_prefix
 
 def check_p7(report, bundle):
     report.ran("P7")
+    flat = (bundle / "SKILL.md").is_file()
     entries = {p.name for p in bundle.iterdir()}
-    if entries != BUNDLE_ROOT_ENTRIES:
-        report.fail("P7", bundle, f"root entries {sorted(entries)} must be exactly {sorted(BUNDLE_ROOT_ENTRIES)}")
+    expected_root = FLAT_BUNDLE_ROOT_ENTRIES if flat else BUNDLE_ROOT_ENTRIES
+    if entries != expected_root:
+        report.fail("P7", bundle, f"root entries {sorted(entries)} must be exactly {sorted(expected_root)}")
+    if flat and not all((bundle / n).is_dir() for n in (*BUNDLE_SKILLS, "agents")):
+        report.fail("P7", bundle, "flat bundle requires agents and all three child skill directories")
     parent = bundle / BUNDLE_NAME
     if parent.is_dir():
         names = {p.name for p in parent.iterdir()}
@@ -487,14 +493,14 @@ def run_package(path, skills_root, literals_path):
     report = Report("package", path)
     literals = load_literals(literals_path)
     if is_bundle(path):
-        root = Path(skills_root) if skills_root else path / BUNDLE_NAME
+        parent = path if (path / "SKILL.md").is_file() else path / BUNDLE_NAME
+        root = Path(skills_root) if skills_root else parent
         check_p5(report, path)
         check_p7(report, path)
         check_p3_readme(report, path)
         scan_content(report, "P6", path, literals)
-        parent = path / BUNDLE_NAME
         if parent.is_dir():
-            check_p1(report, parent)
+            check_p1(report, parent, expected_name=BUNDLE_NAME if parent == path else None)
             check_p2(report, parent)
         for name in BUNDLE_SKILLS:
             skill_dir = parent / name

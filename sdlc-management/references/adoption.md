@@ -228,17 +228,27 @@ The supervisor states the tier in each Goal's Execution Policy; agents never sel
 
 ## Installing the skills
 
-Install the `restruct-sdlc/` bundle directory **whole**; its three children are never installed separately. Never
-copy over an existing installation. From the distribution root (the directory that contains `restruct-sdlc/`):
+Install the Restruct bundle **whole**; its three children are never installed separately. The distribution
+repository root is the bundle, with `SKILL.md` beside the three child skill directories. Never copy over an existing installation.
+The copy procedure excludes only the source checkout's root `.git` directory or submodule marker:
 
 ```sh
 TARGET=/path/to/target-repo
+SOURCE=/path/to/restruct-sdlc
 dest="$TARGET/.agents/skills/restruct-sdlc"
 if [ -L "$TARGET/.agents" ] || [ -L "$TARGET/.agents/skills" ] || [ -L "$dest" ]; then
   echo "STOP: symlinked destination; nothing copied"
 elif [ ! -e "$dest" ]; then
-  mkdir -p "$TARGET/.agents/skills" && cp -R restruct-sdlc "$dest" && echo "INSTALLED restruct-sdlc"
-elif [ -z "$(find "$dest" -type l)" ] && diff -r -q restruct-sdlc "$dest" > /dev/null; then
+  mkdir -p "$TARGET/.agents/skills"
+  python3 - "$SOURCE" "$dest" <<'PY'
+from pathlib import Path
+import shutil
+import sys
+source = Path(sys.argv[1]).resolve()
+shutil.copytree(source, sys.argv[2],
+                ignore=lambda directory, names: {".git"} if Path(directory) == source else set())
+PY
+elif [ ! -e "$dest/.git" ] && [ -z "$(find "$dest" -type l)" ] && diff -r -q --exclude=.git "$SOURCE" "$dest" > /dev/null; then
   echo "IDENTICAL restruct-sdlc: left unchanged"
 else
   echo "COLLISION restruct-sdlc: existing content kept; record an owner merge or replacement decision"
@@ -260,9 +270,9 @@ fi
 The supported layout is the single bundle directory `.agents/skills/restruct-sdlc/` (real files), committed in the
 target repository, with its children at `.agents/skills/restruct-sdlc/<child>/`. Codex discovers the parent
 `restruct-sdlc` skill there; the parent routes to the one child a task needs through a contained relative link, and
-Claude sessions read the needed `SKILL.md` explicitly, as the adopted AGENTS.md requires. A distribution root
-(`README.md`, `LICENSE`, `MANIFEST.tsv`, `restruct-sdlc/`) is **storage**, not a discovery location. A
-source-maintainer repository may keep the canonical tree elsewhere (for example `skills/restruct-sdlc/`) and expose
+Claude sessions read the needed `SKILL.md` explicitly, as the adopted AGENTS.md requires. The distribution
+repository root is itself the bundle (`SKILL.md`, `README.md`, `LICENSE`, `MANIFEST.tsv` and the three children).
+A source-maintainer repository may keep the canonical tree elsewhere (for example `skills/restruct-sdlc/`) and expose
 it through relative aliases `.agents/skills/restruct-sdlc` and `.claude/skills/restruct-sdlc`.
 
 The handoff helper's committed-path assumptions constrain adopters:

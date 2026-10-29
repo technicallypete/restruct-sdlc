@@ -26,12 +26,14 @@ commands) against the **target checkout**, never against the skill storage direc
 
 ## Layout
 
-- **Adopting repository (supported default):** copy the whole `restruct-sdlc/` directory, as real files, to
+- **Adopting repository (supported default):** copy this whole bundle, excluding VCS metadata, as real files to
   `.agents/skills/restruct-sdlc/` and commit it. Codex discovers the parent there. An optional Claude discovery
   alias is the relative symlink `.claude/skills/restruct-sdlc -> ../../.agents/skills/restruct-sdlc`. Children are
   not installed or discovered separately. See
   [installing the bundle](sdlc-management/references/adoption.md#installing-the-skills).
-- **Source-maintainer repository:** the canonical tree lives at `skills/restruct-sdlc/`, with the two relative
+- **Distribution repository:** the repository root itself contains `SKILL.md`, `README.md`, `LICENSE`,
+  `MANIFEST.tsv`, `agents/` and all three children; there is no extra wrapper directory.
+- **Source-maintainer repository:** the canonical tree may live at `skills/restruct-sdlc/`, with the two relative
   discovery aliases `.agents/skills/restruct-sdlc` and `.claude/skills/restruct-sdlc` pointing to
   `../../skills/restruct-sdlc`.
 
@@ -49,6 +51,7 @@ python3 -B -m unittest discover -s <bundle>/sdlc-management/scripts -p 'test_che
 python3 -B -m unittest discover -s <bundle>/claude-session-handoff/scripts -p 'test_*.py'
 ```
 
-`<bundle>` is `skills/restruct-sdlc` in the source-maintainer layout and `.agents/skills/restruct-sdlc` in an
-adopting repository. A distribution root (`README.md`, `LICENSE`, `MANIFEST.tsv`, `restruct-sdlc/`) is checked
-with `check_sdlc.py package <distribution-root>`.
+`<bundle>` is `skills/restruct-sdlc` in the source-maintainer example and `.agents/skills/restruct-sdlc`
+in the default adopting layout. Check a metadata-free copy of this distribution root with
+`check_sdlc.py package <distribution-root>`; exclude its root `.git` directory or submodule marker first.
+The checker also accepts older distributions with the extra `restruct-sdlc/` wrapper.

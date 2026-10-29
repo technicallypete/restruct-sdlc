@@ -128,18 +128,11 @@ def detail(result, check):
     return [f["detail"] for f in result["findings"] if f["check"] == check]
 
 
-def assert_only_p2_baseline(case, code, result, checks):
-    """D5 oracle (Plan r4): the preserved 220-line sdlc-management/SKILL.md is a documented baseline P2 failure.
-
-    Exit 1, P2 the only failing check, every other check passing, and exactly one finding naming that file. This is
-    recorded as a baseline failure, never as a pass; MAX_SKILL_LINES stays 200 and the child is not trimmed.
-    """
-    case.assertEqual(code, 1, result["findings"])
-    case.assertEqual(result["checks"], {c: ("fail" if c == "P2" else "pass") for c in sorted(checks)})
-    case.assertEqual(len(result["findings"]), 1, result["findings"])
-    finding = result["findings"][0]
-    case.assertEqual((finding["check"], finding["detail"]), ("P2", "220 lines exceeds 200"))
-    case.assertEqual(Path(finding["path"]).parts[-2:], ("sdlc-management", "SKILL.md"))
+def assert_package_baseline(case, code, result, checks):
+    """The shipped package passes; test_p2_line_limit separately enforces the 200-line limit."""
+    case.assertEqual(code, 0, result["findings"])
+    case.assertEqual(result["checks"], {c: "pass" for c in sorted(checks)})
+    case.assertEqual(result["findings"], [])
 
 
 PACKAGE_CHECKS = {"P1", "P2", "P3", "P3t", "P4", "P5", "P6"}
@@ -158,7 +151,7 @@ class PackageChecks(unittest.TestCase):
         return run(["package", self.skill, "--skills-root", self.root, *extra])
 
     def baseline(self, *extra):
-        assert_only_p2_baseline(self, *self.package(*extra), PACKAGE_CHECKS)
+        assert_package_baseline(self, *self.package(*extra), PACKAGE_CHECKS)
 
     def test_real_skill_passes_all_checks(self):
         self.baseline()
@@ -283,7 +276,7 @@ class BundleChecks(unittest.TestCase):
         self.tmp.cleanup()
 
     def test_bundle_passes(self):
-        assert_only_p2_baseline(self, *run(["package", self.bundle]), PACKAGE_CHECKS | {"P7"})
+        assert_package_baseline(self, *run(["package", self.bundle]), PACKAGE_CHECKS | {"P7"})
 
     def test_bundle_parent_p1_p2(self):
         """Bundle mode checks the parent entrypoint itself: P1 name/description and the 200-line P2 limit."""
@@ -318,6 +311,48 @@ class BundleChecks(unittest.TestCase):
         readme = self.bundle / "README.md"
         readme.write_text(readme.read_text() + "\n[x](../outside.md)\n")
         self.assertTrue(detail(run(["package", self.bundle])[1], "P3"))
+
+
+class FlatBundleChecks(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.bundle = make_bundle(self.tmp.name, make_skills_root(self.tmp.name))
+        parent = self.bundle / cs.BUNDLE_NAME
+        (parent / "LICENSE").unlink()  # The identical root license is retained.
+        for path in parent.iterdir():
+            path.rename(self.bundle / path.name)
+        parent.rmdir()
+        readme = self.bundle / "README.md"
+        readme.write_text(readme.read_text().replace("restruct-sdlc/sdlc-management/", "sdlc-management/"))
+        rows = []
+        for path in cs.walk_files(self.bundle):
+            if path.name != "MANIFEST.tsv":
+                rows.append(f"{cs.sha256_file(path)}\tnew\t{path.relative_to(self.bundle).as_posix()}")
+        write(self.bundle / "MANIFEST.tsv", "\n".join(rows) + "\n")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_flat_bundle_passes_with_checkout_basename(self):
+        # Repository/submodule checkout names need not equal the declared skill name.
+        assert_package_baseline(self, *run(["package", self.bundle]), PACKAGE_CHECKS | {"P7"})
+
+    def test_flat_bundle_requires_parent_skill_identity(self):
+        parent = self.bundle / "SKILL.md"
+        parent.write_text(PARENT_SKILL.replace("name: restruct-sdlc", "name: other-parent"))
+        self.assertTrue(detail(run(["package", self.bundle])[1], "P1"))
+
+    def test_flat_bundle_rejects_missing_child_and_extra_root_file(self):
+        shutil.rmtree(self.bundle / "repository-supervisor")
+        write(self.bundle / "NOTES.md", "unexpected\n")
+        self.assertTrue(detail(run(["package", self.bundle])[1], "P7"))
+
+    def test_flat_bundle_verifies_hashes_and_readme_links(self):
+        readme = self.bundle / "README.md"
+        readme.write_text(readme.read_text() + "\n[x](../outside.md)\n")
+        result = run(["package", self.bundle])[1]
+        self.assertTrue(any("hash mismatch" in d for d in detail(result, "P7")))
+        self.assertTrue(detail(result, "P3"))
 
 
 class AdoptionChecks(unittest.TestCase):

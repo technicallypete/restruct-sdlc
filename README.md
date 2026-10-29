@@ -59,22 +59,26 @@ sdlc-skill/
   README.md
   LICENSE
   MANIFEST.tsv
-  restruct-sdlc/
-    SKILL.md
-    agents/
-    sdlc-management/
-    repository-supervisor/
-    claude-session-handoff/
+  SKILL.md
+  agents/
+  sdlc-management/
+  repository-supervisor/
+  claude-session-handoff/
 ```
 
 `MANIFEST.tsv` records packaged file hashes and origins. The bundle's parent skill is the discovery entrypoint;
-the children are loaded through it rather than installed separately.
+the children are loaded through it rather than installed separately. The repository root is the complete skill
+bundle, so it can be checked out directly at `distributions/skills/restruct-sdlc/`. Both agent skill directories
+can then use relative aliases to that directory. A submodule checkout uses the same layout and must be initialized
+before its skills are available; adopting it still requires the documented installation/helper checks.
 
 ## Install and adopt
 
-1. Copy the entire `restruct-sdlc/` directory into your repository at `.agents/skills/restruct-sdlc/` and commit
-   it. Keep its contained files together. If an installation already exists, compare it and agree on an update
-   before replacing anything; do not copy through a symlinked destination.
+1. Copy this repository's complete root contents, excluding its `.git` metadata, into your repository at
+   `.agents/skills/restruct-sdlc/` and commit it. See the safe copy procedure in
+   [installation guidance](sdlc-management/references/adoption.md#installing-the-skills). Keep the files together.
+   If an installation already exists, compare it and agree on an update before replacing anything; do not copy
+   through a symlinked destination.
 2. For Claude discovery, optionally create the relative alias
    `.claude/skills/restruct-sdlc -> ../../.agents/skills/restruct-sdlc` where no conflicting entry exists.
 3. Ask your agent to use `restruct-sdlc` to adopt the workflow. Start with the bundled
