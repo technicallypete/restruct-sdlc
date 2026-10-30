@@ -31,8 +31,13 @@ MANIFEST_SCHEMA = "claude-session-handoff/compaction-manifest/v1"
 DEFAULT_RECORD = "management/SESSION-HANDOFFS.jsonl"
 # Committed helper locations, in order: the source-maintainer bundle, then an adopting repository's installed
 # bundle. A symlinked .agents/skills/restruct-sdlc alias is never a tree path in HEAD, so the choice is deterministic.
-HELPER_CANDIDATES = ("skills/restruct-sdlc/claude-session-handoff/scripts/handoff.py",
+# Either bundle directory may instead be a submodule gitlink; helper_source binds it through the parent's pin.
+HELPER_CANDIDATES = ("distributions/skills/restruct-sdlc/claude-session-handoff/scripts/handoff.py",
                      ".agents/skills/restruct-sdlc/claude-session-handoff/scripts/handoff.py")
+# The helper's path inside the bundle; a candidate minus this suffix is its bundle directory.
+BUNDLE_HELPER_RELATIVE = "claude-session-handoff/scripts/handoff.py"
+GITLINK_MODE = "160000"
+OBJECT_ID_RE = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
 # Retired standalone helper location. Scanned only (never selected as the writer) so a helper or observer still
 # running from it during the migration/cutover window keeps the in-flight-helper refusal; absent paths are ignored.
 LEGACY_HELPER_RELATIVE = ".agents/skills/claude-session-handoff/scripts/handoff.py"
@@ -1114,20 +1119,113 @@ def process_scan(log_id, directories):
     return invocations, holders, uninspectable, nonhelper
 
 
-def helper_relative(root):
-    """The first HELPER_CANDIDATES path that HEAD tracks as a file (blob); None when neither is tracked."""
-    for candidate in HELPER_CANDIDATES:
-        result = git(root, "cat-file", "-t", f"HEAD:{candidate}")
-        if result.returncode == 0 and result.stdout.strip() == "blob":
-            return candidate
+def bundle_directory(candidate):
+    return candidate[:-len(BUNDLE_HELPER_RELATIVE)].rstrip("/")
+
+
+def gitlink_pin(root, bundle):
+    """The commit HEAD records for `bundle` when that exact path is a gitlink (mode 160000); None otherwise."""
+    result = git(root, "--literal-pathspecs", "ls-tree", "-z", "HEAD", "--", bundle)
+    if result.returncode != 0:
+        return None
+    for entry in result.stdout.split("\0"):
+        meta, _, path = entry.partition("\t")
+        fields = meta.split()
+        if path == bundle and len(fields) == 3 and fields[0] == GITLINK_MODE and fields[1] == "commit" \
+                and OBJECT_ID_RE.fullmatch(fields[2]):
+            return fields[2]
     return None
 
 
-def committed_helper_sha(root, relative):
+def gitlink_child_failure(root, bundle, pin):
+    """None when <root>/<bundle> is the parent's own initialized child checkout at `pin`; else (code, details).
+
+    The child must be a real directory (no symlink anywhere on the path) whose `.git` is a regular file naming a
+    git directory beneath the parent's modules directory (common or per-worktree), whose top level is the child
+    itself and whose HEAD is the recorded pin. An absent or empty child is uninitialized."""
+    init = {"init_command": f"git submodule update --init -- {bundle}"}
+    base = Path(root).resolve()
+    child = base / bundle
+    try:
+        if os.path.lexists(child) and (child.is_symlink() or not child.is_dir()):
+            return "helper-source-not-a-repository", {"reason": "not-a-real-directory"}
+        if os.path.realpath(child) != str(child):
+            return "helper-source-not-a-repository", {"reason": "path-escape"}
+        marker = child / ".git"
+        if not os.path.lexists(marker):
+            return "helper-source-unbound", init
+        if marker.is_symlink() or not marker.is_file():
+            return "helper-source-not-a-repository", {"reason": "git-marker-not-a-file"}
+        lines = marker.read_text().splitlines()
+    except (OSError, UnicodeDecodeError):
+        return "helper-source-not-a-repository", {"reason": "child-unreadable"}
+    if len(lines) != 1 or not lines[0].startswith("gitdir: ") or not lines[0][len("gitdir: "):].strip():
+        return "helper-source-not-a-repository", {"reason": "git-marker-malformed"}
+    gitdir = Path(os.path.realpath(child / lines[0][len("gitdir: "):].strip()))
+    dirs = git(root, "rev-parse", "--path-format=absolute", "--git-common-dir", "--git-dir")
+    if dirs.returncode != 0:
+        return "helper-source-not-a-repository", {"reason": "parent-git-dir-unavailable"}
+    bases = {Path(os.path.realpath(line)) / "modules" for line in dirs.stdout.splitlines() if line}
+    if not any(gitdir != allowed and gitdir.is_relative_to(allowed) for allowed in bases):
+        return "helper-source-not-a-repository", {"reason": "gitdir-outside-parent-modules"}
+    state = git(child, "rev-parse", "--show-toplevel", "HEAD")
+    lines = state.stdout.splitlines() if state.returncode == 0 else []
+    if len(lines) != 2 or Path(os.path.realpath(lines[0])) != child:
+        return "helper-source-not-a-repository", {"reason": "child-repository-unavailable"}
+    if lines[1] != pin:
+        return "helper-source-pin-mismatch", {"pin": pin, "child_head": lines[1], **init}
+    return None
+
+
+def helper_source(root):
+    """The committed helper source: {relative, kind, pin, child, failure, details}; None when nothing is tracked.
+
+    Blob before gitlink, each in HELPER_CANDIDATES order: a helper committed as a parent file is bound exactly as
+    before; otherwise the first candidate whose bundle directory is a gitlink binds through the parent's recorded
+    commit and the child's own object store, and an uninitialized, mismatched or substituted child is a failure."""
+    for candidate in HELPER_CANDIDATES:
+        result = git(root, "cat-file", "-t", f"HEAD:{candidate}")
+        if result.returncode == 0 and result.stdout.strip() == "blob":
+            return {"relative": candidate, "kind": "blob", "pin": None, "child": None, "failure": None,
+                    "details": {}}
+    for candidate in HELPER_CANDIDATES:
+        bundle = bundle_directory(candidate)
+        pin = gitlink_pin(root, bundle)
+        if pin is None:
+            continue
+        failure = gitlink_child_failure(root, bundle, pin)
+        code, details = failure if failure else (None, {})
+        return {"relative": candidate, "kind": "gitlink", "pin": pin, "child": Path(root).resolve() / bundle,
+                "failure": code, "details": details}
+    return None
+
+
+def helper_relative(root):
+    """The bound helper path: a HELPER_CANDIDATES path tracked as a blob, or beneath a verified gitlink; else None."""
+    source = helper_source(root)
+    return source["relative"] if source and not source["failure"] else None
+
+
+def committed_helper_sha(root, relative, source=None):
     if relative is None:
         return None
-    result = git(root, "show", f"HEAD:{relative}", text=False)
+    if source is not None and source["kind"] == "gitlink":
+        if source["failure"]:
+            return None
+        spec = f"{source['pin']}:{BUNDLE_HELPER_RELATIVE}"
+        kind = git(source["child"], "cat-file", "-t", spec)
+        if kind.returncode != 0 or kind.stdout.strip() != "blob":
+            return None
+        result = git(source["child"], "show", spec, text=False)
+    else:
+        result = git(root, "show", f"HEAD:{relative}", text=False)
     return digest(result.stdout) if result.returncode == 0 else None
+
+
+def public_source(source):
+    if source is None:
+        return None
+    return {k: source[k] for k in ("relative", "kind", "pin", "failure", "details")}
 
 
 def prerequisite_evidence(root, log_id, writer_sha256):
@@ -1135,10 +1233,14 @@ def prerequisite_evidence(root, log_id, writer_sha256):
     main = is_main_checkout(root)
     if not main:
         failures.append("repo-not-main-checkout")
-    relative = helper_relative(root)
-    committed = committed_helper_sha(root, relative)
+    source = helper_source(root)
+    relative = source["relative"] if source else None
+    if source and source["failure"]:
+        failures.append(source["failure"])
+    committed = committed_helper_sha(root, relative, source)
     try:
-        working = digest((Path(root) / relative).read_bytes()) if relative is not None else None
+        working = digest((Path(root) / relative).read_bytes()) \
+            if relative is not None and not (source and source["failure"]) else None
     except OSError:
         working = None
     if not (SELF_SHA256 == committed == working == writer_sha256):
@@ -1169,7 +1271,7 @@ def prerequisite_evidence(root, log_id, writer_sha256):
             "uninspectable_processes": uninspectable, "uninspectable_nonhelper": nonhelper,
             "cli_listing": listing is not None, "visible_cli_pids": len(pids) - len(invisible),
             "invisible_cli_pids": len(invisible),
-            "other_worktree_helpers_differing": differing}
+            "other_worktree_helpers_differing": differing, "helper_source": public_source(source)}
 
 
 def write_archive(root, closure, selection, source, evidence, selection_sha):

@@ -272,12 +272,22 @@ target repository, with its children at `.agents/skills/restruct-sdlc/<child>/`.
 `restruct-sdlc` skill there; the parent routes to the one child a task needs through a contained relative link, and
 Claude sessions read the needed `SKILL.md` explicitly, as the adopted AGENTS.md requires. The distribution
 repository root is itself the bundle (`SKILL.md`, `README.md`, `LICENSE`, `MANIFEST.tsv` and the three children).
-A source-maintainer repository may keep the canonical tree elsewhere (for example `skills/restruct-sdlc/`) and expose
+A source-maintainer repository may keep the canonical tree elsewhere (for example `distributions/skills/restruct-sdlc/`) and expose
 it through relative aliases `.agents/skills/restruct-sdlc` and `.claude/skills/restruct-sdlc`.
+
+That source-maintainer tree may be a Git submodule of the distribution repository: one gitlink at the bundle
+directory, the canonical remote in `.gitmodules`, no tracked branch. Each checkout or worktree that needs the skill
+initializes only that path, with `git submodule update --init -- distributions/skills/restruct-sdlc`, before the
+aliases resolve. Never use `--recursive` or a blanket `git submodule update --init`, which would also initialize
+unrelated submodules. An empty bundle directory or a dangling alias means "not initialized"; never substitute a
+same-named personal or copied skill. To opt out, remove both aliases and the instructions that load them, then run
+`git submodule deinit -- <path>` and `git rm <path>`; deleting an alias alone removes nothing.
 
 The handoff helper's committed-path assumptions constrain adopters:
 - `compact` verifies the helper committed at `.agents/skills/restruct-sdlc/claude-session-handoff/scripts/handoff.py`
-  (or, in a source-maintainer repository, at `skills/restruct-sdlc/claude-session-handoff/scripts/handoff.py`);
+  (or, in a source-maintainer repository, at `distributions/skills/restruct-sdlc/claude-session-handoff/scripts/handoff.py`);
+  when that bundle directory is a submodule gitlink, the helper is bound through the parent's recorded commit; an
+  uninitialized, moved or substituted child refuses, and the first two refusals name the targeted initialization command;
 - task labels match `G` plus three digits, and document references must lie under `management/`;
 - closure records match `management/<release>/results/<ID>-implementation-codex-review*.md`, with
   `--verified-by codex|owner`, and the sender label is `codex-supervisor`;

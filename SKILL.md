@@ -33,9 +33,12 @@ commands) against the **target checkout**, never against the skill storage direc
   [installing the bundle](sdlc-management/references/adoption.md#installing-the-skills).
 - **Distribution repository:** the repository root itself contains `SKILL.md`, `README.md`, `LICENSE`,
   `MANIFEST.tsv`, `agents/` and all three children; there is no extra wrapper directory.
-- **Source-maintainer repository:** the canonical tree may live at `skills/restruct-sdlc/`, with the two relative
-  discovery aliases `.agents/skills/restruct-sdlc` and `.claude/skills/restruct-sdlc` pointing to
-  `../../skills/restruct-sdlc`.
+- **Source-maintainer repository:** the canonical tree may live at `distributions/skills/restruct-sdlc/`, with the two
+  relative discovery aliases `.agents/skills/restruct-sdlc` and `.claude/skills/restruct-sdlc` pointing to
+  `../../distributions/skills/restruct-sdlc`. When that directory is a submodule checkout of this distribution
+  repository, initialize only it, in each checkout, with
+  `git submodule update --init -- distributions/skills/restruct-sdlc` (never `--recursive`) before the aliases
+  resolve; an empty directory or dangling alias means "not initialized", not a missing skill.
 
 Installing or discovering the bundle creates no management tree, fills no project decision, starts no agent and
 activates no observer. Adoption is a separate, explicit, owner-authorized procedure described by sdlc-management.
@@ -51,7 +54,7 @@ python3 -B -m unittest discover -s <bundle>/sdlc-management/scripts -p 'test_che
 python3 -B -m unittest discover -s <bundle>/claude-session-handoff/scripts -p 'test_*.py'
 ```
 
-`<bundle>` is `skills/restruct-sdlc` in the source-maintainer example and `.agents/skills/restruct-sdlc`
+`<bundle>` is `distributions/skills/restruct-sdlc` in the source-maintainer example and `.agents/skills/restruct-sdlc`
 in the default adopting layout. Check a metadata-free copy of this distribution root with
 `check_sdlc.py package <distribution-root>`; exclude its root `.git` directory or submodule marker first.
 The checker also accepts older distributions with the extra `restruct-sdlc/` wrapper.

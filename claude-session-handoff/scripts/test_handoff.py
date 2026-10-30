@@ -1322,7 +1322,7 @@ class T14LegacyWriter(Base):
         """The source-maintainer discovery alias: a committed relative symlink to the canonical bundle."""
         alias = root / ".agents" / "skills" / "restruct-sdlc"
         alias.parent.mkdir(parents=True)
-        os.symlink("../../skills/restruct-sdlc", alias)
+        os.symlink("../../distributions/skills/restruct-sdlc", alias)
         self.commit(root)
         return alias
 
@@ -1413,6 +1413,177 @@ class T14LegacyWriter(Base):
         self.assertEqual(child.stdout.readline().strip(), "ready")
         evidence = self.refused("log-held-by-other-process")
         self.assertIn(child.pid, [h["pid"] for h in evidence["log_holders"]])
+
+
+GITLINK_LAYOUTS = {"distributions": 0, "adopter": 1}
+
+
+def head(directory):
+    return subprocess.run(["git", "-C", str(directory), "rev-parse", "HEAD"], capture_output=True, text=True,
+                          check=True).stdout.strip()
+
+
+class T15GitlinkSource(Base):
+    """OS004: the committed helper beneath a submodule gitlink is bound through the parent's recorded commit and the
+    child's object store, in both layouts; uninitialized, mismatched, substituted or escaping sources refuse."""
+    refused = T14LegacyWriter.refused
+
+    def setUp(self):
+        super().setUp()
+        self.data, _, _ = self.closure_log(str(uuid.uuid4()))
+
+    def make_child(self, name):
+        """A standalone bundle repository: the helper, then a second commit that leaves the helper bytes unchanged."""
+        child = self.tmp / f"{name}-child"
+        run_git("init", "-q", "-b", "main", child)
+        helper = child / handoff.BUNDLE_HELPER_RELATIVE
+        helper.parent.mkdir(parents=True)
+        helper.write_bytes(HELPER_BYTES)
+        self.commit(child)
+        first = head(child)
+        (child / "NOTES.md").write_bytes(b"second commit; helper bytes unchanged\n")
+        self.commit(child)
+        return child, first, head(child)
+
+    def init_child(self, checkout, bundle):
+        run_git("-C", checkout, "-c", "protocol.file.allow=always", "submodule", "update", "--init", "-q", "--", bundle)
+
+    def make_gitlink_repo(self, layout, name="parent", initialized=True):
+        """A parent whose bundle directory for `layout` is a gitlink pinned to the child's first commit, with the
+        child cloned into the parent's modules directory behind a `.git` file (or left uninitialized: an empty
+        directory). No helper blob is committed anywhere in the parent."""
+        bundle = handoff.bundle_directory(handoff.HELPER_CANDIDATES[GITLINK_LAYOUTS[layout]])
+        child, first, second = self.make_child(name)
+        root = self.make_repo(name)
+        run_git("-C", root, "rm", "-r", "-q", "--", handoff.bundle_directory(handoff.HELPER_CANDIDATES[0]))
+        run_git("-C", root, "config", "-f", ".gitmodules", f"submodule.{bundle}.path", bundle)
+        run_git("-C", root, "config", "-f", ".gitmodules", f"submodule.{bundle}.url", child)
+        run_git("-C", root, "update-index", "--add", "--cacheinfo", f"160000,{first},{bundle}")
+        (root / bundle).mkdir(parents=True, exist_ok=True)
+        self.commit(root)
+        if initialized:
+            self.init_child(root, bundle)
+        self.write_log(root, self.data)
+        self.root, self.bundle, self.child, self.first, self.second = root, bundle, child, first, second
+        self.selection = self.dry(root)["selection_sha256"]
+        return root
+
+    def test_t15_initialized_pinned_gitlink_is_accepted_at_both_candidates(self):
+        for layout, index in GITLINK_LAYOUTS.items():
+            self.fake_proc()
+            root = self.make_gitlink_repo(layout, name=layout)
+            source = handoff.helper_source(root)
+            self.assertEqual((source["kind"], source["relative"], source["pin"], source["failure"]),
+                             ("gitlink", handoff.HELPER_CANDIDATES[index], self.first, None))
+            self.assertEqual(handoff.helper_relative(root), handoff.HELPER_CANDIDATES[index])
+            evidence = self.dry(root)["prerequisite"]
+            self.assertEqual((evidence["satisfied"], evidence["failures"]), (True, []), layout)
+            self.assertEqual((evidence["committed_sha256"], evidence["working_sha256"]), (SELF_SHA, SELF_SHA))
+            self.assertEqual(evidence["helper_source"], {"relative": handoff.HELPER_CANDIDATES[index],
+                                                         "kind": "gitlink", "pin": self.first, "failure": None,
+                                                         "details": {}})
+        result = self.apply(root, self.selection)
+        self.assertEqual(result["status"], "compaction-applied")
+
+    def test_t15_uninitialized_gitlink_refuses_with_the_init_command(self):
+        for layout in GITLINK_LAYOUTS:
+            self.fake_proc()
+            root = self.make_gitlink_repo(layout, name=layout, initialized=False)
+            self.assertIsNone(handoff.helper_relative(root))
+            evidence = self.refused("helper-source-unbound", "invocation-path-not-upgraded", root=root)
+            self.assertEqual(evidence["helper_source"]["details"],
+                             {"init_command": f"git submodule update --init -- {self.bundle}"})
+            self.assertEqual((evidence["committed_sha256"], evidence["working_sha256"]), (None, None))
+
+    def test_t15_child_moved_off_the_pin_refuses(self):
+        self.fake_proc()
+        root = self.make_gitlink_repo("distributions")
+        run_git("-C", root / self.bundle, "checkout", "-q", self.second)
+        evidence = self.refused("helper-source-pin-mismatch", root=root)
+        self.assertEqual(evidence["helper_source"]["details"],
+                         {"pin": self.first, "child_head": self.second,
+                          "init_command": f"git submodule update --init -- {self.bundle}"})
+        self.assertIsNone(evidence["committed_sha256"])
+
+    def test_t15_dirty_substituted_helper_and_other_writer_refuse(self):
+        self.fake_proc()
+        root = self.make_gitlink_repo("distributions")
+        working = root / handoff.HELPER_CANDIDATES[0]
+        working.write_bytes(b"# substituted working helper\n")
+        evidence = self.refused("invocation-path-not-upgraded", root=root)
+        self.assertEqual((evidence["helper_source"]["failure"], evidence["committed_sha256"]), (None, SELF_SHA))
+        self.assertNotEqual(evidence["working_sha256"], SELF_SHA)
+        working.write_bytes(HELPER_BYTES)
+        self.refused("invocation-path-not-upgraded", root=root, writer=hashlib.sha256(b"other").hexdigest())
+        # A reviewed-looking pin move to a child commit carrying different helper bytes is still refused.
+        working.write_bytes(b"# substituted committed helper\n")
+        self.commit(root / self.bundle)
+        self.commit(root)
+        source = handoff.helper_source(root)
+        self.assertEqual((source["failure"], source["pin"]), (None, head(root / self.bundle)))
+        evidence = self.refused("invocation-path-not-upgraded", root=root)
+        self.assertEqual(evidence["committed_sha256"], evidence["working_sha256"])
+        self.assertNotEqual(evidence["committed_sha256"], SELF_SHA)
+
+    def test_t15_symlinked_file_escaping_or_foreign_child_refuses(self):
+        self.fake_proc()
+        root = self.make_gitlink_repo("distributions", initialized=False)
+        target = root / self.bundle
+        run_git("-C", self.child, "checkout", "-q", self.first)  # a real repository at the pin, outside the parent
+        target.rmdir()
+        os.symlink(self.child, target)
+        evidence = self.refused("helper-source-not-a-repository", root=root)
+        self.assertEqual(evidence["helper_source"]["details"], {"reason": "not-a-real-directory"})
+        target.unlink()
+        target.write_bytes(b"not a directory\n")
+        evidence = self.refused("helper-source-not-a-repository", root=root)
+        self.assertEqual(evidence["helper_source"]["details"], {"reason": "not-a-real-directory"})
+        target.unlink()
+        target.mkdir()
+        self.init_child(root, self.bundle)
+        self.assertIsNone(handoff.helper_source(root)["failure"])
+        marker = target / ".git"
+        original = marker.read_bytes()
+        marker.write_text(f"gitdir: {self.child / '.git'}\n")
+        evidence = self.refused("helper-source-not-a-repository", root=root)
+        self.assertEqual(evidence["helper_source"]["details"], {"reason": "gitdir-outside-parent-modules"})
+        marker.write_bytes(original)
+        moved = self.tmp / "moved-distributions"
+        (root / "distributions").rename(moved)
+        os.symlink(moved, root / "distributions")
+        evidence = self.refused("helper-source-not-a-repository", root=root)
+        self.assertEqual(evidence["helper_source"]["details"], {"reason": "path-escape"})
+
+    def test_t15_linked_worktree_child_is_reported_only_when_its_bytes_differ(self):
+        self.fake_proc()
+        root = self.make_gitlink_repo("distributions")
+        linked = self.worktree(root, "linked")
+        self.assertEqual(self.dry(root)["prerequisite"]["other_worktree_helpers_differing"], [],
+                         "an uninitialized linked worktree child is skipped")
+        self.init_child(linked, self.bundle)
+        source = handoff.helper_source(linked)
+        self.assertEqual((source["kind"], source["pin"], source["failure"]), ("gitlink", self.first, None))
+        evidence = self.dry(root)["prerequisite"]
+        self.assertEqual((evidence["satisfied"], evidence["other_worktree_helpers_differing"]), (True, []))
+        (linked / handoff.HELPER_CANDIDATES[0]).write_bytes(b"# linked worktree edit\n")
+        differing = self.dry(root)["prerequisite"]["other_worktree_helpers_differing"]
+        self.assertEqual(differing, [{"worktree": str(linked),
+                                      "helper_sha256": hashlib.sha256(b"# linked worktree edit\n").hexdigest()}])
+
+    def test_t15_blob_before_gitlink_precedence_is_deterministic(self):
+        self.fake_proc()
+        cases = (("distributions", 1), ("adopter", 0))  # gitlink layout, candidate committed as a parent blob
+        for layout, blob in cases:
+            root = self.make_gitlink_repo(layout, name=layout, initialized=layout == "adopter")
+            path = root / handoff.HELPER_CANDIDATES[blob]
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(HELPER_BYTES)
+            self.commit(root)
+            sources = [handoff.helper_source(root) for _ in range(3)]
+            self.assertEqual(sources, [sources[0]] * 3)
+            self.assertEqual((sources[0]["kind"], sources[0]["relative"]), ("blob", handoff.HELPER_CANDIDATES[blob]))
+            evidence = self.dry(root)["prerequisite"]
+            self.assertEqual((evidence["satisfied"], evidence["helper_source"]["kind"]), (True, "blob"), layout)
 
 
 class T15Failures(Base):
