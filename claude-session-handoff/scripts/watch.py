@@ -64,8 +64,9 @@ WORKING_HANDOFFS = (
                                 r"(?:awaiting|waiting (?:on|for))\s+"
                                 r"(?:(?:codex|supervisor)(?:['’]s)?\s+)?(?:re[- ]?)?review)\b", re.I)),
 )
+# Failure alerts require the explicit final status marker. Prose may describe
+# historical, conditional or ongoing repair failures without a new handoff.
 CATEGORIES = (
-    ("failed", re.compile(r"\b(?:failed|failing|failures?)\b", re.I)),
     ("question", re.compile(r"\b(?:question for (?:the )?(?:owner|codex|supervisor)|"
                             r"(?:decision|approval)\s+(?:is\s+)?(?:needed|required))\b", re.I)),
     ("blocked", re.compile(r"\b(?:blocked|blocker|escalat(?:e|es|ed|ing|ion))\b", re.I)),
@@ -317,7 +318,7 @@ def milestone(row):
         for line in joined.split("\n"):
             if re.match(r"^\s*(?:>\s*)?COORDINATOR_STATUS:", line):
                 continue  # malformed/nonterminal/quoted markers are not prose alerts
-            if pattern.search(line) and (category not in ("failed", "blocked", "question")
+            if pattern.search(line) and (category not in ("blocked", "question")
                                          or active_alert(line, pattern)):
                 return category, handoff.safe_excerpt(line.strip(), 240)
     return None

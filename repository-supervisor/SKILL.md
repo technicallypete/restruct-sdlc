@@ -311,7 +311,7 @@ Do not accept a later passing subset as proof that earlier failures cleared.
 
 ## Direct owner replies — 2026-10-19
 
-For ordinary replies to direct owner prompts, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks for supervisor relay. Exception: an owner decision that changes active work must immediately emit a `decision` footer, including when the same message answers the owner. Do not wait for another turn, worker handback or review-ready commit. Autonomous handoffs and required reviews, failure records and blockers still notify; existing legacy-prose/native-question detection is unchanged.
+For ordinary replies to direct owner prompts, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks for supervisor relay. Exception: an owner decision that changes active work must immediately emit a `decision` footer, including when the same message answers the owner. Do not wait for another turn, worker handback or review-ready commit. Autonomous handoffs and required reviews, failure records and blockers still notify; failure notices require a valid final `failed` status marker. Other legacy-prose and native-question detection remains unchanged.
 
 
 ## Coordination economy — owner direction, 2026-10-20

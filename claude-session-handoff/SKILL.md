@@ -387,7 +387,7 @@ If the inbox is incompatible or unavailable, use the supported attach/input inte
 
 ## Coordinator milestone observer (opt-in here; an adopting repository may default-enable it after verified bindings)
 
-For ordinary replies to direct owner prompts, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks for supervisor relay. Exception: an owner decision that changes active work must immediately emit a `decision` footer, including when the same message answers the owner. Do not wait for another turn, worker handback or review-ready commit. Autonomous handoffs and required reviews, failure records and blockers still notify; existing legacy-prose/native-question detection is unchanged.
+For ordinary replies to direct owner prompts, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks for supervisor relay. Exception: an owner decision that changes active work must immediately emit a `decision` footer, including when the same message answers the owner. Do not wait for another turn, worker handback or review-ready commit. Autonomous handoffs and required reviews, failure records and blockers still notify; failure notices require a valid final `failed` status marker. Other legacy-prose and native-question detection remains unchanged.
 
 **Coordinator response contract:** finish autonomous supervisor handoffs with one plain final line:
 `COORDINATOR_STATUS: review-ready | G008 | Plan ready for supervisor review.`
@@ -410,9 +410,13 @@ other legacy prose remains detectable when no valid final marker exists.
 Existing source/echo exclusions, deduplication and authority boundaries remain.
 
 [scripts/watch.py](scripts/watch.py) notifies one existing Codex supervisor thread of the verified Claude
-coordinator's milestones: decision, failure, review-ready, blocked or question, waiting, completed. Explicit decision/approval
-requests qualify as questions; absent, expected or explicitly resolved failures do not qualify as failure alerts.
-Detection uses bounded text patterns, not AI inference or direct CI polling. It is a stdlib polling loop (default
+coordinator's milestones: decision, failure, review-ready, blocked or question, waiting, completed.
+Failure notifications require `COORDINATOR_STATUS: failed | TASK-ID | SUMMARY` as a valid final marker;
+ordinary prose containing failed/failing/failure never classifies a failure notice. Use `working` while
+performing authorized diagnosis/correction/reruns, `blocked` when unable to proceed, and `review-ready`
+when evidence is ready. Preserve actual failed outcomes in the Result and logs regardless of notification class.
+Explicit decision/approval requests still qualify as questions. Other legacy detection remains bounded text
+matching, not AI inference or direct CI polling. It is a stdlib polling loop (default
 30 seconds) with no model inference. It belongs to the repository's coordinator–supervisor pair, not to one task:
 once enabled it keeps running across Goals, reviews and closeouts until the operator stops it.
 

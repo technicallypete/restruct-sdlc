@@ -306,7 +306,7 @@ class NotificationSources(Base):
                 self.assertIn("no approval or task authority", self.codex.queues()[-1][4])
                 self.assertEqual(self.poll()["queue_calls"], 0)
 
-    def test_invalid_marker_does_not_suppress_a_real_prose_failure(self):
+    def test_invalid_marker_does_not_turn_prose_into_failure_alert(self):
         self.bind()
         self.poll()
         for marker in ("COORDINATOR_STATUS: unknown | G008 | Check records.",
@@ -314,8 +314,8 @@ class NotificationSources(Base):
                        "COORDINATOR_STATUS: working | G008 | ",
                        "COORDINATOR_STATUS: working | G008 | invalid | separator"):
             self.append(self.row("assistant", "The staging gate failed.\n" + marker))
-            self.assertEqual(self.poll()["queue_calls"], 1)
-            self.assertIn("milestone (failed", self.codex.queues()[-1][4])
+            self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(self.codex.queues(), [])
 
     def test_incoming_sidechain_and_echo_markers_never_notify(self):
         self.bind()
@@ -353,13 +353,13 @@ class NotificationSources(Base):
         self.assertEqual(self.poll()["queue_calls"], 1)
         self.assertIn("asked a native question", self.codex.queues()[0][4])
 
-    def test_staging_failure_report_notifies_once(self):
+    def test_staging_failure_with_decision_request_notifies_as_question(self):
         self.bind()
         self.poll()
         self.append(self.row("assistant", "The staging gate failed, so final acceptance must wait.\n"
                              "140 tests passed and 1 failed.\n**Decision needed (supervisor or owner):** retry or investigate."))
         self.assertEqual(self.poll()["queue_calls"], 1)
-        self.assertIn("milestone (failed", self.codex.queues()[0][4])
+        self.assertIn("milestone (question", self.codex.queues()[0][4])
         self.assertEqual(self.poll()["queue_calls"], 0)
 
     def test_absent_expected_or_resolved_failures_do_not_notify(self):
@@ -372,12 +372,18 @@ class NotificationSources(Base):
                 self.assertEqual(self.poll()["queue_calls"], 0)
         self.assertEqual(self.codex.queues(), [])
 
-    def test_resolved_failure_does_not_hide_a_new_failure(self):
+    def test_failure_prose_requires_explicit_status(self):
         self.bind()
         self.poll()
-        self.append(self.row("assistant", "The failure is resolved; a different job failed."))
-        self.assertEqual(self.poll()["queue_calls"], 1)
-        self.assertIn("milestone (failed", self.codex.queues()[0][4])
+        for text in ("The failure is resolved; a different job failed.",
+                     "The staging gate failed.", "Two tests are failing.",
+                     "The first run failed; the corrected rerun is still running.",
+                     "This type mismatch would otherwise cause a tsc failure.",
+                     "I will fix whatever failed after the run finishes."):
+            with self.subTest(text=text):
+                self.append(self.row("assistant", text))
+                self.assertEqual(self.poll()["queue_calls"], 0)
+        self.assertEqual(self.codex.queues(), [])
 
     def test_conditional_failure_rules_do_not_notify(self):
         self.bind()
@@ -400,12 +406,16 @@ class NotificationSources(Base):
         self.assertIn("G008 Plan r3", self.codex.queues()[0][4])
         self.assertEqual(self.poll()["queue_calls"], 0)
 
-    def test_conditional_rule_does_not_hide_real_failure(self):
+    def test_explicit_failure_notifies_once_without_failure_keyword(self):
         self.bind()
         self.poll()
         self.append(self.row("assistant", "Any failure stops it; the staging gate failed."))
+        self.assertEqual(self.poll()["queue_calls"], 0)
+        self.append(self.row("assistant", "COORDINATOR_STATUS: failed | G008 | Lint returned exit 1; correction needed."))
         self.assertEqual(self.poll()["queue_calls"], 1)
         self.assertIn("milestone (failed", self.codex.queues()[0][4])
+        self.assertIn("Lint returned exit 1", self.codex.queues()[0][4])
+        self.assertEqual(self.poll()["queue_calls"], 0)
 
     def test_mechanical_binding_ready_notifies_once(self):
         self.bind()

@@ -216,7 +216,7 @@ standard `/proc`/`lsof` inspection and the helper's existing `status`.
 
 ### Coordinator final status line
 
-For ordinary replies to direct owner prompts, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks for supervisor relay. Exception: an owner decision that changes active work must immediately emit a `decision` footer, including when the same message answers the owner. Do not wait for another turn, worker handback or review-ready commit. Autonomous handoffs and required reviews, failure records and blockers still notify; existing legacy-prose/native-question detection is unchanged.
+For ordinary replies to direct owner prompts, omit the `COORDINATOR_STATUS` footer unless the owner explicitly asks for supervisor relay. Exception: an owner decision that changes active work must immediately emit a `decision` footer, including when the same message answers the owner. Do not wait for another turn, worker handback or review-ready commit. Autonomous handoffs and required reviews, failure records and blockers still notify; failure notices require a valid final `failed` status marker. Other legacy-prose and native-question detection remains unchanged.
 
 Finish autonomous coordinator-to-supervisor handoffs with one plain final line (outside Markdown/code blocks):
 
@@ -239,7 +239,11 @@ and summarize other tasks in the body. Use `working` only when no actionable han
 The observer also catches explicit pending decision/review wording in a `working` marker's full summary;
 it does not scan historical body prose through a valid `working` marker. This fallback prevents a mixed-task
 summary from hiding a handoff; it does not replace truthful classification.
-Report failed history honestly in the body without labelling a recovery instruction as a new failure.
+Failure notices require a valid final `failed` marker; failed/failing/failure in ordinary prose is not
+failure notification authority. Use `working` during authorized diagnosis, correction and reruns,
+`blocked` when unable to proceed, and `review-ready` when completed evidence is ready.
+Report actual failed outcomes/history honestly in the Result and logs regardless of the current
+notification class; do not label a recovery instruction as a new failure.
 
 Emit `decision` as soon as a direct owner instruction changes active work; do not
 hide it under `working` or wait for a review-ready commit. In the existing task
