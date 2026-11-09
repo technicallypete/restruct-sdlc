@@ -212,6 +212,16 @@ This procedure preserves ownership/isolation and relocation safety. Naming is a 
 The gate adds no naming framework, lock bypass, process-scanner code or helper change. Verification uses Git,
 standard `/proc`/`lsof` inspection and the helper's existing `status`.
 
+## Reuse verified task context
+
+Prepare one private [role/phase packet](task-context-packets.md) during the existing
+planning/dispatch/handoff. Keep handoffs to its exact binding plus changed scope,
+decisions and remaining gates; do not paste the whole packet into each message.
+At safe boundaries verify freshness/current owner holds and read only relevant
+deltas. Packets never replace native instructions, actual source review or the
+coordinator's initial whole-task assessment. Do not create another progress log,
+manifest service, watcher or successor task just to maintain a packet.
+
 ## Handoff contents
 
 ### Coordinator final status line

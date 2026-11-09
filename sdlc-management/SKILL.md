@@ -87,6 +87,11 @@ kickoff follows the accepted allocation. The planner may remain one agent. See [
 | [closeout-risks.md](references/closeout-risks.md) | Verified cleanup, archive-before-prune, PROGRESS compaction, risk and performance reporting. |
 | [workflow-overview.md](references/workflow-overview.md) | Goal lifecycle, routine transitions, validation and closeout defaults. |
 
+Use the [private packet procedure](references/task-context-packets.md) and linked
+template for scoped reuse. Existing task records hold preparation/freshness checks;
+live guidance must adopt the route. Packets are not Spec appendices or authority.
+Root/service instructions, owner holds and whole-task acceptance inputs still apply.
+
 ## Templates
 
 | Template | Destination |

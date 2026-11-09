@@ -19,6 +19,11 @@ When the owner selects Claude supervision, ChatGPT/Codex is limited to Work Spec
 1. Resolve the current checkout's Git root. Read root AGENTS.md and CLAUDE.md,
    canonical architecture/security/decisions and applicable ADRs, budget policy,
    and the active release's ROADMAP.md and PROGRESS.md as required by governance.
+   For later refreshes or bounded delegated reviews, an explicitly adopted
+   [task-packet route](../sdlc-management/references/task-context-packets.md) may
+   select relevant excerpts instead of repeating whole-book reads. Verify source
+   freshness and current owner holds; initial task-wide assessment and full
+   Plan/Result acceptance retain their canonical input requirements.
 2. Read `management/SUPERVISOR-HANDOFF.md` if present as a dated state reference.
    Prefer current committed records and verified state over its older observations.
    Use another release's existing management structure when governance selects it.

@@ -26,9 +26,23 @@ is the shared governance; follow it in full. This file adds no separate governan
 
 Routine acceptance and cleanup closeout records use the supervisor's direct publication route to the configured integration branch. The coordinator hands back the Result, attributable qualification evidence and cleanup receipt with exact source references; the supervisor reviews them, records the acceptance disposition and imports/publishes the completed Result, review, PROGRESS and related closeout records in scoped commits. Do not create a separate acceptance, Result-only or cleanup-receipt MR, request another automated review or launch CI solely to publish those records. The implementer receives no direct integration-branch push or self-acceptance authority. An explicit owner instruction or an actual branch-protection requirement can select an MR instead; report that reason. Actual code or executable configuration repairs retain the normal source-MR workflow. Preserve review, evidence, cleanup and native permission gates; publication alone is not ACCEPT.
 
+
+## Private task-context reading route
+
+A preparer and initial whole-task assessor read the repository's canonical inputs.
+After that preparer checks completeness in the existing Plan/dispatch/review,
+a bounded worker/reviewer may use root/service instructions plus the applicable
+verified packet extracts in place of repeated whole-book management/architecture/
+security reads. Follow the [packet procedure](.agents/skills/restruct-sdlc/sdlc-management/references/task-context-packets.md).
+Current owner holds, source freshness, skills, security and phase gates remain
+mandatory; missing/stale/unclear inputs require direct canonical reads. Full-task
+acceptance retains its canonical inputs. Packets are ignored private task evidence,
+not committed management documents or Spec appendices. Adopt at a safe boundary;
+no packet releases held work or changes a running batch's frozen inputs.
+
 ## Required reading
 
-Before planning or implementation, read AGENTS.md, this file, {{CANONICAL_SOURCES}}, the
+Default preparer/initial whole-task route: before planning or implementation, read AGENTS.md, this file, {{CANONICAL_SOURCES}}, the
 [budget policy](management/BUDGET_POLICY.md), the release [ROADMAP](management/{{RELEASE}}/ROADMAP.md) and
 [PROGRESS](management/{{RELEASE}}/PROGRESS.md), then the active Goal's Goal, Spec, Plan and Result. Formats:
 [roles and lifecycle](.agents/skills/restruct-sdlc/sdlc-management/references/roles-lifecycle.md).

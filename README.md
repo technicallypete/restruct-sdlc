@@ -130,3 +130,12 @@ installation is not the supported default; the committed repository copy keeps t
 ## License
 
 MIT. See the distribution's `LICENSE` and the notices retained in the bundled skills.
+
+## Task context without another canonical document
+
+The [task-packet procedure](sdlc-management/references/task-context-packets.md) and
+[template](sdlc-management/references/task-context-packet-template.md) let one
+preparer assemble verified role/phase extracts for reuse. Generated packets stay
+private in ignored task evidence, with exact source bindings and freshness checks;
+they are not committed Spec appendices or substitutes for native authority. Live
+guidance explicitly selects the route. Broader governance reorganization is separate.

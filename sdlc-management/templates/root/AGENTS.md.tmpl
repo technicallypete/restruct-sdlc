@@ -25,13 +25,27 @@ Harness instructions and explicit owner direction take precedence over skills an
 
 ## Canonical sources
 
-Before planning, implementing or reviewing, read: {{CANONICAL_SOURCES}}, the
+Default preparer/initial whole-task route (bounded consumers may use the explicit packet route below): read: {{CANONICAL_SOURCES}}, the
 [budget policy](management/BUDGET_POLICY.md), the release [ROADMAP](management/{{RELEASE}}/ROADMAP.md) and
 [PROGRESS](management/{{RELEASE}}/PROGRESS.md), and the active Goal's Goal, Spec, Plan and Result. Conflicts with
 canonical architecture or accepted decisions escalate. Delivery barrier: {{DELIVERY_BARRIER}}.
 
 Service roots with scoped instructions: {{SERVICE_ROOTS}}. Service work starts in its root, after reading this file
 and the active Goal inputs, and explicitly loads that root's instructions and skills.
+
+
+## Private task-context reading route
+
+A preparer and initial whole-task assessor read the canonical inputs above.
+After that preparer checks completeness in the existing Plan/dispatch/review,
+a bounded worker/reviewer may use root/service instructions plus the applicable
+verified packet extracts in place of repeated whole-book management/architecture/
+security reads. Follow the [packet procedure](.agents/skills/restruct-sdlc/sdlc-management/references/task-context-packets.md).
+Current owner holds, source freshness, skills, security and phase gates remain
+mandatory; missing/stale/unclear inputs require direct canonical reads. Full-task
+acceptance retains its canonical inputs. Packets are ignored private task evidence,
+not committed management documents or Spec appendices. Adopt at a safe boundary;
+no packet releases held work or changes a running batch's frozen inputs.
 
 ## Ownership matrix
 
