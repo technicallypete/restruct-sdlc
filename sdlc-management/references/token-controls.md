@@ -106,3 +106,59 @@ launch an unapproved probe agent, or resume a held lane to test installation.
 This is a bounded event-driven stop, not a guarantee about all stalls, silent
 reasoning between events or provider quota. The supervisor still checks useful
 artifacts and required proof at existing handback/acceptance gates.
+
+### Worker identity and safe rollout
+
+Native callbacks may supply the parent transcript even for a worker. Resolve the
+native agent ID to its existing `SESSION/subagents/agent-ID.jsonl`; direct child
+callbacks must match that same ID/session. Never key worker counters to the parent
+transcript. Missing, mismatched, traversing or symlinked identities stop verification.
+Distinct workers have distinct locked state; parent/child callbacks for one worker
+share it. A legacy shared state must not silently become a fresh allowance.
+
+Pin the prior hook for an already-running worker until its terminal handback. At
+that boundary preserve its state/refusal evidence and close its ownership before
+rebinding native hooks to the corrected script. Do not resume a held worker through
+a new namespace, remove its hold, or overwrite live bound hook bytes to install
+this fix. A native refusal of recovery remains a refusal; the supervisor owns the
+next supported disposition, with owner approval only where genuinely required.
+
+## Dispatch readiness and proof completeness
+
+Use [the delivery checker](../scripts/check_delivery.py) on the existing private
+dispatch/handback data; no committed per-worker document or tracking service.
+The coordinator prepares one bounded objective, source commit, role/phase, exact
+exclusive writable files, an empty unresolved-dependency list and named required
+cases with observable expectations. Resolve fixture/contract design before writing
+dispatch; a worker blocked by an unresolved design returns that precise obstacle
+within the existing progress budget. The supervisor checks the required-case list
+against the canonical AC/Spec/Plan, rather than trusting a worker-selected subset.
+
+Run `python3 -B scripts/check_delivery.py --dispatch PRIVATE.json` before dispatch.
+The JSON keys are `objective`, `source` (40-hex commit), `role`, `phase`,
+`writable_paths` (exact relative files), `unresolved` (empty array) and
+`required_cases` (objects with `id` and `expected`). Use resolved existing paths and
+fixture facts in the private context packet; do not commission another worker to
+rediscover facts already established. A genuinely new design obstacle returns for
+bounded disposition, not speculative expansion or repeated full-source reads.
+
+Before submitting a checkpoint as passing, add `--handback PRIVATE.json --repo
+CHECKOUT --evidence-root PRIVATE_EVIDENCE`. Handback keys: `source` (actual HEAD),
+`dispatch_sha256` (SHA-256 of sorted compact JSON dispatch), `outputs` (objects with
+`path`, `sha256`) and `cases` (one object per required ID). Each case records `id`,
+`status` (`passed`, `failed`, `not_run`, `not_proven`). A passed case also supplies
+an executable `selector` plus `assertion` and `evidence`, each with root-relative
+`path`, exact file `sha256` and an exact `excerpt` from that file. Evidence roots
+must not contain secrets. Hashes bind evidence, not its correctness.
+
+The checker rejects missing/duplicate/unknown cases, unowned declared outputs,
+source/dispatch mismatches, missing/changed files and absent excerpts. Non-passes
+remain incomplete, never an aggregate PASS. Writer-only handbacks may be incomplete:
+the coordinator runs the authorized selectors and fills actual evidence before
+checkpoint submission; no extra worker test authority is granted. Exit0 proves
+completeness/bindings only. The coordinator and supervisor still inspect actual
+assertions, outcomes, provenance and the complete Git diff (including undeclared
+changes); arbitrary log text or a case name alone proves no behavior. Genuine
+coverage discoveries amend the existing records; never shrink a bound checklist
+silently to get a green result. Run the focused tests in `test_delivery.py` when
+changing this checker; no application suite is needed for its adoption.

@@ -25,6 +25,10 @@ Objective and dependencies:
 Faithful operative extracts with canonical path/section/revision:
 Explanatory summary (not authority):
 Acceptance criteria and required focused selectors for this scope:
+Named required cases and observable expected behavior (existing dispatch fields;
+check against canonical requirements, not a worker-selected subset):
+First source artifact or precise obstacle expected within the existing progress
+budget; settled fixture/contract facts and exact source locations:
 Unresolved decisions and additional-read triggers:
 
 ## Source coverage and freshness

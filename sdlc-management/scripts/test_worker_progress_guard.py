@@ -1,6 +1,13 @@
 import unittest
 from worker_progress_guard import transition, decision, worker_event
 
+def workerpath(root, ident="a", session="session"):
+    from pathlib import Path
+    p = Path(root) / session / "subagents" / ("agent-" + ident + ".jsonl")
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text("{}\n")
+    return p
+
 def batch(i, name="Read", text="ok"):
     return {"hook_event_name":"PostToolBatch", "tool_calls":[{"tool_use_id":str(i),"tool_name":name,"tool_response":text}]}
 
@@ -38,7 +45,7 @@ class FileHookTests(unittest.TestCase):
         from pathlib import Path
         from worker_progress_guard import handle
         with tempfile.TemporaryDirectory() as d:
-            p=Path(d)/'agent.jsonl';p.write_text('{}\n')
+            p=workerpath(d)
             base={'agent_id':'a','session_id':'session','transcript_path':str(p),'tool_use_id':'pre'}
             for i in range(40): result=handle({**base,**batch(i)})
             self.assertFalse(result['continue'])
@@ -73,7 +80,7 @@ class PersistenceTests(unittest.TestCase):
         from unittest.mock import patch
         from worker_progress_guard import handle
         with tempfile.TemporaryDirectory() as d:
-            p=Path(d)/"agent.jsonl";p.write_text("{}")
+            p=workerpath(d,session="s")
             state=p.with_suffix(".restruct-progress.json");state.write_text(json.dumps({"held":"preserved"}))
             event={"agent_id":"a","session_id":"s","transcript_path":str(p),"hook_event_name":"PreToolUse","tool_name":"Read","tool_use_id":"pre"}
             with patch("worker_progress_guard.os.replace",side_effect=OSError("interrupted")):
@@ -84,10 +91,77 @@ class PersistenceTests(unittest.TestCase):
         from pathlib import Path
         from worker_progress_guard import handle
         with tempfile.TemporaryDirectory() as d:
-            p=Path(d)/"agent.jsonl";p.write_text("{}")
+            p=workerpath(d,session="s")
             event={"agent_id":"a","session_id":"s","transcript_path":str(p),"hook_event_name":"PostToolBatch"}
             with self.assertRaises(ValueError):handle(event)
             p.with_suffix(".restruct-progress.json").write_text("")
             with self.assertRaises(ValueError):handle({**event,**batch(1)})
+
+class WorkerIsolationTests(unittest.TestCase):
+    def test_parent_callbacks_do_not_share_latches_or_budgets(self):
+        import tempfile,json
+        from pathlib import Path
+        from worker_progress_guard import handle
+        with tempfile.TemporaryDirectory() as d:
+            parent=Path(d)/"session.jsonl";parent.write_text("{}")
+            a=workerpath(d,"a"); b=workerpath(d,"b")
+            base={"session_id":"session","transcript_path":str(parent)}
+            for i in range(40): result=handle({**base,"agent_id":"a",**batch(i)})
+            self.assertFalse(result["continue"])
+            self.assertEqual(handle({**base,"agent_id":"b",**batch("b1")}),{})
+            self.assertEqual(json.loads(b.with_suffix(".restruct-progress.json").read_text())["without_artifact"],1)
+            self.assertIn("held",json.loads(a.with_suffix(".restruct-progress.json").read_text()))
+    def test_parent_and_direct_callbacks_share_one_worker_state(self):
+        import tempfile,json
+        from pathlib import Path
+        from worker_progress_guard import handle
+        with tempfile.TemporaryDirectory() as d:
+            parent=Path(d)/"session.jsonl";parent.write_text("{}")
+            p=workerpath(d)
+            base={"session_id":"session","agent_id":"a"}
+            handle({**base,"transcript_path":str(parent),**batch("1")})
+            handle({**base,"transcript_path":str(p),**batch("2")})
+            self.assertEqual(json.loads(p.with_suffix(".restruct-progress.json").read_text())["without_artifact"],2)
+    def test_missing_worker_trace_cannot_create_a_fresh_allowance(self):
+        import tempfile
+        from pathlib import Path
+        from worker_progress_guard import handle
+        with tempfile.TemporaryDirectory() as d:
+            parent=Path(d)/"session.jsonl";parent.write_text("{}")
+            with self.assertRaises(ValueError):
+                handle({"session_id":"session","agent_id":"a","transcript_path":str(parent),**batch(1)})
+            self.assertEqual(list(Path(d).rglob("*.restruct-progress.json")),[])
+    def test_legacy_shared_state_is_preserved_and_requires_review(self):
+        import tempfile
+        from pathlib import Path
+        from worker_progress_guard import handle
+        with tempfile.TemporaryDirectory() as d:
+            parent=Path(d)/"session.jsonl";parent.write_text("{}")
+            p=workerpath(d)
+            legacy=parent.with_suffix(".restruct-progress.json");legacy.write_text('{"held":"keep"}')
+            for path in (parent,p):
+                with self.assertRaises(ValueError):
+                    handle({"session_id":"session","agent_id":"a","transcript_path":str(path),**batch(1)})
+            self.assertEqual(legacy.read_text(),'{"held":"keep"}')
+            self.assertFalse(p.with_suffix(".restruct-progress.json").exists())
+            legacy.unlink()
+            legacy.with_suffix(".lock").touch()
+            for path in (parent,p):
+                with self.assertRaises(ValueError):
+                    handle({"session_id":"session","agent_id":"a","transcript_path":str(path),**batch(2)})
+    def test_wrong_id_session_and_traversal_are_rejected(self):
+        import tempfile
+        from worker_progress_guard import handle
+        with tempfile.TemporaryDirectory() as d:
+            p=workerpath(d)
+            for ident, session in (("b","session"),("a","other"),("../a","session")):
+                with self.assertRaises(ValueError):
+                    handle({"session_id":session,"agent_id":ident,"transcript_path":str(p),**batch(1)})
+    def test_child_path_without_agent_id_uses_verified_basename(self):
+        import tempfile
+        from worker_progress_guard import handle
+        with tempfile.TemporaryDirectory() as d:
+            p=workerpath(d)
+            self.assertEqual(handle({"session_id":"session","transcript_path":str(p),**batch(1)}),{})
 
 if __name__ == "__main__": unittest.main()

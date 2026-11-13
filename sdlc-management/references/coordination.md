@@ -590,3 +590,14 @@ active tests, permissions, role-specific effort exceptions and unique source.
 Worker progress must use the event-driven stop guard in [token controls](token-controls.md),
 not timer/status polling. Install its script and fail-closed native hook configuration
 at adoption and verify loading before releasing held worker work.
+
+Before a writing dispatch, resolve concrete fixture/contract dependencies and bind
+one objective, exact writable files and named expected cases in the existing
+private dispatch record. Run the
+[delivery completeness check](token-controls.md#dispatch-readiness-and-proof-completeness)
+before release and with actual source/assertion/outcome evidence before submitting
+a checkpoint as passing. The supervisor checks that case list against canonical
+requirements and judges what the assertions prove. A detailed Plan, worker PASS
+label or artifact activity does not establish completion. At two correction loops
+use the existing bounded root-cause checkpoint, reuse settled facts and consolidate
+with the current owner. Preserve native boundaries, budgets and no-polling operation.

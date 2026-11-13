@@ -1,5 +1,19 @@
 # {{IMPLEMENTER_AGENT}} repository role
 
+## Enforced bounded delivery
+
+Before writing dispatch, resolve concrete fixture/contract dependencies and bind
+one objective, source, role/phase, exact writable files and named expected cases
+in the existing private dispatch record. Use Restruct's
+`sdlc-management/scripts/check_delivery.py` completeness check before release and
+with actual committed source/assertion/outcome evidence before checkpoint PASS.
+Failed, missing, unrun or unproven required cases remain incomplete. The coordinator
+checks assertions/outcomes; the supervisor checks completeness against canonical
+requirements and reviews semantics. Checker exit0 is not acceptance. Use the
+existing bounded root-cause checkpoint for repeated corrections. Preserve native
+boundaries, independent review, budgets, owner holds and event-driven no-polling
+progress enforcement; adopt runtime changes at a safe handback boundary.
+
 ## Coordinator-owned local staging qualification
 
 After focused pre-merge checks, hosted fast checks and supervisor/Duo review, merge under existing authority. The existing coordinator automatically runs affected local batches/suites on the exact merged SHA, covering the change and its dependencies; record selectors, results, attribution and cleanup in the existing Plan/Result. Final acceptance requires that coverage and the other Goal gates. Run full local qualification on the integration branch tip when the owner requests it **or the supervisor recommends it**, freezing the observed tip and recording the reason. These staging runs and full hosted RC-promotion runs provide broader regression coverage; unexecuted checks are not passes. Feature MRs retain hosted fast checks. Automatic post-merge and tag-push pipelines remain disabled. Preserve explicit technically justified full-run requirements, resource limits and owner/security/manual gates; apply changed defaults at a safe boundary.
