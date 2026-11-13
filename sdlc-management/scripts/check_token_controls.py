@@ -4,22 +4,22 @@ import argparse
 import json
 from pathlib import Path
 
-WINDOW = 200000
-PERCENT = 75
+WINDOW = 250000
+PERCENT = 80
 
 def check_settings(settings):
     env = settings.get("env", {})
     errors = []
     if str(env.get("CLAUDE_CODE_AUTO_COMPACT_WINDOW")) != str(WINDOW):
-        errors.append("native compact window must be 200000")
+        errors.append("native compact window must be 250000")
     if str(env.get("CLAUDE_AUTOCOMPACT_PCT_OVERRIDE")) != str(PERCENT):
-        errors.append("native compact trigger must be 75 percent (150000 tokens)")
+        errors.append("native compact trigger must be 80 percent (200000 tokens)")
     for key in ("DISABLE_COMPACT", "DISABLE_AUTO_COMPACT"):
         if str(env.get(key, "")).lower() in ("1", "true", "yes"):
             errors.append(key + " disables required compaction")
     for model, opts in settings.get("modelSettings", {}).items():
         if opts.get("autoCompactWindow", WINDOW) > WINDOW:
-            errors.append(model + " overrides the compact window above 200000")
+            errors.append(model + " overrides the compact window above 250000")
     return errors
 
 def latest_usage(path):

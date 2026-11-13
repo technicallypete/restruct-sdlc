@@ -1,5 +1,8 @@
 # Native context controls and dispatch acceptance
 
+Owner correction, 2026-11-13: checkpoint around200k, ceiling250k. This supersedes
+the earlier150k/200k thresholds; smaller native limits and no-output stops remain.
+
 The coordinator and supervisor own this gate, including every worker/continuation.
 Written thresholds alone are insufficient. Configure native early compaction and
 verify actual loading, role effort and request metadata. Do not infer enforcement
@@ -10,10 +13,10 @@ from a brief, a co-author trailer or a quota percentage.
 Merge (never overwrite unrelated settings) into shared `.claude/settings.json`:
 
 ```json
-{"env":{"CLAUDE_CODE_AUTO_COMPACT_WINDOW":"200000","CLAUDE_AUTOCOMPACT_PCT_OVERRIDE":"75"}}
+{"env":{"CLAUDE_CODE_AUTO_COMPACT_WINDOW":"250000","CLAUDE_AUTOCOMPACT_PCT_OVERRIDE":"80"}}
 ```
 
-This targets native auto-compaction around150k, including subagents, with200k the
+This targets native auto-compaction around200k, including subagents, with250k the
 ordinary-work stop threshold. Respect smaller native limits. Audit higher-priority
 settings, per-model `autoCompactWindow`, inherited environment and disabled
 compaction. A project-file PASS alone is only a static check. Native limits are
@@ -29,7 +32,7 @@ checks the last request, not accumulated session totals, and includes fresh plus
 cache-creation plus cache-read input. Output/reasoning and account quota are separate.
 It reads a bounded metadata tail; missing/unsupported data is UNVERIFIED, never PASS.
 
-At150k checkpoint unique work and compact at a safe boundary. At200k stop ordinary
+At200k checkpoint unique work and compact at a safe boundary. At250k stop ordinary
 work: preserve source and use supported compaction or an authorized safe handoff
 before proceeding. Do not relaunch duplicate workers, discard active children,
 rebind frozen tests, kill running validation or block necessary cleanup merely to

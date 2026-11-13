@@ -346,7 +346,7 @@ and cache counters before attributing cost. Generated tokens include reasoning;
 cache totals and context sizes are not the provider's billed allowance percentage.
 Use existing Results and handoffs, not a second monitoring framework.
 
-- Enforce the existing 150k checkpoint and 200k safe handoff threshold. A new
+- Enforce the existing 200k checkpoint and 250k safe handoff threshold. A new
   substantial phase above the threshold needs compaction/transfer or a specific
   completion-imminent exception. Preserve a safe running batch and its evidence.
 - Default to one implementation worker. Nested delegation needs a concrete
@@ -395,15 +395,15 @@ Deferred tool definitions shown separately are not the active message-history to
 
 ## Coordinator checkpoints and retirement
 
-Use **150,000 active context tokens** as the coordinator checkpoint target and
-**200,000** as the compaction-or-handoff threshold, respecting smaller harness
+Use **200,000 active context tokens** as the coordinator checkpoint target and
+**250,000** as the compaction-or-handoff threshold, respecting smaller harness
 limits and recorded owner overrides. Measure current working context, not total
 transcript bytes or cumulative/cache-read tokens. Check at existing task/phase
 boundaries; do not add polling. If measurement is unavailable, record unknown and
 use the qualitative history assessment above.
 
-At 150k, safeguard concise state and arrange supported compaction at the next safe
-boundary. At or above 200k, do not begin another substantial phase until compaction
+At 200k, safeguard concise state and arrange supported compaction at the next safe
+boundary. At or above 250k, do not begin another substantial phase until compaction
 or a controlled replacement has been assessed. Preserve a safe running batch;
 record a short completion-imminent exception when appropriate. This is not a hard
 kill or automatic retirement solely for crossing a counter. Reassess at epic
@@ -439,7 +439,7 @@ prepare a handoff rather than claiming automatic cutover is available.
 
 The same checkpoint, compaction-first and safe-retirement principles apply to
 supervisor sessions, including Codex supervisors and Claude supervisors. The
-150k/200k defaults apply only when the selected model/harness supports that working
+200k/250k defaults apply only when the selected model/harness supports that working
 window; honor an earlier native compaction boundary or smaller limit. Never raise
 or invent a context-window setting to fit policy numbers. Record unknown occupancy
 as unknown. Use native automatic/manual compaction where supported; do not infer
@@ -474,11 +474,11 @@ without verification. Opening the chat grants no additional task authority.
 
 ## Worker context and phase handoffs
 
-Default worker checkpoint target: **150,000 active context tokens**; upper handoff
-threshold: **200,000 active context tokens**, configurable by explicit owner
-direction or a reviewed Goal/dispatch override. Around 150k, use the next safe
+Default worker checkpoint target: **200,000 active context tokens**; upper handoff
+threshold: **250,000 active context tokens**, configurable by explicit owner
+direction or a reviewed Goal/dispatch override. Around 200k, use the next safe
 step/batch boundary to safeguard work and prepare a concise handoff, leaving room
-to transfer before 200k rather than beginning another large phase near the limit.
+to transfer before 250k rather than beginning another large phase near the limit.
 Checkpointing alone does not require immediate rotation or a new review. This measures
 current working context, not cumulative input/output/cache-read usage or transcript
 file size. Respect smaller model/harness context limits. At an observed threshold,
@@ -526,7 +526,7 @@ the normal Result/closeout; no new benchmark campaign or reporting requirement.
 
 ## Lower context thresholds and coordination economy — owner direction, 2026-10-20
 
-Use **150k active context tokens for checkpointing and 200k for safe handoff/compaction assessment**, superseding the former300k/350k defaults for workers and coordinator checkpoints and the shared supervisor default. Smaller native limits still prevail. Measure current working context, not transcript bytes or cumulative/cached token totals; report unavailable measurements as unknown. Adopt at the next safe step/batch boundary; preserve running validation, exact source/evidence, current task owner and budgets. No forced interruption, full-transcript fork, duplicate writer or retest merely to adopt the limits. Record only a bounded completion-imminent exception when needed.
+Use **200k active context tokens for checkpointing and 250k for safe handoff/compaction assessment**, superseding the former300k/350k defaults for workers and coordinator checkpoints and the shared supervisor default. Smaller native limits still prevail. Measure current working context, not transcript bytes or cumulative/cached token totals; report unavailable measurements as unknown. Adopt at the next safe step/batch boundary; preserve running validation, exact source/evidence, current task owner and budgets. No forced interruption, full-transcript fork, duplicate writer or retest merely to adopt the limits. Record only a bounded completion-imminent exception when needed.
 
 **Claude and Codex may compact their own sessions at safe points without another owner prompt**, using a supported native agent-accessible control or harness-managed automatic compaction. Safeguard concise state first. If the actual interface exposes only an operator control, report that limitation once; authorization does not create a tool or permit fabricated owner input. Preserve active children and one coordinator; no automatic session replacement or new monitor.
 
@@ -542,7 +542,7 @@ Judge savings from observed usage/cost where available; context-size/cache count
 
 ## Authorized self-compaction at safe points — owner amendment, 2026-10-20
 
-Owner prefers Claude and Codex compact themselves. This supersedes the earlier repository owner-only `/compact` rule. Standing permission covers native self-compaction and ordinary harness automatic compaction; no routine confirmation is needed when the agent's interface supports it. Keep150k checkpoint/200k compaction-or-handoff assessment and smaller native limits; these are workflow thresholds, not a claim that the harness has been configured to compact at those exact values.
+Owner prefers Claude and Codex compact themselves. This supersedes the earlier repository owner-only `/compact` rule. Standing permission covers native self-compaction and ordinary harness automatic compaction; no routine confirmation is needed when the agent's interface supports it. Keep200k checkpoint/250k compaction-or-handoff assessment and smaller native limits; these are workflow thresholds, not a claim that the harness has been configured to compact at those exact values.
 
 At a completed step/phase boundary, safeguard current authority/stops, exact checkout/source/input references, reviews, budgets, open findings, active children/resources, pending deliveries and next actions in existing records. Use only the native control exposed for that session. Preserve running tests/evidence and one owner; do not interrupt a blocking test to compact or launch a replacement agent merely for context reduction. Resume by reading the compact state and relevant deltas, not the whole old transcript.
 
@@ -581,8 +581,8 @@ This adds no coordinator polling or duplicate inventory framework.
 ## Mandatory native token-control gate — 2026-11-13
 
 For coordinator and every worker/continuation, follow the
-[native token controls](token-controls.md): native auto-compaction targeted at150k,
-200k ordinary-work stop, effective role-effort verification and bounded metadata
+[native token controls](token-controls.md): native auto-compaction targeted at200k,
+250k ordinary-work stop, effective role-effort verification and bounded metadata
 check at dispatch/first usage/handback/phase acceptance. Missing telemetry or
 configuration loading is UNVERIFIED, never an assumed PASS. Preserve native recovery,
 active tests, permissions, role-specific effort exceptions and unique source.

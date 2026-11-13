@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from check_token_controls import inspect, latest_usage
 
-GOOD = {"env": {"CLAUDE_CODE_AUTO_COMPACT_WINDOW": "200000", "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75"}}
+GOOD = {"env": {"CLAUDE_CODE_AUTO_COMPACT_WINDOW": "250000", "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80"}}
 
 class ControlsTests(unittest.TestCase):
     def test_valid_native_configuration(self):
@@ -14,7 +14,7 @@ class ControlsTests(unittest.TestCase):
                        {**GOOD, "modelSettings": {"opus": {"autoCompactWindow": 1000000}}}]:
             self.assertFalse(inspect(config)["ok"])
     def test_checkpoint_and_ceiling(self):
-        for count, ok, due in [(149999, True, False), (150000, True, True), (199999, True, True), (200000, False, True), (656413, False, True)]:
+        for count, ok, due in [(199999, True, False), (200000, True, True), (249999, True, True), (250000, False, True), (656413, False, True)]:
             result = inspect(GOOD, {"input_context": count, "effort": "high"}, "high")
             self.assertEqual((result["ok"], result["checkpoint_due"]), (ok, due))
     def test_effort_mismatch_and_explicit_role_override(self):

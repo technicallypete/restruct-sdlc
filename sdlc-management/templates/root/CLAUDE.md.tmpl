@@ -231,8 +231,8 @@ At handoffs/closeout or when old conversation history dominates context, follow
 [coordinator context compaction](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#coordinator-context-compaction-at-safe-boundaries).
 Preserve durable state, session/observer identity and running batches; no per-turn compaction or new monitor.
 Use [bounded worker handoffs](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#worker-context-and-phase-handoffs)
-when obsolete context warrants them; default checkpoint target **150,000 active context tokens**,
-upper handoff threshold **200,000**. Prepare concise transfer state around 150k at a safe boundary;
+when obsolete context warrants them; default checkpoint target **200,000 active context tokens**,
+upper handoff threshold **250,000**. Prepare concise transfer state around 200k at a safe boundary;
 checkpointing alone does not force immediate rotation or review. Preserve budgets/evidence;
 no full-transcript fork, mandatory per-phase rotation or test restart.
 
@@ -260,7 +260,7 @@ material overrun needs a compact Result checkpoint and bounded correction; apply
 only to remaining work at a safe boundary, without a new reporting framework.
 
 For [coordinator checkpoints and retirement](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#coordinator-checkpoints-and-retirement),
-use 150k active context for checkpointing and 200k for compaction-or-handoff
+use 200k active context for checkpointing and 250k for compaction-or-handoff
 assessment, not a hard kill. Prefer supported compaction. Replace only with
 recorded creation authority, verified native cutover and explicit observer rebind;
 preserve active agents, budgets and evidence. Documentation alone does not
@@ -444,7 +444,7 @@ Permanent rules survive task cleanup; remove only recorded temporary bridge rule
 
 ## Context and coordination economy — owner direction, 2026-10-20
 
-Current checkpoint/handoff defaults are150k/200k active context, superseding300k/350k at the next safe boundary for workers and coordinator/supervisor assessment. Claude and Codex may initiate supported native self-compaction at safe points under standing owner authority. Preserve running batches, exact bindings, children, budgets and smaller native limits. Follow [coordination economy](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#lower-context-thresholds-and-coordination-economy--owner-direction-2026-10-20): directly review routine prose/mechanical changes, reserve delegation for meaningful independent work and required substantive reviews, batch searches/edits/handoffs, read deltas and suppress unchanged polls/acknowledgments. No full-history fork, duplicate worker, test rerun or automatic replacement merely for a checkpoint; no weakening of security/source/validation gates.
+Current checkpoint/handoff defaults are200k/250k active context, superseding300k/350k at the next safe boundary for workers and coordinator/supervisor assessment. Claude and Codex may initiate supported native self-compaction at safe points under standing owner authority. Preserve running batches, exact bindings, children, budgets and smaller native limits. Follow [coordination economy](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#lower-context-thresholds-and-coordination-economy--owner-direction-2026-10-20): directly review routine prose/mechanical changes, reserve delegation for meaningful independent work and required substantive reviews, batch searches/edits/handoffs, read deltas and suppress unchanged polls/acknowledgments. No full-history fork, duplicate worker, test rerun or automatic replacement merely for a checkpoint; no weakening of security/source/validation gates.
 
 
 Owner amendment,2026-10-20: [safe self-compaction](.agents/skills/restruct-sdlc/sdlc-management/references/coordination.md#authorized-self-compaction-at-safe-points--owner-amendment-2026-10-20) is authorized for Claude/Codex without a repeat prompt where native tools support it; supersedes the prior owner-only policy. Save current state first, preserve active work, and verify native completion. An operator-only interface remains a capability limitation, not a reason to fabricate input or replace sessions.
@@ -464,7 +464,7 @@ IDs. Follow [local evidence retention](.agents/skills/restruct-sdlc/sdlc-managem
 
 ## Native token controls — mandatory
 
-Configure native auto-compaction for150k (200k window,75 percent), enforce the200k
+Configure native auto-compaction for200k (250k window,80 percent), enforce the250k
 ordinary-work stop and verify actual role effort at dispatch/first usage, continuation,
 handback and phase acceptance. Follow [.agents/skills/restruct-sdlc/sdlc-management/references/token-controls.md](.agents/skills/restruct-sdlc/sdlc-management/references/token-controls.md).
 The coordinator owns worker checks; the supervisor independently verifies the gate.
