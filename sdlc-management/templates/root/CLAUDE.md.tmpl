@@ -456,3 +456,7 @@ handback and phase acceptance. Follow [.agents/skills/restruct-sdlc/sdlc-managem
 The coordinator owns worker checks; the supervisor independently verifies the gate.
 Static configuration or an unread brief is not proof a running session loaded it.
 Preserve existing role-specific effort exceptions, native recovery and frozen tests.
+
+Worker progress supervision is event-driven: use the native worker-progress hook
+from token-controls.md. No timer or session polling. A latched no-progress/refusal
+stop requires bounded supervisor recovery, never automatic redispatch.

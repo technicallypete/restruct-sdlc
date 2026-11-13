@@ -586,3 +586,7 @@ For coordinator and every worker/continuation, follow the
 check at dispatch/first usage/handback/phase acceptance. Missing telemetry or
 configuration loading is UNVERIFIED, never an assumed PASS. Preserve native recovery,
 active tests, permissions, role-specific effort exceptions and unique source.
+
+Worker progress must use the event-driven stop guard in [token controls](token-controls.md),
+not timer/status polling. Install its script and fail-closed native hook configuration
+at adoption and verify loading before releasing held worker work.

@@ -421,3 +421,7 @@ repository's shared Claude settings, preserving all permissions/unrelated settin
 Verify overrides and first native worker usage; add the checker to existing
 dispatch/handback/acceptance verification. A rendered prose template alone does not
 complete adoption. Never report live enforcement from a static-settings-only PASS.
+
+Worker progress must use the event-driven stop guard in [token controls](token-controls.md),
+not timer/status polling. Install its script and fail-closed native hook configuration
+at adoption and verify loading before releasing held worker work.
