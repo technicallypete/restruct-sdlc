@@ -39,6 +39,90 @@ class GuardTests(unittest.TestCase):
         self.assertTrue(worker_event({"transcript_path":"/p/subagents/agent-a.jsonl"}))
 
 
+class CheckpointTests(unittest.TestCase):
+    def test_checkpoint_precedes_hard_stop(self):
+        s = {}
+        for i in range(29):
+            e = batch(i)
+            s = transition(s, e)
+            self.assertEqual(decision(s, e), {})
+        e = batch(29)
+        s = transition(s, e)
+        output = decision(s, e)["hookSpecificOutput"]
+        self.assertEqual(output["hookEventName"], "PostToolBatch")
+        self.assertIn("checkpoint", output["additionalContext"])
+        self.assertNotIn("held", s)
+        self.assertEqual(s["without_artifact"], 30)
+        for i in range(30, 39):
+            e = batch(i, "SendMessage", "Still reading")
+            s = transition(s, e)
+            self.assertEqual(decision(s, e), {})
+        e = batch(39)
+        s = transition(s, e)
+        self.assertFalse(decision(s, e)["continue"])
+
+    def test_duplicate_callback_does_not_repeat_notice(self):
+        e = batch("notice")
+        s = transition({"without_artifact": 29}, e)
+        self.assertIn("hookSpecificOutput", decision(s, e))
+        s = transition(s, e)
+        self.assertEqual(s["without_artifact"], 30)
+        self.assertEqual(decision(s, e), {})
+
+    def test_artifact_starts_new_stretch(self):
+        s = transition({"without_artifact": 29}, batch("notice"))
+        s = transition(s, {"hook_event_name": "PostToolUse", "tool_name": "Write", "tool_use_id": "draft"})
+        s = transition(s, batch("draft", "Write"))
+        self.assertEqual(s["without_artifact"], 0)
+        self.assertNotIn("checkpoint_requested", s)
+        for i in range(30):
+            e = batch(i)
+            s = transition(s, e)
+        self.assertIn("hookSpecificOutput", decision(s, e))
+
+    def test_batch_crossing_threshold_then_writing_has_no_stale_notice(self):
+        s = transition({"without_artifact": 29}, {"hook_event_name": "PostToolUse", "tool_name": "Edit", "tool_use_id": "draft"})
+        e = batch("read")
+        e["tool_calls"] += batch("draft", "Edit")["tool_calls"]
+        s = transition(s, e)
+        self.assertEqual(s["without_artifact"], 0)
+        self.assertEqual(decision(s, e), {})
+
+    def test_parallel_batch_crossing_thirty_warns_once_and_forty_stops(self):
+        e = batch("a")
+        e["tool_calls"] += batch("b")["tool_calls"] + batch("c")["tool_calls"]
+        s = transition({"without_artifact": 29}, e)
+        self.assertEqual(s["without_artifact"], 32)
+        self.assertIn("hookSpecificOutput", decision(s, e))
+        s = transition({"without_artifact": 39}, e)
+        self.assertFalse(decision(s, e)["continue"])
+
+    def test_existing_refusal_takes_precedence(self):
+        e = batch("notice")
+        s = transition({"without_artifact": 29}, e)
+        s = transition(s, {"hook_event_name": "PermissionDenied"})
+        self.assertFalse(decision(s, e)["continue"])
+        self.assertIn("native refusal", s["held"])
+
+    def test_notice_and_counter_survive_separate_file_callbacks(self):
+        import tempfile, json
+        from worker_progress_guard import handle
+        with tempfile.TemporaryDirectory() as d:
+            p = workerpath(d)
+            base = {"agent_id": "a", "session_id": "session", "transcript_path": str(p)}
+            for i in range(30):
+                result = handle({**base, **batch(i)})
+            self.assertIn("hookSpecificOutput", result)
+            self.assertEqual(handle({**base, **batch(29)}), {})
+            self.assertEqual(handle({**base, **batch(30, "SendMessage", "checkpoint reply")}), {})
+            state = json.loads(p.with_suffix(".restruct-progress.json").read_text())
+            self.assertEqual(state["without_artifact"], 31)
+            self.assertTrue(state["checkpoint_requested"])
+            for i in range(31, 40):
+                result = handle({**base, **batch(i)})
+            self.assertFalse(result["continue"])
+
+
 class FileHookTests(unittest.TestCase):
     def test_latch_survives_process_callbacks(self):
         import tempfile,json

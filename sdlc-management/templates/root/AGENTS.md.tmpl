@@ -620,5 +620,11 @@ Static configuration or an unread brief is not proof a running session loaded it
 Preserve existing role-specific effort exceptions, native recovery and frozen tests.
 
 Worker progress supervision is event-driven: use the native worker-progress hook
-from token-controls.md. No timer or session polling. A latched no-progress/refusal
-stop requires bounded supervisor recovery, never automatic redispatch.
+from token-controls.md. At30 tool calls without an observed artifact, request one
+brief checkpoint: resolved facts, blocker and next concrete edit/deliverable.
+A status reply does not reset the counter; the40-call pause remains. Meaningful
+planning/review findings or drafts count as role artifacts, not still-reading
+reports. A justified research outcome requires bounded review, not a self-granted
+extension. No timer/session polling. A latched no-progress/refusal stop requires
+bounded supervisor recovery, never automatic redispatch. Preserve active hook
+bindings until terminal handback; verify supported loading at the next bootstrap.

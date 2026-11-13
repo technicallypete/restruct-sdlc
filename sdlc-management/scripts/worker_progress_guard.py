@@ -8,6 +8,7 @@ import re
 import sys
 import tempfile
 
+CHECKPOINT = 30
 LIMIT = 40
 def native_refusal(response):
     if isinstance(response, list):
@@ -19,6 +20,8 @@ def native_refusal(response):
 
 def transition(state, event):
     state = dict(state)
+    # A notice is emitted once per no-artifact stretch, not on every callback.
+    state.pop("checkpoint_notice", None)
     kind = event.get("hook_event_name")
     if kind == "PermissionDenied":
         state["held"] = "native refusal: return control; do not retry or reroute"
@@ -46,8 +49,13 @@ def transition(state, event):
             if ident in state.get("written_ids", []):
                 state["without_artifact"] = 0
                 state["artifact_since_compact"] = True
+                state.pop("checkpoint_requested", None)
+                state.pop("checkpoint_notice", None)
             else:
                 state["without_artifact"] = state.get("without_artifact", 0) + 1
+            if state["without_artifact"] >= CHECKPOINT and not state.get("checkpoint_requested"):
+                state["checkpoint_requested"] = True
+                state["checkpoint_notice"] = True
             if state["without_artifact"] >= LIMIT:
                 state["held"] = "40 tool calls without observed artifact: return bounded obstacle/design checkpoint"
                 break
@@ -59,6 +67,13 @@ def decision(state, event):
         return {}
     if state.get("held"):
         return {"continue": False, "stopReason": "Restruct worker guard: " + state["held"] + ". Source/tests remain preserved. No automatic restart."}
+    if event.get("hook_event_name") == "PostToolBatch" and state.get("checkpoint_notice"):
+        return {"hookSpecificOutput": {"hookEventName": "PostToolBatch", "additionalContext":
+            "Restruct progress checkpoint due: at least 30 tool calls without an observed artifact. "
+            "The coordinator needs a brief checkpoint now: resolved facts, precise blocker, and next concrete "
+            "edit or deliverable. The existing 40-call pause remains; a status reply does not reset the counter. "
+            "Planning/review findings or a draft are appropriate role artifacts; still reading is not one. "
+            "Any justified research outcome needs coordinator review, not a self-granted extension."}}
     return {}
 
 def worker_event(event):

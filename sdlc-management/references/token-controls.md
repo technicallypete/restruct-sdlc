@@ -83,6 +83,25 @@ Requires current native hook support and Python3/fcntl (Linux/WSL); an unsupport
 host is UNVERIFIED, not permission to silently disable the gate. `onFailure:block`
 prevents a missing/crashed guard from silently allowing worker actions.
 
+At30 tool calls without an observed successful Write/Edit/NotebookEdit, the
+native tool-batch hook injects one checkpoint request into the worker's next
+normal model request. The coordinator requests a brief checkpoint at that event:
+resolved facts, precise blocker and next concrete edit/deliverable. The worker
+returns it through the existing communication/handback path; no timer, poll,
+monitor agent or hook-generated model/message call is added. Native
+[`PostToolBatch.additionalContext`](https://code.claude.com/docs/en/hooks#posttoolbatch-decision-control)
+is the reminder channel, not an acknowledgment or proof of live loading.
+
+A status/checkpoint reply, message or repeated callback never resets the counter.
+At40 calls the existing hard pause remains if there is still no observed artifact;
+a justified research/design outcome needs bounded coordinator/supervisor review,
+not a worker-granted extension. For planners/reviewers, a meaningful findings or
+draft artifact is appropriate; repeated still-reading reports are not progress.
+A Write/Edit signal alone cannot establish usefulness or acceptance. A completed
+artifact starts a new no-artifact stretch and permits a new30-call reminder.
+If a single parallel batch reaches40, the hard stop takes precedence; it does not
+grant another model turn merely to deliver the earlier reminder.
+
 Native tool-batch callbacks stop a worker before its next model request after40
 tool calls without an observed successful Write/Edit/NotebookEdit. A compaction
 without such an artifact latches the same stop for the next tool boundary because
@@ -93,7 +112,7 @@ from worker budgets. No timers, transcript polling, model calls, shell execution
 resource deletion, permission changes or automatic replacement are performed.
 
 The small locked state file beside the native worker transcript stores counters,
-recent tool IDs and a hold reason only; no tool contents or secrets. It survives
+recent tool IDs, checkpoint flags and a hold reason only; no tool contents or secrets. It survives
 compaction/repeated callbacks. Coordinator retains it with task evidence and reclaims
 it only under normal verified closeout. A hold requires a bounded artifact/obstacle
 review and supported recovery, never automatic reset/relaunch. Bash-generated
