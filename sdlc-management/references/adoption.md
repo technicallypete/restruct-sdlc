@@ -413,3 +413,11 @@ pattern, not automatic settings self-modification or a blanket bypass.
 ### Repository-scoped Codex subagent model defaults
 
 Where the owner selects mixed-model supervision, put shared project Codex settings in `.codex/config.toml`: `[agents]` with `default_subagent_model = "gpt-6.1-sol"` is the current owner's example. Leave the main-session model/effort and unrelated personal configuration unchanged. Explicit per-agent overrides take precedence; verify actual configuration loading/trust and dispatch separately, do not launch a test agent merely to prove the setting. No extra persistent session is needed. See [model/delegation defaults](coordination.md#codex-supervisor-model-and-delegation-defaults--owner-direction-2026-10-20). This optional adoption pattern does not install account-wide settings or add a required package file. Routine supervision stays in the main session; Goal/Spec drafting and substantive independent reviews use bounded delegates.
+
+## Native token controls at adoption
+
+Merge the environment entries in [token-controls](token-controls.md) into the
+repository's shared Claude settings, preserving all permissions/unrelated settings.
+Verify overrides and first native worker usage; add the checker to existing
+dispatch/handback/acceptance verification. A rendered prose template alone does not
+complete adoption. Never report live enforcement from a static-settings-only PASS.

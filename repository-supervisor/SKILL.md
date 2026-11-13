@@ -332,3 +332,10 @@ Cleanup is continuously accounted for at allocation, handback/batch end and
 interruption/restart, under [mandatory resource accountability](../sdlc-management/references/closeout-risks.md#continuous-resource-accountability--mandatory).
 Verify every category; abandoned resources block new resource-consuming work.
 Reclaim finished worker trees at handback, not only at final acceptance.
+
+## Native token-control verification
+
+At worker dispatch/first usage, continuation, handback and phase acceptance verify
+native150k compaction target,200k ordinary-work stop and actual role effort under
+[the token-control procedure](../sdlc-management/references/token-controls.md).
+Do not treat missing telemetry or unrefreshed configuration as verified enforcement.

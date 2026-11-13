@@ -577,3 +577,12 @@ preserving their handback. Any unresolved abandoned resources block new resource
 consuming work until repaired; verify actual absence, including nested resources
 and anonymous volumes. Follow [continuous accountability](closeout-risks.md#continuous-resource-accountability--mandatory).
 This adds no coordinator polling or duplicate inventory framework.
+
+## Mandatory native token-control gate — 2026-11-13
+
+For coordinator and every worker/continuation, follow the
+[native token controls](token-controls.md): native auto-compaction targeted at150k,
+200k ordinary-work stop, effective role-effort verification and bounded metadata
+check at dispatch/first usage/handback/phase acceptance. Missing telemetry or
+configuration loading is UNVERIFIED, never an assumed PASS. Preserve native recovery,
+active tests, permissions, role-specific effort exceptions and unique source.

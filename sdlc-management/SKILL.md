@@ -162,7 +162,6 @@ high, with Opus 5.5 high available by owner choice. Follow the
 [full fallback policy](references/budgets.md#fable-weekly-limit-fallback--owner-direction-2026-10-15)
 for safe transitions, verified reset, preserved state/budgets and native permissions.
 
-
 Operational defaults: use [proportionate validation and bounded flake handling](references/validation-integration.md#validation-economy-and-recurring-failures),
 [automatic routine transitions](references/roles-lifecycle.md#continue-routine-transitions-without-owner-nudges),
 [compact status/handoffs](references/coordination.md#concise-operational-messages) and the
@@ -171,7 +170,6 @@ Operational defaults: use [proportionate validation and bounded flake handling](
 Default to [targeted reruns and attributable coverage](references/validation-integration.md#targeted-reruns-and-attributable-coverage-default):
 reuse unchanged passes and overlap frozen-source review with independent validation;
 retain real failure history and required final/hosted gates.
-
 
 ## Mandatory task-acceptance cleanup — owner direction, 2026-10-17
 
@@ -183,7 +181,6 @@ work before force removal when needed. Clean task-owned containers, unused image
 another routine approval. Keep active coordinator/successor/preview resources and
 specific recorded retention/native-permission holds. Verify a compact receipt;
 no silent lock/dirty-work deferral, blanket host prune or extra test campaign.
-
 
 ## Private files for new tasks — 2026-10-17
 
@@ -197,3 +194,5 @@ Cleanup is continuously accounted for at allocation, handback/batch end and
 interruption/restart, under [mandatory resource accountability](references/closeout-risks.md#continuous-resource-accountability--mandatory).
 Verify every category; abandoned resources block new resource-consuming work.
 Reclaim finished worker trees at handback, not only at final acceptance.
+
+Native context/effort verification is mandatory at dispatch/first usage, continuation, handback and acceptance; follow [token controls](references/token-controls.md). Unknown or unrefreshed settings are not verified enforcement.
