@@ -598,6 +598,13 @@ Worker progress must use the event-driven stop guard in [token controls](token-c
 not timer/status polling. Install its script and fail-closed native hook configuration
 at adoption and verify loading before releasing held worker work.
 
+Implementation/correction continuations target one behavior/test case with an
+edit-ready fact/anchor brief. On a second no-artifact checkpoint for the same
+objective/cause, review and change strategy (smaller artifact, resolved fact or
+reviewed fresh worker) rather than clear-and-repeat. Preserve warm context where
+useful, exclusive ownership, source, budgets and native recovery. No polling or
+per-subtest approval/commit gate is added. Apply at the next safe handoff.
+
 Before a writing dispatch, resolve concrete fixture/contract dependencies and bind
 one objective, exact writable files and named expected cases in the existing
 private dispatch record. Run the

@@ -62,6 +62,16 @@ stop further speculative dispatch and perform a compact root-cause/remaining-sco
 fit review under the existing budget; no new process or owner approval if within
 existing authority. Required correctness/security checks are never waived to save quota.
 
+On a second no-artifact checkpoint for the same objective/cause, change strategy
+before approving another continuation. Review the existing checkpoint/source,
+then choose a smaller artifact, resolve the exact missing fact inline, or authorize
+a fresh bounded worker with preserved facts and exclusive ownership. Record the
+changed approach in the existing dispatch/recovery record. Clearing the latch and
+repeating an equivalent brief is insufficient. No automatic replacement, permission
+workaround, renewed read allowance or budget reset; preserve source, live tests
+and normal recovery authority. Apply at the next safe handoff, not by interrupting
+an active edit/test or resetting native state.
+
 ## Verification and limits
 
 Run `python3 -m unittest discover -s sdlc-management/scripts -p test_token_controls.py`.
@@ -146,6 +156,22 @@ this fix. A native refusal of recovery remains a refusal; the supervisor owns th
 next supported disposition, with owner approval only where genuinely required.
 
 ## Dispatch readiness and proof completeness
+
+For implementation/correction continuations, name one behavior or test case and
+its first meaningful artifact, with only the relevant verified facts, existing
+code anchor/fixture API and observable assertions. Keep coupled assertions together
+where they prove that behavior. Missing facts return as a precise obstacle rather
+than restarting whole-source discovery after compaction. Later authorized cases
+may proceed in the same warm worker at safe handoffs; do not require a new worker,
+commit or supervisor approval for every subtest. Keep the full Goal/phase checklist
+intact: smaller delivery units do not shrink acceptance scope.
+
+Before a source/phase submission, reconcile every required behavior with actual
+implementation plus substantive assertions and attributable outcomes. The
+coordinator inspects the mapping before submission; the supervisor independently
+reviews it. Green selected tests or matching case names alone cannot establish
+completeness. A partial checkpoint may report useful work and missing cases, but
+cannot claim the complete phase passed or release dependent work.
 
 Use [the delivery checker](../scripts/check_delivery.py) on the existing private
 dispatch/handback data; no committed per-worker document or tracking service.
