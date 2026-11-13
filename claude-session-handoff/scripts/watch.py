@@ -292,6 +292,32 @@ def explicit_status(text):
     return marker[1], f"{marker[2]}: {marker[3].strip()}"
 
 
+def status_format_problem(text):
+    """Flag plain misplaced/ambiguous reports, without interpreting them as authority."""
+    lines = text.rstrip().split("\n")
+    markers = []
+    fence = None
+    for index, line in enumerate(lines):
+        match = re.match(r"^\s*(`{3,}|~{3,})", line)
+        if match:
+            delimiter = match[1]
+            if fence is None:
+                fence = delimiter
+            elif delimiter[0] == fence[0] and len(delimiter) >= len(fence):
+                fence = None
+            continue
+        if fence is None:
+            marker = STATUS_MARKER.fullmatch(line)
+            if marker is not None and marker[3].strip():
+                markers.append((index, marker))
+    if not markers or (len(markers) == 1 and markers[0][0] == len(lines) - 1):
+        return None
+    task = markers[0][1][2]
+    problem = "multiple plain status markers" if len(markers) > 1 else "status marker is not the final line"
+    return ("question", f"{task}: coordinator status-format error: {problem}; inspect the handback and request "
+            "one final status line. The misplaced marker is not an accepted status or approval.")
+
+
 def milestone(row):
     """A new coordinator-authored milestone, or None. Incoming handoffs, echoes and receipts never qualify."""
     if row.get("type") != "assistant" or row.get("isSidechain"):
@@ -306,6 +332,9 @@ def milestone(row):
     if any(isinstance(c, dict) and c.get("type") == "tool_use" and c.get("name") == "AskUserQuestion"
            for c in content):
         return "question", "the coordinator asked a native question (inspect it in the coordinator session)"
+    problem = status_format_problem(joined)
+    if problem is not None:
+        return problem[0], handoff.safe_excerpt(problem[1], 240)
     status = explicit_status(joined)
     if status is not None:
         if status[0] != "working":

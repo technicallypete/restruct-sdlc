@@ -327,15 +327,60 @@ class NotificationSources(Base):
         self.assertEqual(self.poll()["queue_calls"], 0)
         self.assertEqual(self.codex.calls, [])
 
-    def test_nonterminal_quoted_and_fenced_markers_never_notify(self):
+    def test_quoted_and_fenced_markers_never_notify(self):
         self.bind()
         self.poll()
         marker = "COORDINATOR_STATUS: review-ready | G008 | Result ready."
-        for text in (marker + "\nThis was an example.", "> " + marker,
+        for text in ("> " + marker, "    " + marker,
                      "```text\n" + marker + "\n```", "```text\n" + marker,
                      "~~~text\n" + marker):
             self.append(self.row("assistant", text))
             self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_header_handoff_reports_format_error_once(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant",
+            "COORDINATOR_STATUS: review-ready | G092-L1-EP1 | EP-1 handback for Codex disposition. No acceptance is claimed.\n\n"
+            "- **Frozen source:** g092-l1-ep4 at 1c532d0f.\n"
+            "- **Passing:** catalog and implemented raw subset.\n"
+            "- **Held:** dependent work until disposition."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        notice = self.codex.queues()[-1][4]
+        self.assertIn("milestone (question", notice)
+        self.assertIn("G092-L1-EP1: coordinator status-format error", notice)
+        self.assertNotIn("milestone (review-ready", notice)
+        self.assertIn("no approval or task authority", notice)
+        self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_misplaced_status_classes_cannot_silently_disappear(self):
+        self.bind()
+        self.poll()
+        for category in ("working", "decision", "review-ready", "blocked", "question", "failed", "completed"):
+            with self.subTest(category=category):
+                self.append(self.row("assistant", "A handback follows.\n"
+                    f"COORDINATOR_STATUS: {category} | G008 | Check records.\nFurther details."))
+                self.assertEqual(self.poll()["queue_calls"], 1)
+                self.assertIn("status-format error", self.codex.queues()[-1][4])
+                self.assertIn("milestone (question", self.codex.queues()[-1][4])
+
+    def test_conflicting_plain_markers_do_not_hide_handoff_behind_working_footer(self):
+        self.bind()
+        self.poll()
+        self.append(self.row("assistant",
+            "COORDINATOR_STATUS: review-ready | G008 | Review needed.\nDetails.\n"
+            "COORDINATOR_STATUS: working | G008 | Continuing."))
+        self.assertEqual(self.poll()["queue_calls"], 1)
+        self.assertIn("multiple plain status markers", self.codex.queues()[-1][4])
+
+    def test_nonterminal_markers_in_incoming_sidechain_or_echo_remain_ignored(self):
+        self.bind()
+        self.poll()
+        text = "COORDINATOR_STATUS: review-ready | G008 | Result ready.\nMore detail."
+        self.append(self.row("user", text), self.row("assistant", text, sidechain=True),
+                    self.row("assistant", "[observer-notice: example]\n" + text),
+                    self.row("assistant", "[handoff-id: example]\n" + text))
+        self.assertEqual(self.poll()["queue_calls"], 0)
 
     def test_final_marker_after_closed_fence_is_recognized(self):
         self.bind()

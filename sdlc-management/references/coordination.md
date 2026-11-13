@@ -234,6 +234,13 @@ Finish autonomous coordinator-to-supervisor handoffs with one plain final line (
 COORDINATOR_STATUS: review-ready | G008 | Plan ready for supervisor review.
 ```
 
+Before submitting an autonomous handback, check that exactly one plain status
+marker is the final nonempty line, with no text after it. Quote/fence examples.
+A misplaced or multiple plain marker produces an observer status-format question,
+not acceptance of that marker's class. The supervisor inspects the handback and
+handles routine format repair without another owner prompt or duplicate dispatch;
+request only a corrected final line, not a repeat of an unchanged long handback.
+
 Use a nonsecret task ID and a nonempty single-line summary of at most 240 characters, without `|`.
 This is an authoring limit, not a notification rejection rule: the observer classifies the full summary within
 its existing transcript-row limit, then truncates the delivered excerpt to 240 characters. Oversized summaries

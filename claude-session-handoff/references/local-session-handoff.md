@@ -181,3 +181,16 @@ explicit verified rebind; attempted/uncertain sends retain dedup protection.
 The separate coordinator-creation check remains version-restricted and authorized
 independently. Restart a running observer at a safe point with `stop`, then
 `start --resume` to load this code without resetting the pair/cursor/dedup.
+
+## Misplaced coordinator status reports
+
+A single final plain status marker remains the canonical report. A valid plain
+marker elsewhere, or multiple plain markers, produces one deduplicated `question`
+notice identifying a status-format error. It is not treated as review-ready,
+failed, completed or approval. The supervisor inspects the handback and requests
+a corrected footer without an owner approval loop. Incoming, echoed, sidechain,
+blockquote, indented-code and fenced markers remain excluded. Examples must be
+quoted/fenced. A malformed marker is never repaired into an authorization.
+Reload an existing observer with `stop` then `start --resume` at a safe boundary,
+preserving its pair, saved cursor, deduplication and uncertain delivery state.
+Do not rewind past delivered notices or create another watcher.
