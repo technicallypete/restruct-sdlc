@@ -130,6 +130,34 @@ artifacts may need checkpoint review; the guard deliberately does not guess from
 opaque shell commands. An artifact signal is not a correctness or progress guarantee.
 Required tests and running processes remain untouched; coordinator owns recovery.
 
+### Reviewed recovery needs a usable, bounded window
+
+A progress hold at the threshold cannot usefully resume if only `held` is removed
+and the no-artifact counter stays at40: the next necessary Read or queued callback
+immediately holds again. Do not impose a first-tool-Edit requirement to compensate;
+native editing may require a current file read. This is distinct from the normal
+rule that status replies never reset counters.
+
+After resolving the stopped objective's concrete obstacle, the supervisor may
+authorize one explicit recovery window of at most eight tool calls to the next
+meaningful artifact. For the40-call guard, an eight-call window sets
+`without_artifact=32` and removes only the reviewed progress hold. Preserve the
+entire before-state and historical counter in private evidence, retain seen and
+written IDs and every other state field, and record the exact authority, source,
+worker, allowance and before/after hashes. Verify the unchanged progress-only
+cause under the existing lock and atomic-write protection. Never apply this to
+a native permission/security refusal, unknown cause or changed worker/state.
+
+Supply the resolved facts and exact edit anchors in the continuation. Targeted
+startup/file verification can precede the artifact within that window; no whole-
+Plan rediscovery or empty placeholder write. A successful artifact returns to
+normal guard accounting; eight further non-artifact calls still hold. A window
+is not automatic and cannot be repeated blindly, expand the normal40-call limit,
+reset Goal budgets, erase history, or change hooks/settings/permissions. A repeat
+requires the existing changed-strategy review. Use the existing recovery record,
+not another monitor, ledger or polling loop. Apply only at a verified stopped
+boundary; do not modify active workers' bound hook bytes.
+
 Verify offline transitions, native JSON output, file-backed latch persistence and
 configuration integrity before adoption, then require actual loaded hook evidence
 at the next already-authorized worker bootstrap. Hooks changed outside native
