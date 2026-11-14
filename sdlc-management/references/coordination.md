@@ -1,5 +1,13 @@
 # Coordinator, workers and messages
 
+## Unfinished lanes survive worker completion
+
+A worker ending, returning a handback or hitting a guard does not finish its assigned outcome. At each worker return, run completion and coordinator handoff, reconcile every unfinished lane in the existing task/run inventory: actual state, accountable owner and the next executable action or concrete blocker. Preserve that row when the worker is reclaimed or another task is active; do not mark the outcome done merely because a diagnostic run ended.
+
+Continue dependency-ready authorized work at that boundary. A resource queue names its actual reservation owner and release condition. A guard/native stop remains visibly blocked until its required review/recovery is applied and a continuation is actually dispatched. Delivery receipt or a published recovery is not execution. A worker awaiting a decision while another lane runs still needs the actionable question/blocked final status; a routine working message from the other task must not hide it. The supervisor closes the loop on the reported blocker through the existing handoff/observer route, without owner nudges.
+
+Use existing records and event-driven handbacks only: no polling loop, monitor agent, new manifest, per-case approval or duplicate worker. If a continuation cannot be confirmed, retain the existing unresolved handoff/blocker rather than reporting it resumed or silently dropping it. This changes accountability, not native permission, phase, source, resource or acceptance gates.
+
 ## Local qualification after merge
 
 Under the local-after-merge default, the existing implementer coordinator automatically launches and owns affected local qualification of the exact merged integration SHA. Full local runs on the integration tip are owner-requested or supervisor-recommended; record why and freeze that tip. A merge handoff identifies that SHA and required run; no extra owner prompt or persistent coordinator is needed. Track its actual state and evidence in the existing Result, with one resource-blocker report if queued. Preserve immutable inputs, shared locks and cleanup. Ready successor source work may overlap after merge; predecessor final ACCEPT still gates successor integration.
