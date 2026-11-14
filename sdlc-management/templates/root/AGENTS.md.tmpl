@@ -639,7 +639,7 @@ active work until safe handoff, native recovery and budgets; no automatic rotati
 Worker progress supervision is event-driven: use the native worker-progress hook
 from token-controls.md. At30 tool calls without an observed artifact, request one
 brief checkpoint: resolved facts, blocker and next concrete edit/deliverable.
-A status reply does not reset the counter; the40-call pause remains. Meaningful
+A status reply does not reset the counter; the50-call pause remains. Meaningful
 planning/review findings or drafts count as role artifacts, not still-reading
 reports. A justified research outcome requires bounded review, not a self-granted
 extension. No timer/session polling. A latched no-progress/refusal stop requires
@@ -648,13 +648,13 @@ bindings until terminal handback; verify supported loading at the next bootstrap
 
 
 Reviewed progress-hold recovery must leave a usable bounded window: clearing only
-held at counter40 immediately re-latches on a necessary read. After resolving the
+held at counter50 immediately re-latches on a necessary read. After resolving the
 concrete obstacle, the supervisor may authorize at most eight calls to the next
-meaningful artifact (counter32 for an eight-call window), preserving the full
+meaningful artifact (counter42 for an eight-call window), preserving the full
 before-state/history and seen/written IDs with exact source/worker/authority and
 before/after hashes under the existing lock/atomic write. Targeted file/startup
 reads may precede the edit; do not require an impossible first-tool Edit. The
-normal40-call guard stays active; no automatic reset/repeated allowance, empty
+normal50-call guard stays active; no automatic reset/repeated allowance, empty
 placeholder, Goal-budget reset, native-refusal override or settings/hook change.
 Follow token-controls.md's reviewed recovery procedure at a stopped boundary.
 

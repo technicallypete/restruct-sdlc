@@ -1,5 +1,5 @@
 import unittest
-from worker_progress_guard import transition, decision, worker_event
+from worker_progress_guard import transition, decision, worker_event, LIMIT
 
 def workerpath(root, ident="a", session="session"):
     from pathlib import Path
@@ -14,11 +14,33 @@ def batch(i, name="Read", text="ok"):
 class GuardTests(unittest.TestCase):
     def test_read_loop_stops_before_next_model_call(self):
         s={}
-        for i in range(39): s=transition(s,batch(i))
+        for i in range(LIMIT - 1): s=transition(s,batch(i))
         self.assertNotIn("held",s)
-        s=transition(s,batch(39));self.assertFalse(decision(s,batch(39))["continue"])
+        s=transition(s,batch(LIMIT - 1));self.assertFalse(decision(s,batch(LIMIT - 1))["continue"])
+    def test_fifty_call_limit_and_old_hold_preserved(self):
+        self.assertEqual(LIMIT, 50)
+        s = {}
+        for i in range(40):
+            s = transition(s, batch(i))
+        self.assertNotIn("held", s)
+        for i in range(40, 49):
+            s = transition(s, batch(i))
+        self.assertNotIn("held", s)
+        s = transition(s, batch(49))
+        self.assertIn("50 tool calls", s["held"])
+        old = {"without_artifact": 40, "held": "40 tool calls: preserved prior hold"}
+        self.assertFalse(decision(transition(old, batch("later")), batch("later"))["continue"])
+
+    def test_reviewed_eight_call_window_at_new_limit(self):
+        s = {"without_artifact": LIMIT - 8}
+        for i in range(7):
+            s = transition(s, batch(i))
+            self.assertNotIn("held", s)
+        s = transition(s, batch(7))
+        self.assertFalse(decision(s, batch(7))["continue"])
+
     def test_write_resets_budget_but_not_permission_refusal(self):
-        s=transition({"without_artifact":39},{"hook_event_name":"PostToolUse","tool_name":"Write","tool_use_id":"1"});s=transition(s,batch(1,"Write"));self.assertEqual(s["without_artifact"],0)
+        s=transition({"without_artifact":LIMIT - 1},{"hook_event_name":"PostToolUse","tool_name":"Write","tool_use_id":"1"});s=transition(s,batch(1,"Write"));self.assertEqual(s["without_artifact"],0)
         s=transition(s,{"hook_event_name":"PermissionDenied"})
         self.assertIn("held",transition(s,batch(2,"Write")))
     def test_duplicate_callbacks_do_not_consume_budget(self):
@@ -53,11 +75,11 @@ class CheckpointTests(unittest.TestCase):
         self.assertIn("checkpoint", output["additionalContext"])
         self.assertNotIn("held", s)
         self.assertEqual(s["without_artifact"], 30)
-        for i in range(30, 39):
+        for i in range(30, LIMIT - 1):
             e = batch(i, "SendMessage", "Still reading")
             s = transition(s, e)
             self.assertEqual(decision(s, e), {})
-        e = batch(39)
+        e = batch(LIMIT - 1)
         s = transition(s, e)
         self.assertFalse(decision(s, e)["continue"])
 
@@ -88,13 +110,13 @@ class CheckpointTests(unittest.TestCase):
         self.assertEqual(s["without_artifact"], 0)
         self.assertEqual(decision(s, e), {})
 
-    def test_parallel_batch_crossing_thirty_warns_once_and_forty_stops(self):
+    def test_parallel_batch_crossing_thirty_warns_once_and_fifty_stops(self):
         e = batch("a")
         e["tool_calls"] += batch("b")["tool_calls"] + batch("c")["tool_calls"]
         s = transition({"without_artifact": 29}, e)
         self.assertEqual(s["without_artifact"], 32)
         self.assertIn("hookSpecificOutput", decision(s, e))
-        s = transition({"without_artifact": 39}, e)
+        s = transition({"without_artifact": LIMIT - 1}, e)
         self.assertFalse(decision(s, e)["continue"])
 
     def test_existing_refusal_takes_precedence(self):
@@ -118,7 +140,7 @@ class CheckpointTests(unittest.TestCase):
             state = json.loads(p.with_suffix(".restruct-progress.json").read_text())
             self.assertEqual(state["without_artifact"], 31)
             self.assertTrue(state["checkpoint_requested"])
-            for i in range(31, 40):
+            for i in range(31, LIMIT):
                 result = handle({**base, **batch(i)})
             self.assertFalse(result["continue"])
 
@@ -131,7 +153,7 @@ class FileHookTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p=workerpath(d)
             base={'agent_id':'a','session_id':'session','transcript_path':str(p),'tool_use_id':'pre'}
-            for i in range(40): result=handle({**base,**batch(i)})
+            for i in range(LIMIT): result=handle({**base,**batch(i)})
             self.assertFalse(result['continue'])
             self.assertFalse(handle({**base,'hook_event_name':'PreToolUse','tool_name':'Read'})['continue'])
             self.assertEqual(handle({**base,'hook_event_name':'PreToolUse','tool_name':'SubagentHandback'}),{})
@@ -143,7 +165,7 @@ class FileHookTests(unittest.TestCase):
             p=Path(d)/'real.jsonl';p.write_text('{}\n');q=Path(d)/'agent.jsonl';q.symlink_to(p)
             with self.assertRaises(ValueError):handle({'agent_id':'a','transcript_path':str(q)})
     def test_unconfirmed_write_does_not_reset_budget(self):
-        s=transition({'without_artifact':39},batch(1,'Write'))
+        s=transition({'without_artifact':LIMIT - 1},batch(1,'Write'))
         self.assertIn('held',s)
 
 class RefusalTests(unittest.TestCase):
@@ -190,7 +212,7 @@ class WorkerIsolationTests(unittest.TestCase):
             parent=Path(d)/"session.jsonl";parent.write_text("{}")
             a=workerpath(d,"a"); b=workerpath(d,"b")
             base={"session_id":"session","transcript_path":str(parent)}
-            for i in range(40): result=handle({**base,"agent_id":"a",**batch(i)})
+            for i in range(LIMIT): result=handle({**base,"agent_id":"a",**batch(i)})
             self.assertFalse(result["continue"])
             self.assertEqual(handle({**base,"agent_id":"b",**batch("b1")}),{})
             self.assertEqual(json.loads(b.with_suffix(".restruct-progress.json").read_text())["without_artifact"],1)

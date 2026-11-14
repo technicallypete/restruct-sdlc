@@ -9,7 +9,7 @@ import sys
 import tempfile
 
 CHECKPOINT = 30
-LIMIT = 40
+LIMIT = 50
 def native_refusal(response):
     if isinstance(response, list):
         response = "\n".join(x.get("text", "") for x in response if isinstance(x, dict))
@@ -57,7 +57,7 @@ def transition(state, event):
                 state["checkpoint_requested"] = True
                 state["checkpoint_notice"] = True
             if state["without_artifact"] >= LIMIT:
-                state["held"] = "40 tool calls without observed artifact: return bounded obstacle/design checkpoint"
+                state["held"] = f"{LIMIT} tool calls without observed artifact: return bounded obstacle/design checkpoint"
                 break
         state["seen"] = seen[-256:]
     return state
@@ -71,7 +71,7 @@ def decision(state, event):
         return {"hookSpecificOutput": {"hookEventName": "PostToolBatch", "additionalContext":
             "Restruct progress checkpoint due: at least 30 tool calls without an observed artifact. "
             "The coordinator needs a brief checkpoint now: resolved facts, precise blocker, and next concrete "
-            "edit or deliverable. The existing 40-call pause remains; a status reply does not reset the counter. "
+            "edit or deliverable. The existing 50-call pause remains; a status reply does not reset the counter. "
             "Planning/review findings or a draft are appropriate role artifacts; still reading is not one. "
             "Any justified research outcome needs coordinator review, not a self-granted extension."}}
     return {}
