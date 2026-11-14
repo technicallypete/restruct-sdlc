@@ -45,13 +45,27 @@ class GuardTests(unittest.TestCase):
         self.assertIn("held",transition(s,batch(2,"Write")))
     def test_duplicate_callbacks_do_not_consume_budget(self):
         s=transition({},batch(1));s=transition(s,batch(1));self.assertEqual(s["without_artifact"],1)
-    def test_compaction_latch_does_not_reset(self):
-        s=transition({}, {"hook_event_name":"PostCompact"})
-        self.assertFalse(decision(s,{"hook_event_name":"PreToolUse","tool_name":"Read"})["continue"])
-        self.assertIn("held",transition(s,batch(1,"Write")))
-    def test_compaction_after_artifact_then_no_progress(self):
-        s=transition({}, {"hook_event_name":"PostToolUse","tool_name":"Edit","tool_use_id":"1"});s=transition(s,batch(1,"Edit"));s=transition(s,{"hook_event_name":"PostCompact"});self.assertNotIn("held",s)
-        s=transition(s,{"hook_event_name":"PostCompact"});self.assertIn("held",s)
+    def test_compaction_preserves_progress_limit_without_an_extra_hold(self):
+        s = {}
+        for i in range(LIMIT - 2):
+            s = transition(s, batch(i))
+        for _ in range(2):
+            s = transition(s, {"hook_event_name": "PostCompact"})
+            self.assertNotIn("held", s)
+            self.assertEqual(s["without_artifact"], LIMIT - 2)
+        s = transition(s, batch("after-compact"))
+        self.assertNotIn("held", s)
+        s = transition(s, batch("limit"))
+        self.assertIn("50 tool calls", s["held"])
+
+    def test_compaction_does_not_clear_existing_progress_or_native_holds(self):
+        for reason in ["native refusal: preserve", "50 tool calls: preserve",
+                       "compaction without observed artifact: preserved prior hold"]:
+            s = transition({"held": reason, "without_artifact": 8},
+                           {"hook_event_name": "PostCompact"})
+            self.assertEqual(s["held"], reason)
+            self.assertEqual(s["without_artifact"], 8)
+            self.assertFalse(decision(s, {"hook_event_name": "PreToolUse", "tool_name": "Read"})["continue"])
     def test_refusal_in_batch(self):
         s=transition({},batch(1,"Bash","STOP what you are doing"));self.assertIn("native refusal",s["held"])
     def test_handback_remains_possible(self):
@@ -169,6 +183,16 @@ class FileHookTests(unittest.TestCase):
         self.assertIn('held',s)
 
 class RefusalTests(unittest.TestCase):
+    def test_ordinary_permission_error_is_not_a_native_refusal(self):
+        for text in ["Permission denied: test fixture is unreadable",
+                     "Error: permission denied opening output file"]:
+            s = transition({}, batch(1, "Bash", text))
+            self.assertNotIn("held", s)
+            self.assertEqual(s["without_artifact"], 1)
+            # The authenticated native event always wins, whatever the text says.
+            s = transition(s, {"hook_event_name": "PermissionDenied"})
+            self.assertIn("native refusal", s["held"])
+
     def test_source_text_discussing_refusals_is_not_itself_a_refusal(self):
         s=transition({},batch(1,"Read","1 docs: permission denied means stop what you are doing"))
         self.assertNotIn("held",s)

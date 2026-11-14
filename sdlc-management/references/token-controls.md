@@ -42,8 +42,24 @@ unavailable, checkpoint and return control rather than consuming unbounded conte
 
 Effort is role-specific: record the accepted model/effort and any existing explicit
 exception, then compare actual metadata. Test-correction/escalation policies can
-legitimately require xhigh; a generic high default must not erase them. Unknown or
-mismatched settings block new ordinary dispatch until reconciled, not native recovery.
+legitimately require xhigh; a generic high default must not erase them. A demonstrated
+mismatch, disabled compaction or observed ceiling breach blocks ordinary work.
+Missing metadata is UNVERIFIED, not evidence of a violation. The checker reports
+status blocked (exit1), unverified (exit2), verified or static-only (exit0);
+static-only is never proof of live loading. Missing telemetry never overrides a
+known configuration violation. Partial usage retains the lower bound from
+valid available counters: a lower bound at250k still blocks, even when other
+fields are missing. Neither unverified output nor exit2 is a PASS.
+
+For unavailable telemetry, the coordinator may perform one bounded startup/check
+within the existing worker allowance using supported native configuration and
+recorded role launch settings. Check available effective-setting evidence and
+actual usage at the next ordinary boundary. If a metadata field is not exposed,
+record that limitation and its accountable owner once; continue only within the
+verified native limits and existing bounded scope, without claiming that field
+verified. No repeated probe workers, unsupported refresh or open-ended approval
+wait. Unknown worker identity/isolation, an unverified guard implementation or an
+actual permission refusal retains its separate stop.
 
 Record compact metrics and configuration/loading evidence in the existing dispatch/
 Result inventory, no separate tracking service or polling agent. Do not accept a
@@ -109,14 +125,16 @@ not a worker-granted extension. For planners/reviewers, a meaningful findings or
 draft artifact is appropriate; repeated still-reading reports are not progress.
 A Write/Edit signal alone cannot establish usefulness or acceptance. A completed
 artifact starts a new no-artifact stretch and permits a new30-call reminder.
-If a single parallel batch reaches40, the hard stop takes precedence; it does not
+If a single parallel batch reaches50, the hard stop takes precedence; it does not
 grant another model turn merely to deliver the earlier reminder.
 
-Native tool-batch callbacks stop a worker before its next model request after40
-tool calls without an observed successful Write/Edit/NotebookEdit. A compaction
-without such an artifact latches the same stop for the next tool boundary because
-PostCompact itself cannot stop native processing. PermissionDenied and recognized
-native refusal text also latch a stop; no retry flag is emitted. PreToolUse retains
+Native tool-batch callbacks stop a worker before its next model request after50
+tool calls without an observed successful Write/Edit/NotebookEdit. Successful
+native compaction preserves cumulative calls, IDs and existing holds; it does not
+add an artifact-based hold or erase progress. PermissionDenied events and explicit
+native refusal envelopes still latch a stop. Ordinary command/test output beginning
+with permission denied does not itself establish a native refusal. No retry flag
+or permission override is emitted. PreToolUse retains
 the latch, while allowing native SubagentHandback. Coordinator events are excluded
 from worker budgets. No timers, transcript polling, model calls, shell execution,
 resource deletion, permission changes or automatic replacement are performed.
@@ -130,6 +148,26 @@ artifacts may need checkpoint review; the guard deliberately does not guess from
 opaque shell commands. An artifact signal is not a correctness or progress guarantee.
 Required tests and running processes remain untouched; coordinator owns recovery.
 
+### Coordinator-owned routine decisions
+
+Within already approved work, the coordinator owns mechanical input/count/reader
+corrections, role-metadata checks and reviewed custom progress-state recovery.
+Do not add another supervisor approval per file, case or supported continuation.
+Preserve the exact stopped worker/source/state, before-state and refusal evidence,
+lock/atomic update, existing allowance limits and changed-strategy requirement.
+Workers cannot clear their own holds. A genuine native security refusal is never
+reversed: follow an explicitly supported safer own-checkout remedy, or abandon
+the refused action and continue independent work. Unknown security intent,
+permission/settings changes, scope/contract changes and genuine owner-only actions
+retain their existing escalation. A custom-state recovery cannot substitute for
+native authorization; no rerouting a refused action to another executor.
+
+Planner/reviewer findings and shell-produced deliverables may be meaningful role
+artifacts. Preserve and assess the actual handback in existing evidence; do not
+require placeholder edits merely to satisfy a tool-name counter. If more work is
+needed, the coordinator records that assessment and uses the same bounded
+continuation procedure. A status-only message never earns an allowance or PASS.
+
 ### Reviewed recovery needs a usable, bounded window
 
 A progress hold at the threshold cannot usefully resume if only `held` is removed
@@ -138,8 +176,8 @@ immediately holds again. Do not impose a first-tool-Edit requirement to compensa
 native editing may require a current file read. This is distinct from the normal
 rule that status replies never reset counters.
 
-After resolving the stopped objective's concrete obstacle, the supervisor may
-authorize one explicit recovery window of at most eight tool calls to the next
+After reviewing the stopped evidence and resolving its concrete obstacle, the
+coordinator may authorize one explicit recovery window of at most eight tool calls to the next
 meaningful artifact. For the50-call guard, an eight-call window sets
 `without_artifact=42` and removes only the reviewed progress hold. Preserve the
 entire before-state and historical counter in private evidence, retain seen and

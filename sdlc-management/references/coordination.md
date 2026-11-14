@@ -1,5 +1,30 @@
 # Coordinator, workers and messages
 
+## Delivery flow and routine operational ownership
+
+The coordinator executes dependency-ready work within the accepted Plan without
+per-case supervisor approval. Bind the worker's actual isolated checkout and
+source before launch. Worker Git commands operate only in that checkout; a
+shared checkout is not a worker startup destination. Supply already resolved
+fixture facts and verified packet inputs rather than redispatching discovery.
+
+At each worker return, run completion or handoff, carry every unfinished outcome
+to an actual next action or concrete blocker in the existing inventory. Launch
+ready work before ending the turn; name the reservation owner/release condition
+when capacity is unavailable. Sent, received, planned, running and passed remain
+distinct states. The named MR owner tracks checks/findings through the supervisor's
+ready integration disposition under standing merge authority. Another lane's
+activity never finishes or hides the unfinished one. Prerequisite evidence runs
+before the phase acceptance that depends on it; dependent product work keeps its
+normal hold. Preserve formal Plan/source/architecture/security acceptance.
+
+Routine mechanical corrections and reviewed custom progress recovery belong to
+the coordinator under [token controls](token-controls.md#coordinator-owned-routine-decisions).
+This delegates operational decisions, not the supervisor role or native security
+authority. Use existing handbacks and records; no timer polling, new tracker,
+per-function approval chain or extra workflow expansion while active delivery
+recovers, except a demonstrated correctness/security defect.
+
 ## Unfinished lanes survive worker completion
 
 A worker ending, returning a handback or hitting a guard does not finish its assigned outcome. At each worker return, run completion and coordinator handoff, reconcile every unfinished lane in the existing task/run inventory: actual state, accountable owner and the next executable action or concrete blocker. Preserve that row when the worker is reclaimed or another task is active; do not mark the outcome done merely because a diagnostic run ended.

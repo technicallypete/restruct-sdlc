@@ -41,26 +41,42 @@ def latest_usage(path):
         if row.get("type") != "assistant":
             continue
         usage = row.get("message", {}).get("usage")
-        if not usage:
+        if usage is None:
             continue
+        if not isinstance(usage, dict):
+            raise ValueError("unsupported request usage telemetry")
         keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
-        if not all(isinstance(usage.get(k), int) and usage[k] >= 0 for k in keys):
-            raise ValueError("incomplete request usage telemetry")
-        return {"input_context": sum(usage[k] for k in keys),
+        available = [usage[k] for k in keys if type(usage.get(k)) is int and usage[k] >= 0]
+        # Missing counters prevent verification, but cannot erase an observed
+        # lower bound that already crosses the hard ceiling.
+        return {"input_context": sum(available), "context_complete": len(available) == len(keys),
                 "effort": row.get("effort"), "timestamp": row.get("timestamp"),
                 "model": row.get("message", {}).get("model")}
     raise ValueError("no usage telemetry in bounded transcript tail")
 
-def inspect(settings, telemetry=None, expected_effort=None):
+def inspect(settings, telemetry=None, expected_effort=None, telemetry_problem=None):
     errors = check_settings(settings)
-    result = {"errors": errors, "telemetry": telemetry}
+    unverified = []
+    result = {"errors": errors, "telemetry": telemetry, "unverified": unverified}
+    if telemetry_problem:
+        unverified.append(telemetry_problem)
     if telemetry is not None:
+        if not telemetry.get("context_complete", True):
+            unverified.append("incomplete request usage; input_context is an observed lower bound")
         if telemetry["input_context"] >= WINDOW:
             errors.append("context ceiling reached: compact or checkpoint/handoff before ordinary work")
-        if expected_effort and telemetry.get("effort") != expected_effort:
-            errors.append("effective effort does not match the recorded role/override")
+        if expected_effort:
+            if telemetry.get("effort") is None:
+                unverified.append("effective effort metadata is unavailable")
+            elif telemetry["effort"] != expected_effort:
+                errors.append("effective effort does not match the recorded role/override")
         result["checkpoint_due"] = telemetry["input_context"] >= WINDOW * PERCENT // 100
-    result["ok"] = not errors
+    elif expected_effort and not telemetry_problem:
+        unverified.append("last-request usage and effective effort require a transcript")
+    result["blocked"] = bool(errors)
+    result["ok"] = not errors and not unverified
+    result["status"] = ("blocked" if errors else "unverified" if unverified else
+                        "verified" if telemetry is not None else "static-only")
     return result
 
 def main():
@@ -71,16 +87,21 @@ def main():
     p.add_argument("--expected-effort", choices=["low", "medium", "high", "xhigh", "max"])
     args = p.parse_args()
     try:
-        if args.expected_effort and not args.transcript:
-            raise ValueError("effort verification requires a transcript")
         settings = json.loads(args.settings.read_text())
-        telemetry = latest_usage(args.transcript) if args.transcript else None
-        result = inspect(settings, telemetry, args.expected_effort)
-        result["scope"] = "settings-and-last-request" if telemetry else "static-settings-only"
+        telemetry, problem = None, None
+        if args.transcript:
+            try:
+                telemetry = latest_usage(args.transcript)
+            except (OSError, ValueError, TypeError) as exc:
+                problem = str(exc)
+        result = inspect(settings, telemetry, args.expected_effort, problem)
+        result["scope"] = ("settings-and-last-request" if telemetry else
+                           "telemetry-unverified" if problem or args.expected_effort else "static-settings-only")
     except (OSError, ValueError, TypeError) as exc:
-        result = {"ok": False, "errors": [str(exc)], "scope": "unverified"}
+        result = {"ok": False, "blocked": True, "status": "blocked",
+                  "errors": [str(exc)], "unverified": [], "scope": "settings-unverified"}
     print(json.dumps(result, sort_keys=True))
-    return 0 if result["ok"] else 1
+    return 1 if result["blocked"] else 0 if result["ok"] else 2
 
 if __name__ == "__main__":
     raise SystemExit(main())

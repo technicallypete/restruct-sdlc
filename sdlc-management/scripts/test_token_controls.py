@@ -22,7 +22,40 @@ class ControlsTests(unittest.TestCase):
         self.assertFalse(inspect(GOOD, row, "high")["ok"])
         self.assertTrue(inspect(GOOD, row, "xhigh")["ok"])
     def test_missing_effort_is_not_verified(self):
-        self.assertFalse(inspect(GOOD, {"input_context": 1}, "high")["ok"])
+        result = inspect(GOOD, {"input_context": 1}, "high")
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["status"], "unverified")
+        self.assertEqual(result["errors"], [])
+        self.assertFalse(result["blocked"])
+        self.assertTrue(result["unverified"])
+    def test_known_violation_wins_over_missing_effort(self):
+        for settings, telemetry in [(GOOD, {"input_context": 250000}),
+                                    ({}, {"input_context": 1})]:
+            result = inspect(settings, telemetry, "high")
+            self.assertEqual(result["status"], "blocked")
+            self.assertTrue(result["blocked"])
+            self.assertFalse(result["ok"])
+    def test_cli_separates_unavailable_telemetry_from_bad_settings(self):
+        import subprocess, sys
+        with tempfile.TemporaryDirectory() as d:
+            settings = Path(d)/"settings.json"
+            trace = Path(d)/"worker.jsonl"
+            trace.write_text("{}\n")
+            cmd = [sys.executable, str(Path(__file__).with_name("check_token_controls.py")),
+                   "--settings", str(settings), "--transcript", str(trace),
+                   "--expected-effort", "high"]
+            settings.write_text(json.dumps(GOOD))
+            run = subprocess.run(cmd, capture_output=True, text=True)
+            result = json.loads(run.stdout)
+            self.assertEqual(run.returncode, 2)
+            self.assertEqual(result["status"], "unverified")
+            self.assertFalse(result["ok"])
+            self.assertEqual(result["errors"], [])
+            settings.write_text("{}")
+            run = subprocess.run(cmd, capture_output=True, text=True)
+            result = json.loads(run.stdout)
+            self.assertEqual(run.returncode, 1)
+            self.assertEqual(result["status"], "blocked")
     def test_latest_usage_is_context_not_cumulative(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d)/"t.jsonl"
@@ -33,5 +66,17 @@ class ControlsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"t";p.write_text("{}\n")
             with self.assertRaises(ValueError): latest_usage(p)
+    def test_partial_usage_preserves_observed_ceiling_lower_bound(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d)/"worker.jsonl"
+            for usage, blocked in [({"input_tokens": 250000}, True),
+                                   ({"input_tokens": 100000, "cache_read_input_tokens": 160000}, True),
+                                   ({"input_tokens": 100000}, False)]:
+                p.write_text(json.dumps({"type": "assistant", "effort": "high",
+                                         "message": {"usage": usage}})+"\n")
+                result = inspect(GOOD, latest_usage(p), "high")
+                self.assertEqual(result["blocked"], blocked)
+                self.assertEqual(result["status"], "blocked" if blocked else "unverified")
+                self.assertFalse(result["ok"])
 
 if __name__ == "__main__": unittest.main()
