@@ -45,3 +45,11 @@ inspection; preserve existing frozen runs and old bound packet bytes.
 
 Next authorized action/gate; concise decision/evidence references:
 Exact packet hash and private evidence/retention reference (record after writing):
+
+## Coordinator resume state (when applicable)
+
+Current phase/authority and controlling errata; historical snapshots to ignore:
+Unfinished actions, actual owners and worker/run identities or concrete blockers:
+MR/head/pipeline IDs; review requests/results and remaining failures/limits:
+Actual completion-notification references; next executable action on return:
+Evidence/resources/cleanup and preserved native holds/budgets (references only):

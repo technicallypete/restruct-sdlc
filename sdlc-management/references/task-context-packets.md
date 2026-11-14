@@ -87,6 +87,29 @@ evidence; a refresh is a distinct version/binding. Keep the old version needed b
 active work or retained failure proof. Canonical decisions stay in the normal
 Goal/Spec/Plan/Result/progress files; do not update them by editing the packet.
 
+## Coordinator continuity across compaction
+
+At an existing phase/handback boundary, refresh the current private handoff and
+native tasks before planned compaction. Reuse the existing packet or handoff;
+create no separate ledger, approval step or per-turn writing requirement. Preserve:
+
+- Current role/authority, owner endpoint, phase and exact source/input bindings,
+  including controlling Spec errata and which older snapshots are historical.
+- Unfinished actions and their accountable owners: actually running worker/run
+  references, or the next executable action and a concrete blocker/release event.
+- MR/head/pipeline identities, actual failed or partial checks, required independent
+  and automated reviews, and real background completion-notification references.
+- Evidence/cleanup locations, resource reservations, native holds and preserved
+  budget/counter state. A summary does not clear or recreate any of these.
+
+After compaction, read that current handoff and reconcile existing native tasks
+and surviving work once before dispatch. Verify relevant source/owner freshness;
+do not reread old transcripts or restart discovery/work merely because context
+was compacted. If automatic compaction happened first, reconcile at the next
+normal boundary without manufacturing a pre-compaction receipt or interrupting
+frozen runs. Resume ready actions, including pending review/CI follow-through.
+This preserves continuity; it changes no model, effort or context threshold.
+
 ## Storage and publication
 
 Commit this procedure and the reusable template. Generated packets belong under
