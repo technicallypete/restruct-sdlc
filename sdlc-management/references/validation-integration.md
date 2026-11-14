@@ -657,3 +657,63 @@ release notes summarize delivered scope since the previous stable release and
 state qualification truthfully; never imply planned or unaccepted work shipped.
 Published tags are immutable: improve an existing GitLab Release entry rather
 than moving or recreating a tag.
+
+## Bounded Duo recovery: owner-selected automation
+
+This procedure is enabled only when the adopting owner selects it. Record the
+adopting owner's enablement, integration target and scope. Default total deadline:
+20 minutes from the first request for a given MR head; at most one retry. These
+are recovery limits, not evidence that an absent review passed.
+
+The existing coordinator owns recovery at CI completion, a delivered review
+outcome, or another existing merge checkpoint. No polling agent, daemon, new
+webhook service or repeated waiting loop is added. A deadline is evaluated at
+such a checkpoint; these instructions do not install a timer or guarantee a
+wake-up exactly at minute 20. Keep the lane owned until resolved.
+
+1. In the existing Result/task record retain project/MR, exact head, actual
+   request timestamp, session ID/link when available, retry count and outcome.
+   Bind the session to this review request/head; never use a stale head's result.
+   A changed head needs reconciliation under normal review/evidence rules.
+2. Inspect the actual session status through the supported provider interface,
+   not just bot comments. GitLab's documented `duoWorkflowWorkflows` GraphQL query
+   returns session status; a session can fail while posting its final comments.
+   Capture minimal nonsecret status/error provenance. If session lookup fails or
+   its binding is uncertain, record UNKNOWN, not FAILED or PASS. Read actual MR
+   discussions/findings as well; finished flow alone does not establish a
+   complete published review. Never invent a session or timestamp.
+3. On confirmed provider failure, retry once using the normal supported review
+   request, only if this head has no live/possibly live review and no explicit
+   owner stop. Preserve the failure. Record/verify the retry request; uncertain
+   delivery is not permission to resend. Do not reset the original deadline or
+   retry allowance after compaction, a handback or another bot comment.
+4. A running review is not failed. Do not duplicate or cancel it merely because
+   it is slow. At the next owned checkpoint after the total deadline, missing,
+   unknown, failed or unpublished completion is REVIEW UNAVAILABLE; completed
+   actionable findings always receive normal disposition, not an outage waiver.
+5. With this owner-selected procedure, the coordinator automatically records a
+   standing outage exception and continues ordinary integration without another
+   owner prompt ONLY when current required CI passes, the supervisor and a
+   separate independent source reviewer have accepted the complete current
+   change, every received blocking finding is resolved/disposed, and all other
+   source/target, security, native/protection, budget and manual gates clear.
+   Record the exact head, reviews, CI, status/time/retry evidence and
+   `Duo unavailable; standing exception applied` in the existing Result/review.
+   This is not Duo approval or PASS. Missing prerequisites keep the MR held;
+   they do not trigger an approval-bypass or another permission request to
+   repeat already granted routine authority.
+6. Recheck actual findings/source/CI before merge. A late blocking finding holds
+   unmerged work; if it arrives after integration, route an owned bounded repair
+   under existing policy rather than silently ignoring it. Never fabricate an
+   approval, change branch protection/permissions, or override an owner-specific
+   instruction to await Duo. Closed/merged MRs get no recovery retry.
+
+The exception applies only to the adopted non-promotion integration scope. It
+waives no CI, source review, real defect, qualification, cleanup or release gate.
+RC/main promotion, final tags/deployment and explicit owner holds remain separate;
+Duo on an RC remains advisory under its existing policy. Reuse the current task
+records and coordinator, not a new tracker. No model/session restart is required.
+
+GitLab adapter sources: Flows API, "Check the status of a flow", and the
+GitLab Support article "Code Review Flow fails repeatedly on a specific merge
+request". Verify the supported interface in the adopting environment.
