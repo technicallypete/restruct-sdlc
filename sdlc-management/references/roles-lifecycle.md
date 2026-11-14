@@ -329,6 +329,10 @@ under the existing planning/execution rules. Do not end a handoff by asking the
 owner to repeat “review”, “continue” or “tell the coordinator” for an already
 covered action. Stop at actual external waits, native permissions, unresolved owner
 product/risk decisions, budgets or mandate/phase limits; name the exact wait.
+These waits are lane-specific: at every child/test completion, advance the existing
+task and dispatch other authorized ready work before yielding. A running unrelated
+batch is not a global barrier. Follow [dispatch before waiting](coordination.md#dispatch-ready-work-before-waiting);
+no-polling rules limit observation, not completion-driven dispatch.
 The observer supplies notices, not authority, and cannot guarantee wake-up of an
 ended supervisor turn. This adds no daemon, scheduler or permission bypass.
 
