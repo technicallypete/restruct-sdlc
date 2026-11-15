@@ -77,6 +77,15 @@ After focused pre-merge checks, hosted fast checks and supervisor/Duo review, me
 
 Ordinary application feature work does **not** require the full `ci-controls` suite merely because it updates product test registration or expectations inside harness files. This includes routes/import allowlists, migration versions, schema/catalog counts, browser matrices, test invocations, required-check IDs and their resulting count pins. Run affected product checks and only the directly affected control cases using existing focused selectors. A changed harness pathname, copied fixture, mechanical count update or desire for an aggregate PASS row is not a reason to select all controls. Full CI controls require a recorded concrete reason involving changed shared runner behavior or an explicitly selected full staging/RC qualification. Required-check aggregates apply to selected coverage; do not add `ci-controls` merely to make `B-CI-CONTROLS` required. Preserve actual outcomes and report focused control proof without claiming an unexecuted full suite passed.
 
+Use one repository-defined primary theme for comprehensive browser workflows;
+retain all supported themes for visual/accessibility states, theme lifecycle and
+representative critical interactions. Do not duplicate theme-independent business
+matrices by default. Select through existing projects/tags, preserving assertions,
+fixture isolation, probe dependencies and truthful required-ID/count accounting.
+Review selection changes as source changes; frozen runs keep their original matrix
+and full hosted qualification still covers the complete accepted selection. See
+[theme-aware coverage](.agents/skills/restruct-sdlc/sdlc-management/references/validation-integration.md#theme-aware-browser-coverage).
+
 A ready authorized successor may implement in isolation during that post-merge local run. Respect shared locks, exact inputs and predecessor-owned repairs; predecessor final ACCEPT still gates successor integration/final acceptance. Merged-SHA qualification uses its frozen checkout and is not rebased by development-branch fetch/rebase rules. Preserve explicitly exempt documentation-only work.
 
 {{SUPERVISOR_AGENT}} supervises the roadmap, Goals, Work Specs, Plan review, implementation acceptance and

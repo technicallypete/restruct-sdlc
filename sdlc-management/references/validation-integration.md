@@ -417,6 +417,38 @@ owners/budgets. No new tracking framework, duplicate full validation, retroactiv
 pass or permission bypass. Apply equally when the supervisor reviews its own
 workflow/CI changes: inspect the actual delta and required self-checks.
 
+## Theme-aware browser coverage
+
+Choose and record one repository-defined primary theme for comprehensive browser
+workflows. Run theme-independent permissions, authentication, CRUD, payload,
+pagination, idempotency and state-transition matrices once in that theme. Do not
+multiply every functional scenario by each supported palette merely because
+themes exist. The reusable workflow chooses no particular primary palette.
+
+Retain coverage in every supported theme for theme selection/persistence/system
+preference, first paint and hydration, contrast and focus indicators, visibility
+and control states, overlays/portals, native controls, theme-dependent assets and
+charts, responsive layout and representative critical interactions. Preserve
+mixed functional/visual cases when they uniquely cover those states; a case title
+without an accessibility label does not establish that its second-theme pass is
+redundant. Shared theme/component changes may justify wider paired regressions;
+record the actual affected guarantee rather than a default full cross-product.
+
+Use existing project selectors/tags and Plan/Result mapping to explain retained
+second-theme coverage and functional coverage in the primary theme. Keep shared
+test definitions and all assertions; remove redundant project expansions rather
+than adding blanket skips, expected failures or artificial PASS rows. Reconcile
+discovery counts, required IDs, probe/report consumers, project dependencies and
+documentation together through normal source review. Unselected cases are not
+passing cases. Theme changes do not isolate shared server data: fixture ownership
+and state preconditions remain mandatory across projects.
+
+Apply a changed selection at a reviewed source boundary. Frozen runs retain their
+original matrix and failure history; do not cancel, rewrite or retrospectively
+qualify them using a later selection. Required full hosted qualification still
+runs the complete accepted matrix. This rule waives no security, release, native
+permission, budget or acceptance gate and adds no separate approval framework.
+
 ## Focused selection before the first run
 
 Focused checks are the default for **every local run**, including initial
