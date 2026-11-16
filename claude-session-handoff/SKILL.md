@@ -503,10 +503,12 @@ Checking status does not authorize messaging or new implementation. A handoff co
 
 ## Model-aware effort override — 2026-10-15
 
-Default to Fable 5.1 high for planning and test corrections, including failure
-diagnosis and corrective test/fix work; use xhigh selectively for especially
-hard work. Default to Opus 5.5 high for implementation, routine test execution
-and coordination. If the owner selects Opus 5.5 for planning or test
+Default to Fable 5.2 high for planning and substantive task-context packets.
+Retain Fable 5.1 high for test corrections, including failure diagnosis and
+corrective test/fix work; use xhigh selectively for especially
+hard work. Default to Opus 5.5 high for implementation and routine test execution.
+Default the coordinator to Sonnet 5.5 high, with Opus 5.5 high by owner choice.
+If the owner selects Opus 5.5 for planning or test
 corrections/diagnosis, use xhigh; routine implementation, test execution and
 coordination stay high. This overrides generic role-effort defaults for those
 models/phases. Honor owner choices, verify actual settings or report unknown,

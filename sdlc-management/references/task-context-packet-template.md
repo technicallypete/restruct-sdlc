@@ -7,7 +7,7 @@ Follow the [procedure](task-context-packets.md).
 ## Identity and binding
 
 - Task/release; role/phase; preparer; intended consumer:
-- Packet writer/model (Fable5.1 high; actual metadata or recorded authorized fallback):
+- Packet writer/model (Fable5.2 high for initial/substantive preparation; actual metadata or recorded authorized fallback):
 - Coordinator responsible for source freshness, completeness and dispatch:
 - Repository/worktree; source commit; dirty/untracked inputs, if any:
 - Created at; packet version; prior binding, if refreshed:
@@ -36,6 +36,8 @@ For changed tests: verified subject role, permitted mutation, prerequisite setup
 and expected success/refusal; exact setup required by focused selectors:
 First coherent checkpoint's relevant compile/type/lint checks, executor and
 resource reservation (coordinator owns them when the writer is source-only):
+Relevant risky assumptions; first bounded feasibility check and success/failure
+criteria, or sufficient existing evidence (only within released execution):
 Unresolved decisions and additional-read triggers:
 
 ## Source coverage and freshness
@@ -50,6 +52,8 @@ inspection; preserve existing frozen runs and old bound packet bytes.
 
 ## Handoff and evidence
 
+Actual assertion/setup/selector/registration coverage against the selected AC map;
+missing/unexecuted cases and existing coordinator/supervisor review reference:
 Next authorized action/gate; concise decision/evidence references:
 Exact packet hash and private evidence/retention reference (record after writing):
 

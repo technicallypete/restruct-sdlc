@@ -286,6 +286,9 @@ source checkpoint, the existing coordinator ensures relevant early static
 feedback before expensive dependent validation, including for source-only
 writers. Follow [early feedback and prerequisites](validation-integration.md#early-focused-feedback-and-fixture-prerequisites);
 preserve running batches, native permissions and resource reservations.
+Carry the first bounded feasibility check into the packet and compare actual
+assertions/setup/selectors/registrations against the AC map at handback, under
+[feasibility and handback review](validation-integration.md#feasibility-before-expensive-expansion).
 
 ## Handoff contents
 

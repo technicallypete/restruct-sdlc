@@ -10,7 +10,10 @@ Revision r1, YYYY-MM-DD. Author: {{IMPLEMENTER_AGENT}}. Status: proposed for {{S
 
 State settled decisions and remaining assumptions. For a nontrivial change, identify the highest-risk unproven
 assumption, the smallest executable proof and its success/failure criteria; cite sufficient existing proof when
-available. Schedule it early in approved implementation. Planning authorizes no runtime probe by itself.
+available. Make it the first bounded slice in approved implementation, before expensive expansion.
+Where relevant, cover actual query access/work bounds, fixture setup cost and measurement plumbing on a small
+representative case before large fixtures or dependent UI. Planning authorizes no runtime probe by itself; reuse
+sufficient existing proof and keep the check inside the existing phase/checkpoint/budget.
 
 ## 2. Source binding and extra inputs
 
@@ -70,8 +73,11 @@ Reclaim finished workers at handback. See
 
 ## 9. Acceptance-criteria mapping
 
-| AC | Changes | Evidence |
-|---|---|---|
+| AC | Changes | Actual assertion / setup / selector / registration | Evidence |
+|---|---|---|---|
+
+At handback, coordinator and supervisor compare implemented assertions and registration with this map at the
+existing reviews; record missing/unrun coverage explicitly. Test names or aggregate passes alone do not close an AC.
 
 ## 10. Risks and escalations
 

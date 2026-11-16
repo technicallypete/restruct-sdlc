@@ -128,6 +128,27 @@ that preserves privacy. Keep the existing overall timeout, authorization negativ
 and required coverage. Do not waive failures, silently broaden to a whole suite
 or introduce another fixture framework/approval stage.
 
+## Feasibility before expensive expansion
+
+For nontrivial changes, planning and Plan review identify assumptions that could
+invalidate the approach, using existing source, fixtures and prior measurements.
+Put the smallest relevant feasibility check in the first released implementation
+slice, with concrete success/failure criteria in the existing Plan/AC map. Where
+applicable prove actual query access/work bounds (including sparse/duplicate and
+reused-connection cases), fixture construction cost, and a working measurement
+example before expanding maximal fixtures or dependent UI. Reuse sufficient prior
+proof; routine changes need no artificial spike or new approval stage. Planning
+alone authorizes no runtime experiment, and this creates no separate test campaign.
+
+At handback, the coordinator checks actual assertions, fixture prerequisites,
+selectors and registration/count pins against the operative AC map before
+launching dependent expensive runs. The supervisor checks the same at the existing
+review. A named test, touched file or aggregate pass is not evidence for a missing
+assertion. Resolve omissions in one bounded correction, keeping attributable
+passes; a genuine design/contract change follows existing review and scope gates.
+Apply only to the remaining delta at a safe boundary, without restarting accepted
+work, rebinding frozen runs or releasing held successors.
+
 ## Before every batch
 
 A batch is a named group of local checks (focused tests, builds, lint, controls, full runs). Before launching each

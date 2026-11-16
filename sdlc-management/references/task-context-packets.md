@@ -7,11 +7,13 @@ existing planning/dispatch/handoff, without a separate approval ceremony or serv
 
 ## Reading route and authority
 
-The packet writer is **Fable 5.1 high**, selected by the owner2026-11-16. The
+The planner and initial/substantive packet writer are **Fable 5.2 high**,
+selected by the owner2026-11-16, superseding the earlier Fable5.1 selection. The
 existing coordinator owns preparation, freshness/completeness verification and
 dispatch; model delegation transfers no acceptance or execution authority. Reuse
 the existing Fable planner when practical instead of launching a packet worker
-for every message or trivial binding update. Fable prepares the resolved task/
+for every message or trivial binding update. The coordinator handles mechanical
+updates, preserving binding/freshness checks. Fable prepares the resolved task/
 role/phase extracts from the current canonical sources required by the adopting
 repository. The coordinator supplies exact scope/source/owner holds and checks
 the actual packet before use; a reading list is not a finished packet.
@@ -20,7 +22,8 @@ everything and generate its own summary does not reduce that initial load.
 
 Record the actual writer/model and packet binding in the existing dispatch.
 Verify supported native model/effort loading; a prompt label is not runtime proof.
-If Fable5.1 is unavailable, report the concrete limit and use only an already
+If Fable5.2 is unavailable or unsupported by the native client, report the
+concrete limit and use only an already
 authorized fallback, recording its actual identity rather than claiming Fable
 authorship. Packet preparation covers released work only; it does not release
 planning for a held Goal. Preserve already-bound packets/frozen runs; adopt the
@@ -80,6 +83,10 @@ tests, inspect the actual seed/setup and include the subject's role, permitted
 mutation, required prerequisites and expected success/refusal. A selector alone
 does not establish fixture independence. Reuse a known eligible subject or name
 the exact supported setup; do not assume examples or earlier tests created it.
+Carry the Plan's relevant unproven assumptions, first bounded feasibility check
+and concrete success/failure criteria into the packet. At handback compare the
+actual test assertions, setup and registrations with the selected AC map; names
+or an aggregate pass are insufficient to establish the required behavior.
 
 The preparer checks the actual excerpts/requirements, not only the listed hashes.
 Use the existing dispatch/input-binding record for this check; no new registry or
