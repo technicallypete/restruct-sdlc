@@ -7,6 +7,8 @@ Follow the [procedure](task-context-packets.md).
 ## Identity and binding
 
 - Task/release; role/phase; preparer; intended consumer:
+- Packet writer/model (Fable5.1 high; actual metadata or recorded authorized fallback):
+- Coordinator responsible for source freshness, completeness and dispatch:
 - Repository/worktree; source commit; dirty/untracked inputs, if any:
 - Created at; packet version; prior binding, if refreshed:
 - Authorized action, exclusive writable paths and explicit exclusions:

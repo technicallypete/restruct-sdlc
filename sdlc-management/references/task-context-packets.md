@@ -7,10 +7,24 @@ existing planning/dispatch/handoff, without a separate approval ceremony or serv
 
 ## Reading route and authority
 
-The preparer (normally the existing supervisor or coordinator) reads the current
-canonical sources required by the adopting repository before selecting material.
+The packet writer is **Fable 5.1 high**, selected by the owner2026-11-16. The
+existing coordinator owns preparation, freshness/completeness verification and
+dispatch; model delegation transfers no acceptance or execution authority. Reuse
+the existing Fable planner when practical instead of launching a packet worker
+for every message or trivial binding update. Fable prepares the resolved task/
+role/phase extracts from the current canonical sources required by the adopting
+repository. The coordinator supplies exact scope/source/owner holds and checks
+the actual packet before use; a reading list is not a finished packet.
 Prepare once and reuse across appropriate workers; having each worker first read
 everything and generate its own summary does not reduce that initial load.
+
+Record the actual writer/model and packet binding in the existing dispatch.
+Verify supported native model/effort loading; a prompt label is not runtime proof.
+If Fable5.1 is unavailable, report the concrete limit and use only an already
+authorized fallback, recording its actual identity rather than claiming Fable
+authorship. Packet preparation covers released work only; it does not release
+planning for a held Goal. Preserve already-bound packets/frozen runs; adopt the
+writer selection at the next normal preparation or substantive-refresh boundary.
 
 Consumers still read the applicable root/service instructions and discover/load
 required skills. Never claim that a packet overrides native injected instructions,
