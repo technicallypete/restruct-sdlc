@@ -9,6 +9,24 @@ GOOD = {"env": {"CLAUDE_CODE_AUTO_COMPACT_WINDOW": "250000", "CLAUDE_AUTOCOMPACT
 class ControlsTests(unittest.TestCase):
     def test_valid_native_configuration(self):
         self.assertTrue(inspect(GOOD)["ok"])
+    def test_explicit_ninety_percent_keeps_checkpoint_and_ceiling(self):
+        config = {"env": {**GOOD["env"], "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "90"}}
+        self.assertTrue(inspect(config)["blocked"])
+        self.assertTrue(inspect(GOOD, expected_percent=90)["blocked"])
+        for count, blocked, due in [(199999, False, False), (200000, False, True),
+                                    (225000, False, True), (249999, False, True), (250000, True, True)]:
+            result = inspect(config, {"input_context": count}, expected_percent=90)
+            self.assertEqual((result["blocked"], result["checkpoint_due"]), (blocked, due))
+    def test_cli_explicit_ninety_percent_static_only(self):
+        import subprocess, sys
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d)/"settings.json"
+            p.write_text(json.dumps({"env": {**GOOD["env"], "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "90"}}))
+            command = [sys.executable, str(Path(__file__).with_name("check_token_controls.py")),
+                       "--settings", str(p), "--expected-percent", "90"]
+            run = subprocess.run(command, capture_output=True, text=True)
+            self.assertEqual(run.returncode, 0)
+            self.assertEqual(json.loads(run.stdout)["status"], "static-only")
     def test_missing_or_disabled_or_widened_settings(self):
         for config in [{}, {**GOOD, "env": {**GOOD["env"], "DISABLE_AUTO_COMPACT": "1"}},
                        {**GOOD, "modelSettings": {"opus": {"autoCompactWindow": 1000000}}}]:

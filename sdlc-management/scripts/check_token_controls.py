@@ -6,14 +6,17 @@ from pathlib import Path
 
 WINDOW = 250000
 PERCENT = 80
+CHECKPOINT = 200000
 
-def check_settings(settings):
+def check_settings(settings, expected_percent=PERCENT):
+    if expected_percent not in (80, 90):
+        raise ValueError("expected compact percentage must be an approved 80 or 90")
     env = settings.get("env", {})
     errors = []
     if str(env.get("CLAUDE_CODE_AUTO_COMPACT_WINDOW")) != str(WINDOW):
         errors.append("native compact window must be 250000")
-    if str(env.get("CLAUDE_AUTOCOMPACT_PCT_OVERRIDE")) != str(PERCENT):
-        errors.append("native compact trigger must be 80 percent (200000 tokens)")
+    if str(env.get("CLAUDE_AUTOCOMPACT_PCT_OVERRIDE")) != str(expected_percent):
+        errors.append(f"native compact trigger must be {expected_percent} percent ({WINDOW * expected_percent // 100} nominal tokens)")
     for key in ("DISABLE_COMPACT", "DISABLE_AUTO_COMPACT"):
         if str(env.get(key, "")).lower() in ("1", "true", "yes"):
             errors.append(key + " disables required compaction")
@@ -54,8 +57,8 @@ def latest_usage(path):
                 "model": row.get("message", {}).get("model")}
     raise ValueError("no usage telemetry in bounded transcript tail")
 
-def inspect(settings, telemetry=None, expected_effort=None, telemetry_problem=None):
-    errors = check_settings(settings)
+def inspect(settings, telemetry=None, expected_effort=None, telemetry_problem=None, expected_percent=PERCENT):
+    errors = check_settings(settings, expected_percent)
     unverified = []
     result = {"errors": errors, "telemetry": telemetry, "unverified": unverified}
     if telemetry_problem:
@@ -70,7 +73,7 @@ def inspect(settings, telemetry=None, expected_effort=None, telemetry_problem=No
                 unverified.append("effective effort metadata is unavailable")
             elif telemetry["effort"] != expected_effort:
                 errors.append("effective effort does not match the recorded role/override")
-        result["checkpoint_due"] = telemetry["input_context"] >= WINDOW * PERCENT // 100
+        result["checkpoint_due"] = telemetry["input_context"] >= CHECKPOINT
     elif expected_effort and not telemetry_problem:
         unverified.append("last-request usage and effective effort require a transcript")
     result["blocked"] = bool(errors)
@@ -85,6 +88,8 @@ def main():
                    help="merged effective settings snapshot, or project file for static check only")
     p.add_argument("--transcript", type=Path)
     p.add_argument("--expected-effort", choices=["low", "medium", "high", "xhigh", "max"])
+    p.add_argument("--expected-percent", type=int, choices=[80, 90], default=PERCENT,
+                   help="recorded approved percentage; default 80, explicit owner-selected 90 supported")
     args = p.parse_args()
     try:
         settings = json.loads(args.settings.read_text())
@@ -94,7 +99,7 @@ def main():
                 telemetry = latest_usage(args.transcript)
             except (OSError, ValueError, TypeError) as exc:
                 problem = str(exc)
-        result = inspect(settings, telemetry, args.expected_effort, problem)
+        result = inspect(settings, telemetry, args.expected_effort, problem, args.expected_percent)
         result["scope"] = ("settings-and-last-request" if telemetry else
                            "telemetry-unverified" if problem or args.expected_effort else "static-settings-only")
     except (OSError, ValueError, TypeError) as exc:

@@ -23,6 +23,14 @@ compaction. A project-file PASS alone is only a static check. Native limits are
 not a precise spending cap: a large response may overshoot; inspect after large
 reads and before another expensive step. Do not expose credentials while checking.
 
+An adopting owner may explicitly select90 percent for the same250k window
+(nominal225k compaction target). Record the choice in live guidance and use
+`--expected-percent 90` with the checker; the default remains80. Keep the200k
+safe checkpoint and250k ordinary-work ceiling independent of this percentage.
+Native thresholds may compact earlier; configuration arithmetic is not live
+loading proof. Reconcile at a safe boundary without restarting workers, changing
+hooks/permissions or rewriting frozen run inputs merely for this setting.
+
 Use `scripts/check_token_controls.py --settings EFFECTIVE_SETTINGS.json
 --transcript EXACT_WORKER.jsonl --expected-effort ROLE_LEVEL` at first available
 worker usage, before continuation/expensive correction dispatch, at handback and
