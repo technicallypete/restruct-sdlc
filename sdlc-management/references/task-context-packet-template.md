@@ -29,6 +29,11 @@ Named required cases and observable expected behavior (existing dispatch fields;
 check against canonical requirements, not a worker-selected subset):
 First source artifact or precise obstacle expected within the existing progress
 budget; settled fixture/contract facts and exact source locations:
+Resolved current contract/errata; superseded wording excluded from operative instructions:
+For changed tests: verified subject role, permitted mutation, prerequisite setup
+and expected success/refusal; exact setup required by focused selectors:
+First coherent checkpoint's relevant compile/type/lint checks, executor and
+resource reservation (coordinator owns them when the writer is source-only):
 Unresolved decisions and additional-read triggers:
 
 ## Source coverage and freshness

@@ -59,6 +59,14 @@ read a combined packet containing every role's full context. Include:
   and owner holds. Link prior decisions/evidence rather than copying transcripts,
   full logs, obsolete Plans or the entire progress index.
 
+Resolve the operative contract in the packet, including applicable errata and
+superseded wording; do not substitute a long reading list and ask each worker to
+reconstruct precedence. Keep necessary owning-source reads explicit. For changed
+tests, inspect the actual seed/setup and include the subject's role, permitted
+mutation, required prerequisites and expected success/refusal. A selector alone
+does not establish fixture independence. Reuse a known eligible subject or name
+the exact supported setup; do not assume examples or earlier tests created it.
+
 The preparer checks the actual excerpts/requirements, not only the listed hashes.
 Use the existing dispatch/input-binding record for this check; no new registry or
 independent acceptance gate. Stop for missing applicable rules or conflicting

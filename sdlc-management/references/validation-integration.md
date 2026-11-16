@@ -107,6 +107,27 @@ retention rules and exact input bindings remain required unless explicitly amend
 and reviewed; active work is not silently rebound or replanned. Security/authority,
 acceptance, rebase, CI and resource-safety gates are unchanged.
 
+## Early focused feedback and fixture prerequisites
+
+At the first coherent source checkpoint, run relevant inexpensive compile,
+type/lint and focused unit checks before expensive database/browser validation.
+Use the existing commands and evidence; do not repeat an unchanged pass merely
+for this rule or require every check after every commit. The writer may execute
+only within its released native/resource permissions. If it is source-only,
+the existing coordinator owns prompt static feedback through the authorized
+validator and existing reservations; "source-only" must not leave this step
+until the end of combined integration validation. Repair static failures before
+dependent expensive batches; unrelated safe lanes remain runnable.
+
+For selected browser/integration cases, inspect and bind fixture prerequisites
+in the existing dispatch/packet. Establish the required setup directly or select
+its exact supported prerequisite chain, including sign-in and role/state changes.
+Check a setup mutation's actual expected response before waiting for its UI
+consequence; an unexpected refusal fails promptly with bounded diagnostic output
+that preserves privacy. Keep the existing overall timeout, authorization negatives
+and required coverage. Do not waive failures, silently broaden to a whole suite
+or introduce another fixture framework/approval stage.
+
 ## Before every batch
 
 A batch is a named group of local checks (focused tests, builds, lint, controls, full runs). Before launching each

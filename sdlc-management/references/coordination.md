@@ -280,6 +280,13 @@ deltas. Packets never replace native instructions, actual source review or the
 coordinator's initial whole-task assessment. Do not create another progress log,
 manifest service, watcher or successor task just to maintain a packet.
 
+Resolve governing errata and actual fixture prerequisites in that packet rather
+than sending a broad reading list as the resolved task. At the first coherent
+source checkpoint, the existing coordinator ensures relevant early static
+feedback before expensive dependent validation, including for source-only
+writers. Follow [early feedback and prerequisites](validation-integration.md#early-focused-feedback-and-fixture-prerequisites);
+preserve running batches, native permissions and resource reservations.
+
 ## Handoff contents
 
 ### Coordinator final status line
