@@ -149,6 +149,45 @@ passes; a genuine design/contract change follows existing review and scope gates
 Apply only to the remaining delta at a safe boundary, without restarting accepted
 work, rebinding frozen runs or releasing held successors.
 
+## Parent runtime budgets and existing baselines
+
+Default planning/review ceiling for a new or substantially expanded reported
+parent check is **15 minutes (900 seconds)** on its intended runner. Include
+parent-specific fixture/setup, all selected children and teardown attributable
+to it. Report shared bootstrap/build phases separately; do not hide parent work
+there. Whole jobs/suites may be longer when composed of independently reported
+parents; a per-Go-command timeout alone does not bound a visible harness parent.
+
+Preserve existing approved long parents and their recorded budgets/baselines,
+including 20–30-minute checks. This is not a retrospective timeout reduction,
+mass split or reason to reject an unchanged legacy parent. Material new coverage
+must not silently enlarge a grandfathered parent: split the new work or review
+its runtime impact. A genuinely indivisible new parent needing more than 15
+minutes requires a specific owner-approved variance, not an automatic timeout bump.
+
+In the existing Spec/Plan validation mapping, cite attributable completed-run
+timings with source/fixture version, runner/environment, setup/child time where
+available, sample count and measured versus estimated status. Reuse retained
+timings, test reports and job traces; completion gaps are estimates and concurrent
+events cannot be subtracted as if sequential. Keep local/hosted and cold/warm
+baselines distinct. Missing data is unknown, not a fabricated default or a new
+benchmark campaign; validate it in the smallest already-authorized early slice.
+
+If a new parent is predicted/measured above budget, optimize its setup or split
+it into meaningful independently selected/reported parents with exact required
+coverage, failure attribution and cleanup. Renaming an umbrella while leaving
+the same silent long-running parent does not satisfy the rule. Preserve unique
+boundary assertions and fixture isolation; do not shrink maxima or skip security
+checks solely to meet the budget. Review any required-check/selection/aggregation
+changes together so required coverage is neither lost nor duplicated.
+
+Emit event-driven parent/child start, end and elapsed/setup progress as appropriate
+using the existing reporting paths; retain unfinished/failure evidence. A quiet
+aggregate log alone does not establish a hang. Implement deadline/reporting
+changes through normal reviewed source work; do not mutate frozen runs, lower
+existing timeouts, cancel jobs or restart tests merely to adopt this guidance.
+No polling agent, new telemetry framework or separate inventory is required.
+
 ## Before every batch
 
 A batch is a named group of local checks (focused tests, builds, lint, controls, full runs). Before launching each

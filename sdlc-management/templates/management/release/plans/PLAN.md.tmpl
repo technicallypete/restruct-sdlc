@@ -48,6 +48,11 @@ changes; record any permitted irrelevant-delta deferral under the validation pol
 Give executable selectors, dependency order, safe parallel batches and resource reservations/serial builds.
 Estimate implementation effort separately from elapsed build/test time and review/queue waits, citing known
 timings or labeling estimates/unknowns. Use existing evidence; no extra timing campaign or separate report.
+Budget each new/substantially expanded reported parent to at most 15 minutes on
+the intended runner, including parent-specific setup/children. Cite comparable
+completed-run baselines, measured versus estimated, and preserve unchanged legacy
+20–30-minute parents. Split oversized new work into real independently reported
+checks with exact coverage; do not lower existing timeouts or rebind frozen runs.
 
 ## 7. Delegation
 
