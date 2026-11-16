@@ -31,6 +31,12 @@ Native thresholds may compact earlier; configuration arithmetic is not live
 loading proof. Reconcile at a safe boundary without restarting workers, changing
 hooks/permissions or rewriting frozen run inputs merely for this setting.
 
+An explicit adopting-owner275k/90 selection uses `--expected-window 275000
+--expected-percent 90`: nominal247500 compaction target,275000 ordinary-work
+ceiling,200000 checkpoint unchanged. Default window/ceiling remains250k; live
+guidance and effective settings must identify the actual approved selection.
+This does not authorize275k in repositories whose owner has not selected it.
+
 Use `scripts/check_token_controls.py --settings EFFECTIVE_SETTINGS.json
 --transcript EXACT_WORKER.jsonl --expected-effort ROLE_LEVEL` at first available
 worker usage, before continuation/expensive correction dispatch, at handback and

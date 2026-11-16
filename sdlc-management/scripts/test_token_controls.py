@@ -27,6 +27,16 @@ class ControlsTests(unittest.TestCase):
             run = subprocess.run(command, capture_output=True, text=True)
             self.assertEqual(run.returncode, 0)
             self.assertEqual(json.loads(run.stdout)["status"], "static-only")
+    def test_explicit_275k_window_preserves_checkpoint_and_enforces_selected_ceiling(self):
+        config = {"env": {"CLAUDE_CODE_AUTO_COMPACT_WINDOW": "275000", "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "90"},
+                  "modelSettings": {"opus": {"autoCompactWindow": 275000}}}
+        self.assertTrue(inspect(config, expected_percent=90)["blocked"])
+        for count, blocked, due in [(199999, False, False), (200000, False, True),
+                                    (250000, False, True), (274999, False, True), (275000, True, True)]:
+            result = inspect(config, {"input_context": count}, expected_percent=90, expected_window=275000)
+            self.assertEqual((result["blocked"], result["checkpoint_due"]), (blocked, due))
+        widened = {**config, "modelSettings": {"opus": {"autoCompactWindow": 1000000}}}
+        self.assertTrue(inspect(widened, expected_percent=90, expected_window=275000)["blocked"])
     def test_missing_or_disabled_or_widened_settings(self):
         for config in [{}, {**GOOD, "env": {**GOOD["env"], "DISABLE_AUTO_COMPACT": "1"}},
                        {**GOOD, "modelSettings": {"opus": {"autoCompactWindow": 1000000}}}]:

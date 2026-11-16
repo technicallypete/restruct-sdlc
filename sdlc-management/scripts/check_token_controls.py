@@ -8,21 +8,23 @@ WINDOW = 250000
 PERCENT = 80
 CHECKPOINT = 200000
 
-def check_settings(settings, expected_percent=PERCENT):
+def check_settings(settings, expected_percent=PERCENT, expected_window=WINDOW):
     if expected_percent not in (80, 90):
         raise ValueError("expected compact percentage must be an approved 80 or 90")
+    if expected_window not in (250000, 275000):
+        raise ValueError("expected compact window must be an approved 250000 or 275000")
     env = settings.get("env", {})
     errors = []
-    if str(env.get("CLAUDE_CODE_AUTO_COMPACT_WINDOW")) != str(WINDOW):
-        errors.append("native compact window must be 250000")
+    if str(env.get("CLAUDE_CODE_AUTO_COMPACT_WINDOW")) != str(expected_window):
+        errors.append(f"native compact window must be {expected_window}")
     if str(env.get("CLAUDE_AUTOCOMPACT_PCT_OVERRIDE")) != str(expected_percent):
-        errors.append(f"native compact trigger must be {expected_percent} percent ({WINDOW * expected_percent // 100} nominal tokens)")
+        errors.append(f"native compact trigger must be {expected_percent} percent ({expected_window * expected_percent // 100} nominal tokens)")
     for key in ("DISABLE_COMPACT", "DISABLE_AUTO_COMPACT"):
         if str(env.get(key, "")).lower() in ("1", "true", "yes"):
             errors.append(key + " disables required compaction")
     for model, opts in settings.get("modelSettings", {}).items():
-        if opts.get("autoCompactWindow", WINDOW) > WINDOW:
-            errors.append(model + " overrides the compact window above 250000")
+        if opts.get("autoCompactWindow", expected_window) > expected_window:
+            errors.append(model + f" overrides the compact window above {expected_window}")
     return errors
 
 def latest_usage(path):
@@ -57,8 +59,8 @@ def latest_usage(path):
                 "model": row.get("message", {}).get("model")}
     raise ValueError("no usage telemetry in bounded transcript tail")
 
-def inspect(settings, telemetry=None, expected_effort=None, telemetry_problem=None, expected_percent=PERCENT):
-    errors = check_settings(settings, expected_percent)
+def inspect(settings, telemetry=None, expected_effort=None, telemetry_problem=None, expected_percent=PERCENT, expected_window=WINDOW):
+    errors = check_settings(settings, expected_percent, expected_window)
     unverified = []
     result = {"errors": errors, "telemetry": telemetry, "unverified": unverified}
     if telemetry_problem:
@@ -66,7 +68,7 @@ def inspect(settings, telemetry=None, expected_effort=None, telemetry_problem=No
     if telemetry is not None:
         if not telemetry.get("context_complete", True):
             unverified.append("incomplete request usage; input_context is an observed lower bound")
-        if telemetry["input_context"] >= WINDOW:
+        if telemetry["input_context"] >= expected_window:
             errors.append("context ceiling reached: compact or checkpoint/handoff before ordinary work")
         if expected_effort:
             if telemetry.get("effort") is None:
@@ -90,6 +92,8 @@ def main():
     p.add_argument("--expected-effort", choices=["low", "medium", "high", "xhigh", "max"])
     p.add_argument("--expected-percent", type=int, choices=[80, 90], default=PERCENT,
                    help="recorded approved percentage; default 80, explicit owner-selected 90 supported")
+    p.add_argument("--expected-window", type=int, choices=[250000, 275000], default=WINDOW,
+                   help="recorded approved window/ceiling; default 250000")
     args = p.parse_args()
     try:
         settings = json.loads(args.settings.read_text())
@@ -99,7 +103,7 @@ def main():
                 telemetry = latest_usage(args.transcript)
             except (OSError, ValueError, TypeError) as exc:
                 problem = str(exc)
-        result = inspect(settings, telemetry, args.expected_effort, problem, args.expected_percent)
+        result = inspect(settings, telemetry, args.expected_effort, problem, args.expected_percent, args.expected_window)
         result["scope"] = ("settings-and-last-request" if telemetry else
                            "telemetry-unverified" if problem or args.expected_effort else "static-settings-only")
     except (OSError, ValueError, TypeError) as exc:
