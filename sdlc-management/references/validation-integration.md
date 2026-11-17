@@ -149,6 +149,47 @@ passes; a genuine design/contract change follows existing review and scope gates
 Apply only to the remaining delta at a safe boundary, without restarting accepted
 work, rebinding frozen runs or releasing held successors.
 
+## Realistic test scope and independent Spec review
+
+For new Specs and substantive validation expansions, choose representative product
+scenarios and risk-proportionate coverage. A technical ceiling alone does not
+justify repeatedly materializing maximum-scale fixtures in routine integration.
+Tie expensive scale, concurrency and combination cases to a concrete product,
+correctness, security or bounded-work requirement; prefer the smallest fixture
+that proves that requirement. Do not invent large product limits merely to make
+validation finite. Unresolved product limits remain owner decisions.
+
+Before accepting a supervisor-authored Spec that introduces or materially expands
+tests, obtain one bounded independent read-only subagent review explicitly covering
+test reasonableness and cost. Reuse the existing Spec reviewer with this remit
+where possible, rather than adding another reviewer or approval stage. Give it the
+proposed requirements/ACs, intended product usage, relevant limits and attributable
+prior timings. It checks fixture realism, duplicated assertions/matrices, total
+parent cost and whether rare maximum-scale checks need routine execution. Preserve
+necessary boundary/security guarantees; an expensive justified case is not grounds
+to silently remove its assertion or reduce an accepted maximum.
+
+Record the findings and supervisor disposition in the existing Spec validation
+section or review. The supervisor remains accountable for scope and acceptance.
+If delegation is unavailable, record the limitation and perform an explicit second
+pass directly; do not leave authorized work idle. No runtime benchmark, new review
+artifact, approval chain or monitoring agent is required for this assessment.
+
+Estimate aggregate runtime including fixture construction, process/list/build
+startup, selected children and cleanup on the intended runner. Flag unexplained
+30+ minute routine parents before planning approval and apply the prospective
+parent-runtime guidance below. Partitioning improves visibility but does not reduce
+total work: also avoid redundant fixture rebuilding and speculative combinations.
+Cite comparable measurements or mark estimates/unknowns; do not run experiments
+merely to fill a Spec timing field. Justified costly coverage may use a separately
+selected scale check under the existing CI/owner policy, without silently dropping
+required qualification.
+
+This guidance is prospective only. It does not change current tests/assertions,
+product limits, approved coverage, timeout settings or frozen inputs; it releases
+no retrospective test cleanup or optimization task. Reconcile substantive future
+changes through the normal owner/Spec/Plan process.
+
 ## Parent runtime budgets and existing baselines
 
 Default planning/review ceiling for a new or substantially expanded reported

@@ -46,6 +46,12 @@ IDs are never renumbered or reused. Revisions append dated records or create lin
 criteria with verification, required tests and validation, and explicit non-goals. A Spec states what must be
 true, not how to code it.
 
+Before accepting new/substantively expanded supervisor-authored test requirements,
+include a bounded independent read-only subagent assessment of test realism,
+required-risk coverage and aggregate execution cost. Reuse the existing Spec
+reviewer and record the disposition in the existing Spec/review, without another
+approval stage. See [test-scope review](validation-integration.md#realistic-test-scope-and-independent-spec-review).
+
 Record high/low priority in the Goal/Spec with its source/rationale. Honor an
 explicit owner choice; the owner should identify low-priority work. If unspecified,
 the supervisor determines it or asks when needed, normally defaulting to high.

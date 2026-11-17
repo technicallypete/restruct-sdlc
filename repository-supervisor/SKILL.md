@@ -77,6 +77,12 @@ The planner may remain one agent; kickoff checks readiness and follows the Plan.
 Keep one task owner/writer per artifact, source/resource/stop and acceptance gates;
 see [parallel scheduling](../sdlc-management/references/coordination.md#default-to-safe-parallel-work-lanes).
 
+Before accepting a new/substantively expanded supervisor-authored Spec's tests,
+use the existing independent Spec reviewer for a bounded test realism/risk/cost
+assessment under [test-scope review](../sdlc-management/references/validation-integration.md#realistic-test-scope-and-independent-spec-review).
+Record its findings and your disposition in the existing Spec/review; no extra
+approval stage or runtime experiment. Current tests and frozen inputs stay intact.
+
 When a new watcher notice or owner-requested status check reveals a review-ready Claude Plan/Result,
 start a bounded subagent review without another owner prompt. Verify the exact
 submission and avoid duplicate review of unchanged accepted content. Integrate
