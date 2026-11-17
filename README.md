@@ -39,6 +39,9 @@ remain complete children of the bundle, with their own instructions, references,
 - **Planned parallel implementation.** Goals/Specs record priority from owner direction or supervisor judgment,
   normally high. Plans target 3–5 implementation workers for high or 1–3 for low whenever feasible within
   ownership, dependency, native/resource and budget limits. Kickoff follows the accepted allocation.
+- **Allowance-informed checkpoints.** Configurable percentage-point intervals prompt a brief implementation
+  progress/source reassessment across parallel work. Keep shared account allowance separate from task cost,
+  context and attempts; unknown telemetry stays explicit. No new approval gate or telemetry installer is added.
 - **Continuous resource accountability.** Record containers, images, volumes, networks, worktrees and scratch
   as they are allocated and removed. Reconcile at every handback/batch end and after interruptions; reclaim
   finished worker trees immediately. Abandoned resources block new resource-consuming work. Restart recovery

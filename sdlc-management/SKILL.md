@@ -80,7 +80,7 @@ kickoff follows the accepted allocation. The planner may remain one agent. See [
 | Reference | Covers |
 |---|---|
 | [roles-lifecycle.md](references/roles-lifecycle.md) | Ownership matrix, eleven Goal fields, Spec/Plan/Result contents, IDs and history, four states, precedence, delegated review and relay. |
-| [budgets.md](references/budgets.md) | B3/B5/B7/B15, checkpoints, Goal-level attempts, shared allowance, extensions, ledger, effort. |
+| [budgets.md](references/budgets.md) | B3/B5/B7/B15, attempts, configurable shared implementation-usage checkpoints, brief supervisor checks, extensions, ledger, effort. |
 | [adoption.md](references/adoption.md) | Parameters, risk tiers, procedure, installation and helper path limits, composition with foundation skills. |
 | [coordination.md](references/coordination.md) | One coordinator, one owner per task, recovery, compact repair handoffs, receipts versus acknowledgment, the naming, dispatch and relocation gate. |
 | [validation-integration.md](references/validation-integration.md) | Pre-batch reconciliation, finish-fix-rerun-advance, manual feedback order, merge requests, options, GitLab/glab adapter. |

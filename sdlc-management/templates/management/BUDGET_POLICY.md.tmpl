@@ -31,6 +31,36 @@ architecture or acceptance changes.
 A checkpoint reassesses criteria done and remaining, failures, repeated patterns, uncertainty, convergence and
 bounds. It is not an automatic stop.
 
+## Implementation usage checkpoints
+
+| Setting | Adopted value |
+|---|---|
+| `IMPLEMENTATION_USAGE_CHECKPOINTS` | `{{IMPLEMENTATION_USAGE_CHECKPOINTS}}` |
+| `USAGE_CHECKPOINT_INTERVAL_PP` | `{{USAGE_CHECKPOINT_INTERVAL_PP}}` percentage points |
+| `USAGE_CHECKPOINT_WINDOW` | `{{USAGE_CHECKPOINT_WINDOW}}` |
+
+These are editable policy settings, independent of the plan name; the owner may
+select 5 or 10 points, another supported window, or disable the signal. Before
+implementation, record the observed allowance, scope, window/reset, timestamp and
+source in the existing Execution Budget/dispatch. Parallel feature, repair and
+maintenance work shares one account/window baseline; increases are not per-task
+cost. Planning-only work does not trigger this policy. Missing/stale telemetry is
+unknown, owner readings are reported, and ordinary bounds remain; no polling,
+credential access, provider probe or telemetry/hook installation is introduced.
+
+At the configured increase, briefly reassess all active implementation at a safe
+boundary. {{SUPERVISOR_AGENT}} checks progress, source/evidence, risks, remaining
+allowance and the next coherent deliverable; reuse existing reviews and record a
+compact disposition in the same records. Coalesce crossed intervals; refresh the
+baseline after review or a window/reset/account change, never mixing scopes.
+Pending review is explicit; unaffected authorized work may continue under existing
+gates. No full review/test, new artifact, forced worker replacement, interrupted
+run or routine owner approval is added. An explicit owner ceiling/reserve stays
+separate; stop new dispatch early enough for safe handback/cleanup, without claiming
+an exact cutoff from delayed telemetry. Preserve attempts, scope/phase holds and
+normal reviews even when allowance barely moves. Follow the
+[full policy](../.agents/skills/restruct-sdlc/sdlc-management/references/budgets.md#implementation-usage-checkpoints).
+
 ## Exhaustion and extensions
 
 On exhaustion: stop, preserve state, keep failing criteria, update the Result and return control. An extension

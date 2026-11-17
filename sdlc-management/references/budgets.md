@@ -29,6 +29,71 @@ The supervisor assigns the class in the Goal; the implementer may recommend a ch
 changes an approved budget. A checkpoint is a reassessment, not an automatic stop: criteria done and remaining,
 failures and repeated patterns, uncertainty, convergence and whether the Goal is still well bounded.
 
+## Implementation usage checkpoints
+
+Use subscription/account allowance as a soft implementation scheduling signal,
+separate from Goal attempts, context occupancy, API cost and deliverable checkpoints.
+This applies to feature, repair and maintenance implementation, including its
+validation and review; planning-only work does not trigger this policy. Installation
+alone supplies neither allowance telemetry nor runtime enforcement.
+
+Adopt these configurable values in the existing budget policy:
+
+| Parameter | Default | Meaning |
+|---|---|---|
+| `IMPLEMENTATION_USAGE_CHECKPOINTS` | `true` | Enable allowance-informed implementation reassessment. |
+| `USAGE_CHECKPOINT_INTERVAL_PP` | `2` | Positive percentage-point increase, at most 100, between reassessments. |
+| `USAGE_CHECKPOINT_WINDOW` | `seven_day` | Explicit allowance window; use a supported provider equivalent when needed. |
+
+The owner may choose 5 or 10 percentage points, another window, or disable the
+signal. A plan name is informational, not an automatic interval/capacity mapping.
+An owner-selected allowance ceiling and handback/cleanup reserve are separate;
+there is no universal ceiling and this policy never grants one task more quota.
+
+Before implementation starts, record the observed percentage, window/reset time,
+observation time, nonsecret account/provider scope and source in the existing
+Plan/Result Execution Budget or dispatch/handoff record. Keep one shared baseline
+for overlapping work on the same allowance/window; task records may reference it.
+It covers all consuming sessions/workers, including unrelated concurrent work:
+an account increase is not attributable task cost. Planning/other sessions may
+contribute while implementation is active without acquiring a separate checkpoint.
+
+Read available supported telemetry at normal dispatch, handback and turn/tool
+boundaries; reuse passive observations where available. An owner-supplied reading
+is labeled reported, not verified runtime telemetry. Missing/stale data stays
+unknown with its last observation time: retain existing task/call/time/attempt
+bounds, report the limitation once, and do not guess usage from tokens or create
+a polling agent, credential reader, new hook or additional provider requests.
+A reading with unknown account/window scope cannot drive interval comparisons.
+For Claude Code, native status-line allowance fields such as
+`rate_limits.seven_day.used_percentage` differ from `context_window.used_percentage`;
+UI visibility does not prove the coordinator/model can read them.
+
+When a fresh reading increases by the configured interval, briefly reassess at
+the next safe boundary. For example, 91 to 93 is two percentage points. Coalesce
+a jump across multiple intervals into one assessment; record the new observed
+baseline after it. Reset/window/account changes establish a new labeled baseline,
+not negative consumption or an attempt reset. Never compare different scopes.
+
+The coordinator reviews all active implementation lanes together: useful source
+and evidence produced, remaining ACs, failures/rework, risks, dependencies,
+remaining allowance and the next coherent deliverable. The supervisor performs
+a brief check of those facts and the available source delta through the existing
+handoff/review route, recording a concise disposition in the same records. Reuse
+an existing contemporaneous review; no separate checkpoint artifact, mandatory
+subagent, full formal review or test run is added. Pending/unavailable supervisor
+review stays explicit; unaffected work within existing authority may continue,
+and normal formal source/security/acceptance gates still apply.
+
+A checkpoint does not stop every parallel worker, interrupt a migration/test,
+force a commit/replacement or require another owner approval. Use coherent safe
+handbacks; continue within existing authority when sound. Near an explicit owner
+ceiling, stop dispatching early enough to preserve handback/cleanup capacity;
+delayed/shared telemetry cannot guarantee an exact percentage cutoff. Usage never
+resets attempts, releases held phases, weakens checks or replaces ordinary reviews,
+failure intervention and deliverable checkpoints when the percentage barely moves.
+Adopt at the next safe implementation boundary, preserving frozen inputs/runs.
+
 ## Exhaustion and extensions
 
 On exhaustion before all criteria pass: stop, preserve the working state, keep every failing criterion, update the

@@ -175,6 +175,13 @@ copy outside the shipped skill (for example in the adoption Plan).
   An owner may also select [RC promotion qualification](validation-integration.md#owner-controlled-rc-promotion-option): full hosted proof belongs to a tag-pinned promotion MR, main/release and tag pushes have no duplicate automatic pipeline, promotion and final tagging remain distinct owner decisions. Configure/verify the adopting provider adapter explicitly; no portable script or project-wide permission change is implied.
 - Budget and effort: `DEFAULT_BUDGET` (`B5`), `COORDINATOR_EFFORT` (`high`), `PLANNING_EFFORT` (`xhigh`),
   `IMPLEMENTATION_EFFORT` (`high`).
+- Implementation allowance: `IMPLEMENTATION_USAGE_CHECKPOINTS` (`true`),
+  `USAGE_CHECKPOINT_INTERVAL_PP` (`2`, positive and at most 100),
+  `USAGE_CHECKPOINT_WINDOW` (`seven_day`, or an explicit supported equivalent).
+  Render these into the existing budget policy; the owner can edit the interval,
+  window or enabled value independently of plan name. This is a shared-account
+  soft review signal, not task cost, telemetry installation or a hard quota.
+  Follow [usage checkpoints](budgets.md#implementation-usage-checkpoints).
 - Observer activation: `OBSERVER_AUTO_ACTIVATE` (default `true`, independent of supervisor publication).
 - `DELIVERY_BARRIER` (optional, default empty): a roadmap barrier the project declares, if any.
 

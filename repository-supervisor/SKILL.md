@@ -131,6 +131,12 @@ automated review or CI run. Follow [closeout publication](../sdlc-management/ref
 
 ## Supervise the next authorized action
 
+Apply configured [implementation usage checkpoints](../sdlc-management/references/budgets.md#implementation-usage-checkpoints):
+briefly assess shared-account progress, source/evidence, risks and next deliverable
+at safe boundaries; reuse current reviews and existing records. No full review,
+mandatory delegate, extra owner gate or phase release follows a usage threshold.
+Unknown telemetry stays explicit; preserve formal reviews and owner ceilings/holds.
+
 Before any automatic transition, check recorded owner specification/work/phase/stop bounds. Missing Specs stop
 continuation unless explicitly authorized within a recorded endpoint/range or pinned epic. Spec-only mandates
 stop at documentation; full-lifecycle mandates retain every gate. Stops override existing Specs/accepted Plans,
