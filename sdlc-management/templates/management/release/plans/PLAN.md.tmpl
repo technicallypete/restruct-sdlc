@@ -32,6 +32,12 @@ None, or the change with risk handling.
 
 ## 5. Contracts and interfaces
 
+Resolve cross-layer facts and ownership here: storage/facade/wire/UI, current versus
+captured values, actual caller context and lifecycle/retry behavior. Identify any
+important positive transition as well as refusal paths. Use the existing AC map to
+name producer, consumers, concrete assertions and deferred evidence; no extra
+contract artifact or permission stage.
+
 ## 6. Validation batches
 
 Cite relevant existing test paths/check IDs in this section or the AC mapping. Mark coverage as reuse/extend/new,
@@ -47,6 +53,10 @@ changes; record any permitted irrelevant-delta deferral under the validation pol
 |---|---|---|
 
 Give executable selectors, dependency order, safe parallel batches and resource reservations/serial builds.
+For changed checks, name the actual runner invocation/required ID, lane and child/count
+pins in the same map. Plan coherent review/validation slices rather than a separate
+permission or expensive run per assertion; retain normal source/security/native gates.
+
 Estimate implementation effort separately from elapsed build/test time and review/queue waits, citing known
 timings or labeling estimates/unknowns. Use existing evidence; no extra timing campaign or separate report.
 Budget each new/substantially expanded reported parent to at most 15 minutes on

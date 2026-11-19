@@ -88,6 +88,15 @@ and concrete success/failure criteria into the packet. At handback compare the
 actual test assertions, setup and registrations with the selected AC map; names
 or an aggregate pass are insufficient to establish the required behavior.
 
+For a change spanning storage, facade, transport and UI, resolve one end-to-end
+behavior in the existing contract/AC map before dependent expansion: which fact
+is authoritative, current versus captured values, caller context, lifecycle/retry
+semantics, producer shape and each consumer owner. Include important positive
+transitions as well as refusals (for example, a valid saved value becoming old).
+An individually correct layer can still disagree with its consumer. Name genuine
+unknowns and their smallest existing-fixture proof; do not leave workers to invent
+cross-layer semantics or request a new approval for settled facts.
+
 The preparer checks the actual excerpts/requirements, not only the listed hashes.
 Use the existing dispatch/input-binding record for this check; no new registry or
 independent acceptance gate. Stop for missing applicable rules or conflicting

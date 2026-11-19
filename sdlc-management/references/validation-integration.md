@@ -128,6 +128,37 @@ that preserves privacy. Keep the existing overall timeout, authorization negativ
 and required coverage. Do not waive failures, silently broaden to a whole suite
 or introduce another fixture framework/approval stage.
 
+## Coherent review slices and executable coverage closure
+
+Use the existing Plan contracts, AC map and phase handback to close a coherent
+producer/consumer behavior. Include settled semantics, actual caller/fixture
+state, implementation, directly affected checks and executable registrations.
+Check the required ID, actual runner invocation, lane inventory and child/count
+pins together when a check changes; a source test file alone does not put it in
+CI. Reconcile omissions at coherent checkpoints rather than discovering them
+only during final MR preparation. Map behavior to actual assertions and outcomes;
+a missing label is not a new coverage gap, and a differently named PASS is not
+proof without equivalent assertions. Keep deferred/failed cases visible until
+attributable evidence closes them.
+
+Batch related source corrections and cheap checks on one frozen coherent slice
+where ownership permits. Do not turn every child assertion or mechanical pin
+into a new worker, DB run or supervisor permission round. The coordinator handles
+already-authorized mechanical fixes and verifies exact conditional-review recipes;
+formal source/architecture/security reviews and native refusals retain their
+existing gates. New or unresolved contract decisions still need the owning review.
+Independent ready lanes continue while a dependent proof or review waits.
+
+Before costly selected UI runs, resolve fixture roles, current/default object
+semantics, dates, navigation and HTML-versus-rendered-text expectations from the
+actual path. Reuse existing helpers and cheap checks; this adds no fixture
+framework, mandatory smoke campaign or extra stage. When a failure is confined
+to test setup/assertion mechanics, preserve it, correct the cause and rerun failed
+or affected checks while retaining attributable unchanged passes. Distinguish
+implementation time from setup/build, execution and review/queue cost in the
+existing Result when explaining churn. Apply at safe boundaries; never rebind
+frozen runs, waive required coverage or retrospectively expand accepted tests.
+
 ## Feasibility before expensive expansion
 
 For nontrivial changes, planning and Plan review identify assumptions that could
