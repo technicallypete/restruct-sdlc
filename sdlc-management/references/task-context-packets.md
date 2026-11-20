@@ -88,6 +88,13 @@ and concrete success/failure criteria into the packet. At handback compare the
 actual test assertions, setup and registrations with the selected AC map; names
 or an aggregate pass are insufficient to establish the required behavior.
 
+For schema changes, resolve the selected runner's actual starting state (empty,
+migrated template or historical upgrade), applicable reset/Down helpers and
+version/ACL expectations. For request changes, include direct/forced test callers
+and their required tuple/provenance, not just rendered forms. The fixture's setup
+transitions can change default values; confirm the value at the assertion. Use
+the existing impact map and focused selectors, not another inventory or matrix.
+
 For a change spanning storage, facade, transport and UI, resolve one end-to-end
 behavior in the existing contract/AC map before dependent expansion: which fact
 is authoritative, current versus captured values, caller context, lifecycle/retry

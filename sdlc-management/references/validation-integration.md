@@ -648,6 +648,23 @@ migration paths and upgrade/down preconditions; schema/catalog/version/count pin
 startup imports and disabled-feature/copy variants; and concurrent or timing-sensitive
 paths. Extend existing coverage only where it leaves a concrete gap.
 
+For schema/migration changes, explicitly inspect applicable shared reset/cleanup
+helpers, upgrade/Down ladders, schema/catalog/version/count/ACL expectations and
+dependent test fixtures, including older-feature consumers. Record the actual
+selected runner's starting database/fixture state in that same map: a migrated
+CI template, empty database and historical upgrade fixture are different inputs.
+Use the relevant state for focused proof; an empty-database pass does not establish
+that reset from the migrated template works. Select only states affected by the
+change, not an automatic matrix or new full-suite campaign.
+
+For changed request contracts, include test callers that bypass the UI (direct
+service/raw calls, forced HTTP posts and replay/security fixtures). Supply or
+assert the required current/captured tuple, provenance and actor context so a
+negative test reaches its intended refusal rather than failing an earlier setup
+or parsing gate. Derive expected transition values from the actual fixture; a
+column's initial default may change during setup. Preserve exact status, reason,
+no-write and permission assertions; do not loosen them merely to obtain a pass.
+
 The coordinator checks that mapping before the first affected batch and refreshes
 it for material implementation or integration deltas. Codex reviews coverage of
 those effects, not merely whether the selected commands look narrow. Reconcile
