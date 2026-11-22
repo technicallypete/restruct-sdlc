@@ -151,6 +151,17 @@ exceptions with reasons in the closeout record.
 Clear an in-flight marker or lock only after verifying its owner ended; never clear another live run's marker.
 Append a superseding status; never rewrite historical facts or turn withheld or failed evidence into a pass.
 
+## Epic integration branch cleanup
+
+Include the epic integration branch in the existing closeout receipt. Verify
+that the epic MR merged to staging or its configured equivalent and that its
+accepted content reached that target. After existing ownership, unique-work
+and live-use checks pass, remove the local and remote epic branches and
+their disposable worktrees. If the merge removed the remote branch, verify its
+absence. Record the disposition and any retained branch with its owner, reason
+and release condition. Child task cleanup leaves the epic branch available
+until epic delivery is complete.
+
 ## Mandatory cleanup at every task acceptance
 
 Owner direction, 2026-10-17: every final task ACCEPT triggers immediate cleanup

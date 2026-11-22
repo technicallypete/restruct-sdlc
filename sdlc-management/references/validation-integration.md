@@ -1,5 +1,29 @@
 # Validation and integration
 
+## Epic integration branches
+
+Unless the owner directs otherwise for an epic or task, create a dedicated epic
+integration branch from the current staging tip (or the repository's configured
+long-lived integration target). Record the branch, baseline and target in the
+existing epic records. Give each Goal/task its own work branch or worktree and
+target its MR at the epic branch. Review and qualify child MRs under the existing
+rules against that target. A child merge lands on the epic branch and its proof
+can inform subsequent tasks.
+
+Open one epic MR from the epic branch to staging **as the final epic task is
+finishing**, once the composed candidate is reviewable. Use Draft while final
+work is pending. Review and CI can overlap with the last task. Reconcile any
+final source and staging changes, confirm the final task is integrated and the
+epic's required reviews and validation are satisfied before merging. Reuse
+attributable unchanged checks and select coverage for the actual composed delta.
+This branch strategy uses the existing CI and release rules.
+
+Keep the epic branch through delivery even as completed task branches are
+cleaned up. After the epic MR merges, reconcile the accepted content and run
+[epic branch cleanup](closeout-risks.md#epic-integration-branch-cleanup) at epic
+closeout. Preserve existing active branch bindings and runs when adopting the
+default.
+
 ## Post-merge qualification runs locally
 
 Default sequence for implementation MRs: focused pre-merge checks and current hosted fast/supervisor/Duo review → authorized merge → affected local batches/suites on the exact merged integration SHA. The existing implementer coordinator automatically launches, owns and tracks those selected checks; no extra owner command or full pre-merge gate. Select from the actual change and integration delta, including affected dependencies, shared fixtures, migrations, disabled variants and security boundaries. Record executable selectors and coverage rationale in the existing Plan/Result; preserve immutable inputs, actual outcomes and cleanup. Final Goal ACCEPT requires that attributable affected coverage and the other Goal gates, rather than a blanket full run per feature.

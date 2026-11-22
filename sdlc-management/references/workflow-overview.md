@@ -10,6 +10,10 @@ By default (`SUPERVISOR_AUTO_PUBLISH=true`, owner may disable), the supervisor p
 
 By default (`OBSERVER_AUTO_ACTIVATE=true`, a separate option), the companion milestone observer starts only after coordinator and supervisor bindings are explicitly verified; otherwise it stays inactive and reported. Effort defaults by role: coordinator high (xhigh when planning), planning workers xhigh, implementation workers high.
 
+Use a dedicated [epic integration branch](validation-integration.md#epic-integration-branches)
+by default. Child task MRs target it. Open the epic MR to staging when the last
+task is finishing, then retire the branch as part of epic closeout.
+
 ## Routine transitions
 
 The supervisor records Goal/Spec priority from explicit owner direction or its own
