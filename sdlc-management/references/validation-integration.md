@@ -18,11 +18,12 @@ epic's required reviews and validation are satisfied before merging. Reuse
 attributable unchanged checks and select coverage for the actual composed delta.
 This branch strategy uses the existing CI and release rules.
 
-Keep the epic branch through delivery even as completed task branches are
-cleaned up. After the epic MR merges, reconcile the accepted content and run
-[epic branch cleanup](closeout-risks.md#epic-integration-branch-cleanup) at epic
-closeout. Preserve existing active branch bindings and runs when adopting the
-default.
+Child tasks clean up at their own acceptance. Start the final
+[epic cleanup audit](closeout-risks.md#epic-integration-branch-cleanup) when the
+epic MR opens or reaches readiness. Verify child cleanup against actual
+resources, then finish reclaiming epic-owned integration resources and removing
+the epic branch after merge and release of its live uses. Preserve existing
+active branch bindings and runs when adopting the default.
 
 **Epic integration qualification.** Unless the owner directs otherwise, start
 the full local suite when the epic integration MR to staging (or its configured

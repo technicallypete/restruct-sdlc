@@ -153,14 +153,23 @@ Append a superseding status; never rewrite historical facts or turn withheld or 
 
 ## Epic integration branch cleanup
 
-Include the epic integration branch in the existing closeout receipt. Verify
-that the epic MR merged to staging or its configured equivalent and that its
-accepted content reached that target. After existing ownership, unique-work
-and live-use checks pass, remove the local and remote epic branches and
-their disposable worktrees. If the merge removed the remote branch, verify its
-absence. Record the disposition and any retained branch with its owner, reason
-and release condition. Child task cleanup leaves the epic branch available
-until epic delivery is complete.
+Each child task completes its own [cleanup at acceptance](#mandatory-cleanup-at-every-task-acceptance).
+Keep the epic branch available through delivery. When the epic MR to staging
+opens or reaches readiness, the coordinator starts a final cleanup audit in the
+existing epic closeout receipt. Reconcile child cleanup receipts against current
+local and remote refs, worktrees, task-owned Docker resources, disposable
+evidence, temporary directories and other task-owned local files. Include the
+last child's receipt once it closes. Reclaim verified leftovers as they become
+safe and record any retained item with its owner, reason and release condition.
+
+After verifying the epic MR merged and accepted content reached staging or
+its configured equivalent, apply the same checks to the epic integration run's
+own resources and files. Remove the local and remote epic branches after their
+live uses end and unique work is preserved. Verify remote absence even if
+the merge deleted the branch. Recheck any remaining child leftovers and record
+the final disposition in the same receipt before marking epic closeout complete.
+Preserve required evidence, active resources, private session state and all
+existing ownership, custody and permission checks.
 
 ## Mandatory cleanup at every task acceptance
 
