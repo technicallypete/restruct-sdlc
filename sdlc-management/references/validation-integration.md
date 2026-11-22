@@ -385,6 +385,30 @@ parameters. Final qualification never starts while required feedback is pending.
 unchanged relevant content and inputs, with recorded provenance; a changed commit SHA alone does not demand an
 unchanged full rerun.
 
+## Frontend UX merge-request screenshots
+
+For changes that alter visible frontend UX, include a compact screenshot gallery
+in the merge-request description. The implementer/coordinator owns the gallery:
+upload representative actual-application captures through the configured provider
+and embed them, normally desktop and phone for responsive changes, with the affected
+state/panel open when relevant. Reuse captures from selected validation; do not add
+a separate screenshot campaign, per-page/theme matrix or new suite solely for the
+gallery. Frontend changes with no visible effect may state that briefly instead.
+
+Caption the captured source commit, viewport, theme and meaningful state; identify
+fixture/seed variants and link the existing Result/proof for the full inventory.
+Before review/merge, refresh materially affected images when the candidate changes,
+or establish that their relevant bytes/inputs are unchanged. Mark preliminary or
+superseded images honestly; a Draft may identify pending captures without claiming
+visual acceptance. Keep older evidence in the Result rather than growing a stale
+gallery. Use authorized synthetic/sanitized states and omit credentials, private
+user/customer content and internal runtime details from uploaded images.
+
+Screenshots support human review; they do not replace functional/accessibility
+checks or constitute mock-parity acceptance. If capture/upload is unavailable,
+record the concrete limitation and existing evidence link for supervisor disposition,
+without bypassing native/security gates or adding another owner approval stage.
+
 ## Integration
 
 - **Safekeeping pushes.** After each implementation or correction round, commit scoped work and push a checkpoint
