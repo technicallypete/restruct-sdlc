@@ -396,7 +396,9 @@ Use `decision` immediately for direct owner changes to active work, with a sourc
 reference and the supervisor reconciliation needed; keep ongoing work in the body.
 The receiver verifies the source; this report adds no acknowledgment gate or authority.
 Use the actual nonsecret task ID and a nonempty summary of at most 240 characters
-without `|`. Routine acknowledgments/progress and recovery use `working`, which
+without `|`. Task IDs are 1–64 ASCII characters: start with a letter or digit,
+then use letters, digits, `_`, `.`, `-` or `+` (for example `G008+G009`). Spaces,
+pipe separators and a leading `+` remain invalid. Routine acknowledgments/progress and recovery use `working`, which
 queues no milestone. Plans/Results/bindings awaiting review use `review-ready`;
 `completed` means verified terminal closeout, never self-acceptance. Pending owner/
 supervisor decisions (`question`) or submitted reviews (`review-ready`) take priority

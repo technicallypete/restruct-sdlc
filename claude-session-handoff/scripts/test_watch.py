@@ -173,6 +173,31 @@ class Polling(Base):
 
 
 class NotificationSources(Base):
+    def test_combined_task_markers_deliver_attention_once(self):
+        self.bind()
+        self.poll()
+        for category in ("review-ready", "question"):
+            with self.subTest(category=category):
+                self.append(self.row("assistant", f"COORDINATOR_STATUS: {category} | G008+G009 | Inspect the handback."))
+                self.assertEqual(self.poll()["queue_calls"], 1)
+                notice = self.codex.queues()[-1][4]
+                self.assertIn(f"milestone ({category}", notice)
+                self.assertIn("G008+G009", notice)
+                self.assertEqual(self.poll()["queue_calls"], 0)
+
+    def test_combined_task_markers_preserve_source_and_format_boundaries(self):
+        marker = "COORDINATOR_STATUS: question | G008+G009 | Inspect the handback."
+        for row in (self.row("user", marker), self.row("assistant", marker, sidechain=True),
+                    self.row("assistant", "[handoff-id: echo]\n" + marker),
+                    self.row("assistant", "[observer-notice: echo]\n" + marker),
+                    self.row("assistant", "> " + marker),
+                    self.row("assistant", "```text\n" + marker + "\n```")):
+            self.assertIsNone(watch.milestone(json.loads(row)))
+        for task in ("+G008", "G008 G009", "G008|G009", "G" * 64 + "+"):
+            self.assertIsNone(watch.explicit_status(f"COORDINATOR_STATUS: question | {task} | Inspect."))
+        self.assertIsNone(watch.milestone(json.loads(self.row(
+            "assistant", "COORDINATOR_STATUS: working | G008+G009 | Tests running."))))
+
     def test_working_marker_suppresses_history_and_recovery_prose(self):
         self.bind()
         self.poll()
