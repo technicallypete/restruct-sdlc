@@ -397,8 +397,8 @@ reference and the supervisor reconciliation needed; keep ongoing work in the bod
 The receiver verifies the source; this report adds no acknowledgment gate or authority.
 Use the actual nonsecret task ID and a nonempty summary of at most 240 characters
 without `|`. Task IDs are 1–64 ASCII characters: start with a letter or digit,
-then use letters, digits, `_`, `.`, `-` or `+` (for example `G008+G009`). Spaces,
-pipe separators and a leading `+` remain invalid. Routine acknowledgments/progress and recovery use `working`, which
+then use letters, digits, `_`, `.`, `-`, `+` or internal ASCII spaces, as in
+`G008+G009` or `EPIC-017 MR230 repair`. Pipes and leading or trailing spaces are invalid. Routine acknowledgments/progress and recovery use `working`, which
 queues no milestone. Plans/Results/bindings awaiting review use `review-ready`;
 `completed` means verified terminal closeout, never self-acceptance. Pending owner/
 supervisor decisions (`question`) or submitted reviews (`review-ready`) take priority

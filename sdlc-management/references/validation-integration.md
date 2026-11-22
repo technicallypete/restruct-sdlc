@@ -24,11 +24,23 @@ cleaned up. After the epic MR merges, reconcile the accepted content and run
 closeout. Preserve existing active branch bindings and runs when adopting the
 default.
 
+**Epic integration qualification.** Unless the owner directs otherwise, start
+the full local suite when the epic integration MR to staging (or its configured
+equivalent) opens with a reviewable candidate. If it opens before the composed
+candidate is ready, start at readiness. The coordinator freezes the exact
+candidate and staging baseline, runs qualification in an isolated checkout,
+and records the evidence in the existing Plan/Result. Review can proceed in
+parallel. Reconcile changes from the tested candidate through merge and run
+affected checks, reusing attributable passes. Child feature/task MRs into the
+epic branch retain focused pre-merge checks and affected post-merge checks.
+This default applies to future epic integration MRs and preserves explicit
+qualification choices and active run bindings.
+
 ## Post-merge qualification runs locally
 
 Default sequence for implementation MRs: focused pre-merge checks and current hosted fast/supervisor/Duo review → authorized merge → affected local batches/suites on the exact merged integration SHA. The existing implementer coordinator automatically launches, owns and tracks those selected checks; no extra owner command or full pre-merge gate. Select from the actual change and integration delta, including affected dependencies, shared fixtures, migrations, disabled variants and security boundaries. Record executable selectors and coverage rationale in the existing Plan/Result; preserve immutable inputs, actual outcomes and cleanup. Final Goal ACCEPT requires that attributable affected coverage and the other Goal gates, rather than a blanket full run per feature.
 
-Run full local qualification on the integration branch tip when the owner requests it **or the supervisor recommends it**, recording the reason and freezing the exact observed tip for the run. Full staging runs and full hosted RC-promotion runs provide broader opportunities to find gaps in feature selection; unexecuted checks are never reported as passing. Ordinary feature MRs retain hosted fast checks; RC promotion MRs retain required full hosted qualification. Automatic integration/release-branch post-merge and tag-push pipelines remain disabled, including lightweight checks; separately authorized diagnostic/provider runs remain distinct.
+Outside the epic MR default, run full local qualification on the integration branch tip when the owner requests it **or the supervisor recommends it**, recording the reason and freezing the exact observed tip for the run. Full staging runs and full hosted RC-promotion runs provide broader opportunities to find gaps in feature selection; unexecuted checks are never reported as passing. Ordinary feature MRs retain hosted fast checks; RC promotion MRs retain required full hosted qualification. Automatic integration/release-branch post-merge and tag-push pipelines remain disabled, including lightweight checks; separately authorized diagnostic/provider runs remain distinct.
 
 After a failure, rerun the failed checks and checks affected by the fix, reusing attributable unchanged passes. A broad local selection needs a concrete coverage reason; explicit technically justified full-run requirements remain binding. Reconcile active work at a safe boundary without restarting running batches or rewriting approved snapshots. Ready authorized successor implementation may overlap post-merge checks in isolation, respecting resource reservations; predecessor final ACCEPT still gates successor integration/final acceptance. Preserve owner holds, manual/security gates, documentation-only exemptions and failure history. This supersedes the blanket full-local-run-after-every-feature default.
 
