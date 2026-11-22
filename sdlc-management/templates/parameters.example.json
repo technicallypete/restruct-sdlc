@@ -30,9 +30,9 @@
     "IMPLEMENTATION_EFFORT": {"description": "Recommended implementation effort; a recommendation, not a verified setting.", "default": "high"},
     "DELIVERY_BARRIER": {"description": "Optional roadmap delivery barrier declared by the project; empty when none.", "default": ""},
     "CODEX_CONFIG_TEMPLATE": {"description": "Render the optional repository-scoped .codex/config.toml (opt-in; an existing file gets a .sdlc-proposed draft; account-wide settings are never edited).", "default": false},
-    "CODEX_MAIN_MODEL": {"description": "Main-session Codex model in the optional .codex/config.toml; sessions may override it.", "default": "gpt-6-luna"},
+    "CODEX_MAIN_MODEL": {"description": "Main-session Codex model in the optional .codex/config.toml; sessions may override it.", "default": "gpt-6.2-sol"},
     "CODEX_MAIN_EFFORT": {"description": "Main-session Codex reasoning effort in the optional .codex/config.toml.", "default": "medium"},
-    "CODEX_SUBAGENT_MODEL": {"description": "Default Codex subagent model in the optional .codex/config.toml; per-spawn overrides take precedence.", "default": "gpt-6.1-sol"},
+    "CODEX_SUBAGENT_MODEL": {"description": "Default Codex subagent model in the optional .codex/config.toml; per-spawn overrides take precedence.", "default": "gpt-6.2-sol"},
     "CODEX_SUBAGENT_EFFORT": {"description": "Default Codex subagent reasoning effort in the optional .codex/config.toml.", "default": "high"}
   }
 }

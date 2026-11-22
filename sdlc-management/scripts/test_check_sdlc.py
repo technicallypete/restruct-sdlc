@@ -56,11 +56,11 @@ def make_skills_root(tmp):
 CODEX_CONFIG = ".codex/config.toml"
 SPEC_CODEX_TOML = (
     "# Shared model defaults for this repository. Individual sessions may override them.\n"
-    "model = \"gpt-6-luna\"\n"
+    "model = \"gpt-6.2-sol\"\n"
     "model_reasoning_effort = \"medium\"\n"
     "\n"
     "[agents]\n"
-    "default_subagent_model = \"gpt-6.1-sol\"\n"
+    "default_subagent_model = \"gpt-6.2-sol\"\n"
     "default_subagent_reasoning_effort = \"high\"\n"
 )
 

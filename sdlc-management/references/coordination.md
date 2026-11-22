@@ -628,11 +628,17 @@ References: [Claude Code context](https://code.claude.com/docs/en/how-claude-cod
 
 ## Codex supervisor model and delegation defaults — owner direction, 2026-10-20
 
-The owner may use a lower-cost model in the main Codex supervisor session while delegated Goal/Spec drafting and substantive architecture/security/Plan/Result reviews default to **gpt-6.1-sol**. Use supported repository-scoped Codex configuration:
+Owner model/effort update, 2026-11-22. The supervisor defaults to `gpt-6.2-sol` at `medium` reasoning effort. Delegated drafting and routine substantive reviews default to `gpt-6.2-sol` at `high`. Use `xhigh` for architecture, security, migrations and difficult lifecycle or concurrency reviews when the actual scope warrants it. Explicit owner/session choices take precedence. Apply defaults at safe preparation boundaries and verify actual runtime settings when available.
+
+The owner may use a lower-cost model in the main Codex supervisor session while delegated Goal/Spec drafting and substantive architecture/security/Plan/Result reviews default to **gpt-6.2-sol**. Use supported repository-scoped Codex configuration:
 
 ```toml
+model = "gpt-6.2-sol"
+model_reasoning_effort = "medium"
+
 [agents]
-default_subagent_model = "gpt-6.1-sol"
+default_subagent_model = "gpt-6.2-sol"
+default_subagent_reasoning_effort = "high"
 ```
 
 Keep the main model and reasoning effort owner-controlled; setting a child default does not change them. Explicit approved per-agent model overrides take precedence. In a live harness that does not reload project configuration or whose full-history forks inherit the parent model, explicitly select Sol for a fresh bounded delegate where supported; do not assume or claim an effective model change from a file edit alone. Verify actual dispatched model when available, otherwise report unknown. Native availability/trust/managed constraints remain; no extra persistent Codex session or artificial test spawn is required. Account usage remains shared, not an independent allowance per agent.
