@@ -424,6 +424,10 @@ unchanged full rerun.
 
 ## Live review against design mocks
 
+**Sequence mixed backend and frontend tasks by dependency.** Use the usual workflow for backend implementation, focused tests and review. In the Spec, identify the data, actions, permissions and states the frontend needs. In the Plan, choose the order for each affected screen family and give a short reason. By default, implement and check the backend behavior first, then run the dependent frontend work and visual loop as the final implementation phase. Specify the smallest backend milestone that makes the real state available to the writer.
+
+A family may start in parallel when its required contract and behavior are already stable and accessible in an authorized live preview. For example, a list can be polished while an unrelated worker changes a background job. A new approval state must be exercisable before its screen can be verified, even if the API shape stays the same. Carry forward attributable pairs and recheck only affected screens when backend and frontend are composed. A mock or stub can inform preparation; final comparison exercises the actual behavior. Backend-only tasks follow the usual workflow.
+
 When a frontend task’s Spec identifies design mocks, the Plan assigns each in-scope screen family to one implementation writer. Identify the mock revision, frame or state, applicable viewports and a way to reach that state in the working app. Families can run in parallel within the agreed capacity. Give shared components one owner and check the affected consumers together.
 
 1. At the first ready screen, open the reference beside the real app. Use the project’s hot-reload workflow on the writer’s checkout with an owned or authorized backend, isolated browser state and safe fixtures. Confirm that saving an actual UI edit updates the open page without rebuilding the app. Use the same role, data state, viewport and theme as the mock. If hot reload or a required state is unavailable, report the exact blocker to the coordinator. Agree on a supported alternative explicitly if needed.
