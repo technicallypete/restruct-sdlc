@@ -422,6 +422,16 @@ parameters. Final qualification never starts while required feedback is pending.
 unchanged relevant content and inputs, with recorded provenance; a changed commit SHA alone does not demand an
 unchanged full rerun.
 
+## Live review against design mocks
+
+When a frontend task’s Spec identifies design mocks, the Plan assigns each in-scope screen family to one implementation writer. Identify the mock revision, frame or state, applicable viewports and a way to reach that state in the working app. Families can run in parallel within the agreed capacity. Give shared components one owner and check the affected consumers together.
+
+1. At the first ready screen, open the reference beside the real app. Use the project’s hot-reload workflow on the writer’s checkout with an owned or authorized backend, isolated browser state and safe fixtures. Confirm that saving an actual UI edit updates the open page without rebuilding the app. Use the same role, data state, viewport and theme as the mock. If hot reload or a required state is unavailable, report the exact blocker to the coordinator. Agree on a supported alternative explicitly if needed.
+2. The writer inspects the initial screenshot, makes a targeted edit, resets the page state when needed, exercises the affected control and inspects the refreshed screenshot beside the mock. Repeat until the screen matches. Save a sanitized live/reference pair for every in-scope frame and drawn viewport, with the source, state and any residual difference in the existing Plan or Result. Use the writer’s own comparison during editing and group independent review and focused committed-source checks at the task or MR boundary. Reuse the confirmed pairs for the MR gallery.
+3. Stop as soon as a frame matches. The default ceiling is **15 correction rounds per frame**, unless the task specifies another limit. One round is an edit followed by a fresh visual comparison. The initial comparison can close an already matching frame with zero rounds. A shared correction can cover several frames in the same round when each is compared. Escalate earlier if repeated edits show no progress or a fixture, behavior or permission decision is needed.
+4. At the ceiling, leave the row open. Send the coordinator the latest pair, rounds used, remaining discrepancy and the next change worth trying. The coordinator requests clearance from the supervisor for **up to five additional rounds** before further corrections to that frame. Record the decision and revised ceiling. Any further extension requires another explicit decision. Existing Goal, time, usage and permission limits still govern. Inner visual rounds use the Goal’s existing attempt accounting.
+5. At a handoff or compaction, carry the family owner, current frame and source, preview or blocker, latest pair, round count, approved ceiling and next action in the existing handoff. Resume the same work at its next safe boundary. Let frozen runs finish and reuse attributable pairs. Keep a mismatch open until corrected or an explicit acceptance decision covers it. Independent families can advance meanwhile.
+
 ## Frontend UX merge-request screenshots
 
 For changes that alter visible frontend UX, include a compact screenshot gallery

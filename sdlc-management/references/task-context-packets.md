@@ -147,6 +147,11 @@ create no separate ledger, approval step or per-turn writing requirement. Preser
 - Evidence/cleanup locations, resource reservations, native holds and preserved
   budget/counter state. A summary does not clear or recreate any of these.
 
+For frontend work bound to design mocks, include the screen family and frame, writer’s
+live preview or blocker, latest compared pair, rounds used and allowed, and the next
+edit or review. Restore these bindings on resume using the
+[live comparison procedure](validation-integration.md#live-review-against-design-mocks).
+
 After compaction, read that current handoff and reconcile existing native tasks
 and surviving work once before dispatch. Verify relevant source/owner freshness;
 do not reread old transcripts or restart discovery/work merely because context
