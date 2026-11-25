@@ -440,6 +440,14 @@ In the existing Plan or Result, report visually closed frames out of applicable 
 4. At the ceiling, leave the row open. Send the coordinator the latest pair, rounds used, remaining discrepancy and the next change worth trying. The coordinator requests clearance from the supervisor for **up to five additional rounds** before further corrections to that frame. Record the decision and revised ceiling. Any further extension requires another explicit decision. Existing Goal, time, usage and permission limits still govern. Inner visual rounds use the Goal’s existing attempt accounting.
 5. At a handoff or compaction, carry the family owner, current frame and source, preview or blocker, latest pair, round count, approved ceiling and next action in the existing handoff. Resume the same work at its next safe boundary. Let frozen runs finish and reuse attributable pairs. Keep a mismatch open until corrected or an explicit acceptance decision covers it. Independent families can advance meanwhile.
 
+### Screen, family and integration checkpoints
+
+At the end of a screen’s live review loop, the writer updates its existing evidence row with the mock frame ID, reached state, viewport, source revision and final live/reference pair. Record the next action for each unresolved difference.
+
+At family review, the supervisor checks coverage of every applicable state and viewport, the screenshot pairs, the results for affected interactions and the decisions covering any accepted differences. Record the family verdict in the existing review record and MR when applicable. Lead owner updates with the family verdict, gallery and remaining named gaps. Report at acceptance or earlier when a blocker or decision needs attention.
+
+After integration, verify that the merged revision contains the reviewed changes. Link the merge SHA and attributable evidence in the existing receipt. If integration or a later shared edit changes a screen’s appearance or behavior, reopen that comparison and refresh its affected evidence. Carry forward evidence for unchanged screens. Track release or staging qualification separately. These records supply the resume point after a session restart.
+
 ## Frontend UX merge-request screenshots
 
 For changes that alter visible frontend UX, include a compact screenshot gallery
