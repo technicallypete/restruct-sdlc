@@ -458,6 +458,13 @@ state/panel open when relevant. Reuse captures from selected validation; do not 
 a separate screenshot campaign, per-page/theme matrix or new suite solely for the
 gallery. Frontend changes with no visible effect may state that briefly instead.
 
+For mock-driven work, use the family MR gallery as the owner's spot-check point.
+Place each representative live capture beside its corresponding design frame and
+label both sides. Identify the mock revision and indicate whether the live image
+comes from the current MR head or an earlier commit. When owner feedback changes
+a screen, refresh that pair in the same MR and briefly say what changed so the
+owner can verify the correction in place.
+
 Caption the captured source commit, viewport, theme and meaningful state; identify
 fixture/seed variants and link the existing Result/proof for the full inventory.
 Before review/merge, refresh materially affected images when the candidate changes,
