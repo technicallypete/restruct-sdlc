@@ -469,9 +469,13 @@ identify what changed.
 A draft may show partial coverage with the outstanding frames named. Before
 marking it ready or merging, reconcile the gallery against the family inventory.
 The supervisor verifies each pair on the candidate or records why an earlier
-capture still applies, checks affected interactions and records the family
-verdict and any explicitly accepted differences. A missing pair keeps the family
-MR in draft. Integration verification follows the merge.
+capture still applies. For each screen/state, map the applicable Spec acceptance
+criteria to actual evidence: permitted actions, role and data visibility, transitions
+and affected interactions. Record both the visual and functional dispositions in
+the existing Result and summarize them in the MR. The family is ready only when
+every in-scope comparison is verified against its mock, applicable Spec criteria
+are proven, and any differences have an explicit decision from the appropriate
+authority. Missing evidence or an unresolved failure keeps the family MR in draft. Integration verification follows the merge.
 
 Caption the captured source commit, viewport, theme and meaningful state; identify
 fixture/seed variants and link the existing Result/proof for the full inventory.
