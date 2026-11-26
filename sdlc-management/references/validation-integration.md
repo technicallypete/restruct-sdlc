@@ -450,7 +450,7 @@ After integration, verify that the merged revision contains the reviewed changes
 
 ## Frontend UX merge-request screenshots
 
-For changes that alter visible frontend UX, include a compact screenshot gallery
+For ordinary visible frontend changes outside a mock-driven family MR, include a compact screenshot gallery
 in the merge-request description. The implementer/coordinator owns the gallery:
 upload representative actual-application captures through the configured provider
 and embed them, normally desktop and phone for responsive changes, with the affected
@@ -458,12 +458,20 @@ state/panel open when relevant. Reuse captures from selected validation; do not 
 a separate screenshot campaign, per-page/theme matrix or new suite solely for the
 gallery. Frontend changes with no visible effect may state that briefly instead.
 
-For mock-driven work, use the family MR gallery as the owner's spot-check point.
-Place each representative live capture beside its corresponding design frame and
-label both sides. Identify the mock revision and indicate whether the live image
-comes from the current MR head or an earlier commit. When owner feedback changes
-a screen, refresh that pair in the same MR and briefly say what changed so the
-owner can verify the correction in place.
+For a mock-driven family MR, embed **every in-scope comparison** in the MR
+description. Pair each live screen with its corresponding design frame for each
+specified state and viewport, including open sheets and panels where drawn.
+Label both sides with the frame/state, viewport, theme and source revision.
+Group large galleries by screen using expandable sections so owners can inspect
+every pair directly in the MR. Refresh the affected pairs after feedback and
+identify what changed.
+
+A draft may show partial coverage with the outstanding frames named. Before
+marking it ready or merging, reconcile the gallery against the family inventory.
+The supervisor verifies each pair on the candidate or records why an earlier
+capture still applies, checks affected interactions and records the family
+verdict and any explicitly accepted differences. A missing pair keeps the family
+MR in draft. Integration verification follows the merge.
 
 Caption the captured source commit, viewport, theme and meaningful state; identify
 fixture/seed variants and link the existing Result/proof for the full inventory.
